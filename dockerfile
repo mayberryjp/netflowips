@@ -12,8 +12,11 @@ RUN git clone https://github.com/mayberryjp/netflowips.git .
 # Create a virtual environment and install the dependencies
 RUN python -m venv venv
 RUN venv/bin/pip install --upgrade pip
-RUN venv/bin/pip install paho.mqtt
-RUN venv/bin/pip install requests
+#RUN venv/bin/pip install paho.mqtt
+#RUN venv/bin/pip install requests
+#RUN venv/bin/pip install git+https://github.com/britram/python-ipfix
+RUN venv/bin/pip install sqlite3
+
 
 
 # Copy the app files
