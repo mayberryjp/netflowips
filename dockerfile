@@ -7,6 +7,8 @@ WORKDIR /netflowips-v0.0.7
 
 RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
 
+RUN cd /
+
 RUN git clone https://github.com/mayberryjp/netflowips.git .
 
 RUN python -m venv venv
@@ -22,7 +24,7 @@ RUN venv/bin/pip install requests
 
 # Copy the requirements file
 #COPY requirements.txt .
-#RUN cd /
+
 
 # Create a virtual environment and install the dependencies
 
