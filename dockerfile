@@ -3,7 +3,7 @@ ARG CACHEBUST=1
 FROM python:3.11.7
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.7
+WORKDIR /netflowips-v0.0.8
 
 RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
 
