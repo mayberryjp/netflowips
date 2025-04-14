@@ -3,7 +3,7 @@ ARG CACHEBUST=1
 FROM python:3.11.7
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.9
+WORKDIR /netflowips-v0.0.10
 
 RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
 
@@ -38,6 +38,6 @@ EXPOSE 2055
 
 # Run the app
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
-CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.9/super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.10/super.conf"]
 
 #CMD ["venv/bin/python","-u", "collector.py"]
