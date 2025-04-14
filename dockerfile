@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
-RUN git clone https://github.com/mayberryjp/netflowips.git .
+RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips-v0.0.13
 
 # Set the working directory
 WORKDIR /netflowips-v0.0.13
 
-RUN venv/bin/pip install schedule requests
+RUN pip install schedule requests
 
 # Expose the port
 EXPOSE 2055
