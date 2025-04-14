@@ -33,6 +33,7 @@ COPY super.conf /etc/supervisor/supervisord.conf
 #EXPOSE 5102
 
 # Run the app
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+#CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/super.conf"]
 
 #CMD ["venv/bin/python","-u", "collector.py"]
