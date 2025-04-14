@@ -201,3 +201,31 @@ def init_config_db():
     except sqlite3.Error as e:
         log_info(None, f"[ERROR] Error initializing configuration database: {e}")
 
+def get_config_settings():
+    """
+    Read configuration settings from the configuration database into a dictionary.
+    
+    Returns:
+        dict: Dictionary containing configuration key-value pairs.
+        None: If there's an error accessing the database.
+    """
+    try:
+        conn = connect_to_db(CONST_CONFIG_DB)
+        if not conn:
+            log_info(None, "[ERROR] Unable to connect to configuration database")
+            return None
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM configuration")
+        
+        # Convert results to dictionary
+        config_dict = dict(cursor.fetchall())
+        
+        conn.close()
+        log_info(None, f"[INFO] Successfully loaded {len(config_dict)} configuration settings")
+        return config_dict
+
+    except sqlite3.Error as e:
+        log_info(None, f"[ERROR] Error reading configuration database: {e}")
+        return None
+
