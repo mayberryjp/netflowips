@@ -3,7 +3,7 @@ ARG CACHEBUST=1
 FROM python:3.11.7
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.11
+WORKDIR /netflowips-v0.0.12
 
 RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
 
@@ -11,7 +11,7 @@ RUN cd /
 
 RUN git clone https://github.com/mayberryjp/netflowips.git .
 
-COPY . /netflowips-v0.0.11
+COPY . /netflowips-v0.0.12
 
 RUN python -m venv venv
 RUN venv/bin/pip install --upgrade pip
@@ -38,6 +38,6 @@ EXPOSE 2055
 
 # Run the app
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
-CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.11/super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.12/super.conf"]
 
 #CMD ["venv/bin/python","-u", "collector.py"]

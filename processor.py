@@ -1,7 +1,7 @@
 import sqlite3  # Import the sqlite3 module
 from database import connect_to_db, update_all_flows, delete_all_records_from_newflows  # Import from database.py
 from detections import update_local_hosts  # Import update_local_hosts from detections.py
-from maxmind import create_geolocation_db  # Import the function from maxmind.py
+#from maxmind import create_geolocation_db  # Import the function from maxmind.py
 from utils import log_info  # Import log_info from utils
 from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER  # Import PROCESSING_INTERVAL from const
 import schedule
