@@ -38,6 +38,6 @@ EXPOSE 2055
 
 # Run the app
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
-CMD ["/usr/bin/supervisord", "-n", "-c", "super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.9/super.conf"]
 
 #CMD ["venv/bin/python","-u", "collector.py"]

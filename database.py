@@ -1,9 +1,12 @@
 import sqlite3
 from utils import log_info  # Assuming log_info is defined in utils
-from const import LOCAL_HOSTS  # Assuming LOCAL_HOSTS is defined in const
+from const import CONST_LOCAL_HOSTS  # Assuming LOCAL_HOSTS is defined in const
 import ipaddress
 from datetime import datetime
 
+if (IS_CONTAINER):
+    LOCAL_HOSTS=os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
+    
 def connect_to_db(db_name="newflows.db"):
     """Establish a connection to the specified database."""
     try:
