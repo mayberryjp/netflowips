@@ -8,7 +8,7 @@ from datetime import datetime
 if (IS_CONTAINER):
     LOCAL_HOSTS=os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
 
-def connect_to_db(db_name="newflows.db"):
+def connect_to_db(db_name="/database/newflows.db"):
     """Establish a connection to the specified database."""
     try:
         conn = sqlite3.connect(db_name)
@@ -19,7 +19,7 @@ def connect_to_db(db_name="newflows.db"):
 
 def update_all_flows(rows):
     """Update allflows.db with the rows from newflows.db."""
-    allflows_conn = connect_to_db("allflows.db")
+    allflows_conn = connect_to_db("/database/allflows.db")
 
     if allflows_conn:
         try:
@@ -105,7 +105,7 @@ def update_all_flows(rows):
 
 def delete_all_records_from_newflows():
     """Delete all records from the newflows.db database."""
-    conn = connect_to_db("newflows.db")
+    conn = connect_to_db("/database/newflows.db")
     if conn:
         try:
             cursor = conn.cursor()

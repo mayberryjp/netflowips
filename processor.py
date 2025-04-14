@@ -18,7 +18,7 @@ if (IS_CONTAINER):
 # Function to process data
 def process_data():
     """Read data from the database and process it."""
-    conn = connect_to_db("newflows.db")
+    conn = connect_to_db("/database/newflows.db")
     if conn:
         try:
             cursor = conn.cursor()

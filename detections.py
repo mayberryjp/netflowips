@@ -14,7 +14,7 @@ if (IS_CONTAINER):
 
 def update_local_hosts(rows):
     """Check for new IPs in the provided rows and add them to localhosts.db if necessary."""
-    localhosts_conn = connect_to_db("localhosts.db")
+    localhosts_conn = connect_to_db("/database/localhosts.db")
 
     if localhosts_conn:
         try:
