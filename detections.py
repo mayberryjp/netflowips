@@ -9,7 +9,7 @@ import os
 
 
 if (IS_CONTAINER):
-    LOCAL_HOSTS=os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
+   LOCAL_HOSTS=os.getenv("LOCAL_HOSTS".split(','), CONST_LOCAL_HOSTS)
 
 
 def update_local_hosts(rows):

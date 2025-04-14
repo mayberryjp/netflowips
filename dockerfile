@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
-RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips-v0.0.15
+RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips-v0.0.16
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.15
+WORKDIR /netflowips-v0.0.16
 
 RUN pip install schedule requests
 
@@ -19,4 +19,4 @@ RUN pip install schedule requests
 EXPOSE 2055
 
 # Run the app
-CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.15/super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.16/super.conf"]
