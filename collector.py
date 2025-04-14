@@ -3,16 +3,34 @@ import socket
 import struct
 import logging
 from datetime import datetime
-from const import VERSION, LISTEN_ADDRESS, LISTEN_PORT
+from const import VERSION, CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER
+import os
+from utils import log_info
 
-DB_NAME = 'rawflows.db'
-HOST = LISTEN_ADDRESS
-PORT = LISTEN_PORT
+if (IS_CONTAINER):
+    LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_LISTEN_ADDRESS)
+    LISTEN_PORT=os.getenv("LISTEN_PORT", CONST_LISTEN_PORT) 
 
-# Logging helper
-def log_info(logger, message):
-    print(message)
-    logger.info(message)
+DB_NAME = 'newflows.db'
+
+def delete_newflowsdb():
+    """
+    Deletes a file at the given path if it exists.
+
+    Args:
+        file_path (str): The full path to the file to be deleted.
+    """
+    try:
+        if os.path.exists(DB_NAME):
+            os.remove(DB_NAME)
+            print(f"[INFO] Deleted: {DB_NAME}")
+        else:
+            print("[WARN] File does not exist.")
+    except Exception as e:
+        print(f"[ERROR] Error deleting file: {e}")
+
+
+
 
 # Initialize the database
 def init_db():
@@ -30,6 +48,7 @@ def init_db():
             flow_start TEXT,
             flow_end TEXT,
             last_seen TEXT,
+            times_seen INTEGER,
             PRIMARY KEY (src_ip, dst_ip, src_port, dst_port, protocol)
         )
     ''')
@@ -44,14 +63,15 @@ def update_flow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, f
 
     c.execute('''
         INSERT INTO flows (
-            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
         ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
         DO UPDATE SET 
             packets = packets + excluded.packets,
             bytes = bytes + excluded.bytes,
             flow_end = excluded.flow_end,
-            last_seen = excluded.last_seen
+            last_seen = excluded.last_seen,
+            times_seen = excluded.times_seen + 1
     ''', (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now))
 
     conn.commit()
@@ -95,11 +115,13 @@ def parse_netflow_v5_record(data, offset):
 def handle_netflow_v5():
     logger = logging.getLogger(__name__)
 
+
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.bind((HOST, PORT))
-        log_info(logger, f"[INFO] NetFlow v5 collector listening on {HOST}:{PORT}")
+        s.bind((LISTEN_ADDRESS, LISTEN_PORT))
+        log_info(logger, f"[INFO] NetFlow v5 collector listening on {LISTEN_ADDRESS}:{LISTEN_PORT}")
 
         while True:
+            flow_count = 0  # Initialize a counter for the number of flows processed
             data, addr = s.recvfrom(8192)
             try:
                 if len(data) < 24:
@@ -108,7 +130,6 @@ def handle_netflow_v5():
 
                 # Parse NetFlow v5 header
                 version, count, sys_uptime, unix_secs, unix_nsecs, flow_sequence, engine_type, engine_id, sampling_interval = parse_netflow_v5_header(data)
-
 
                 if version != 5:
                     log_info(logger, f"[WARNING] Unsupported NetFlow version: {version}")
@@ -138,7 +159,10 @@ def handle_netflow_v5():
                         flow_end
                     )
 
-                    log_info(logger, f"[INFO] Flow: {record['src_ip']}:{record['src_port']} -> {record['dst_ip']}:{record['dst_port']}")
+                    flow_count += 1  # Increment the flow counter
+
+                # Log the number of flows processed in this packet
+                log_info(logger, f"[INFO] Processed {count} flows from packet. Total flows processed: {flow_count}")
 
             except Exception as e:
                 log_info(logger, f"[ERROR] Failed to process NetFlow v5 packet: {e}")
@@ -147,5 +171,6 @@ def handle_netflow_v5():
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     log_info(logger, f"[INFO] Starting NetFlow v5 collector {VERSION}")
+    delete_newflowsdb()
     init_db()
     handle_netflow_v5()
