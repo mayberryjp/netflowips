@@ -18,7 +18,7 @@ RUN venv/bin/pip install requests
 
 
 # Copy your supervisor configuration
-COPY super.conf /etc/supervisor/conf.d/supervisord.conf
+COPY super.conf /etc/supervisor/supervisord.conf
 
 # Copy the requirements file
 #COPY requirements.txt .
