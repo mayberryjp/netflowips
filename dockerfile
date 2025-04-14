@@ -3,13 +3,15 @@ ARG CACHEBUST=1
 FROM python:3.11.7
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.8
+WORKDIR /netflowips-v0.0.9
 
 RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
 
 RUN cd /
 
 RUN git clone https://github.com/mayberryjp/netflowips.git .
+
+COPY . /netflowips-v0.0.9
 
 RUN python -m venv venv
 RUN venv/bin/pip install --upgrade pip
@@ -32,7 +34,7 @@ RUN venv/bin/pip install requests
 #COPY myapp/ .
 
 # Expose the port
-#EXPOSE 5102
+EXPOSE 2055
 
 # Run the app
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
