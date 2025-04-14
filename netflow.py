@@ -4,7 +4,7 @@ from const import VERSION, CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER
 import os
 from utils import log_info
 import logging
-import datetime
+from datetime import datetime, timezone
 import sqlite3
 
 
@@ -29,7 +29,7 @@ def update_flow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, f
             bytes = bytes + excluded.bytes,
             flow_end = excluded.flow_end,
             last_seen = excluded.last_seen,
-            times_seen = excluded.times_seen + 1
+            times_seen = times_seen + 1
     ''', (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now))
 
     conn.commit()
@@ -73,7 +73,6 @@ def parse_netflow_v5_record(data, offset):
 def handle_netflow_v5():
     logger = logging.getLogger(__name__)
 
-
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.bind((LISTEN_ADDRESS, LISTEN_PORT))
         log_info(logger, f"[INFO] NetFlow v5 collector listening on {LISTEN_ADDRESS}:{LISTEN_PORT}")
@@ -101,9 +100,16 @@ def handle_netflow_v5():
                     record = parse_netflow_v5_record(data, offset)
                     offset += 48
 
-                    # Convert flow times to UTC
-                    flow_start = datetime.utcfromtimestamp(unix_secs - ((sys_uptime - record['start_time']) / 1000)).isoformat()
-                    flow_end = datetime.utcfromtimestamp(unix_secs - ((sys_uptime - record['end_time']) / 1000)).isoformat()
+                    # Convert flow times to UTC with timezone awareness
+                    flow_start = datetime.fromtimestamp(
+                        unix_secs - ((sys_uptime - record['start_time']) / 1000),
+                        tz=timezone.utc
+                    ).isoformat()
+                    
+                    flow_end = datetime.fromtimestamp(
+                        unix_secs - ((sys_uptime - record['end_time']) / 1000),
+                        tz=timezone.utc
+                    ).isoformat()
 
                     update_flow(
                         record['src_ip'],

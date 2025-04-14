@@ -3,7 +3,7 @@ from database import connect_to_db, update_all_flows, delete_all_records_from_ne
 from detections import update_local_hosts  # Import update_local_hosts from detections.py
 #from maxmind import create_geolocation_db  # Import the function from maxmind.py
 from utils import log_info  # Import log_info from utils
-from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER  # Import PROCESSING_INTERVAL from const
+from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER,CONST_NEWFLOWS_DB  # Import PROCESSING_INTERVAL from const
 import schedule
 import time
 import logging
@@ -18,7 +18,7 @@ if (IS_CONTAINER):
 # Function to process data
 def process_data():
     """Read data from the database and process it."""
-    conn = connect_to_db("/database/newflows.db")
+    conn = connect_to_db(CONST_NEWFLOWS_DB)
     if conn:
         try:
             cursor = conn.cursor()
