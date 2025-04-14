@@ -6,7 +6,7 @@ import gzip
 import shutil
 from utils import log_info  # Assuming log_info is already defined
 
-def create_geolocation_db(maxmind_url, db_name="geolocation.db"):
+def create_geolocation_db(maxmind_url, db_name="/database/geolocation.db"):
     """
     Downloads the MaxMind GeoLite2 database, extracts it, and creates a SQLite database.
 

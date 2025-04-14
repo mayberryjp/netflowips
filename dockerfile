@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
-RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips-v0.0.14
+RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips-v0.0.15
 
 # Set the working directory
-WORKDIR /netflowips-v0.0.14
+WORKDIR /netflowips-v0.0.15
 
 RUN pip install schedule requests
 

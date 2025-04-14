@@ -11,7 +11,7 @@ if (IS_CONTAINER):
     LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_LISTEN_ADDRESS)
     LISTEN_PORT=os.getenv("LISTEN_PORT", CONST_LISTEN_PORT) 
 
-DB_NAME = 'newflows.db'
+DB_NAME = '/database/newflows.db'
 
 def delete_newflowsdb():
     """
