@@ -19,7 +19,4 @@ RUN pip install schedule requests
 EXPOSE 2055
 
 # Run the app
-#CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.14/super.conf"]
-
-#CMD ["venv/bin/python","-u", "collector.py"]
