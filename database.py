@@ -6,7 +6,8 @@ import os
 from datetime import datetime
 
 if (IS_CONTAINER):
-    LOCAL_HOSTS=os.getenv("LOCAL_HOSTS".split(','), CONST_LOCAL_HOSTS)
+    LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
+    LOCAL_HOSTS = [LOCAL_HOSTS] if ',' not in LOCAL_HOSTS else LOCAL_HOSTS.split(',')
 
 def connect_to_db(db_name="/database/newflows.db"):
     """Establish a connection to the specified database."""
