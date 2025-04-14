@@ -1,5 +1,5 @@
 import sqlite3  # Import the sqlite3 module
-from database import connect_to_db, update_all_flows, delete_all_records_from_newflows  # Import from database.py
+from database import connect_to_db, update_allflows, delete_all_records_from_newflows  # Import from database.py
 from detections import update_local_hosts  # Import update_local_hosts from detections.py
 #from maxmind import create_geolocation_db  # Import the function from maxmind.py
 from utils import log_info  # Import log_info from utils
@@ -34,7 +34,7 @@ def process_data():
             update_local_hosts(rows)
 
             # Pass the rows to update_all_flows
-            update_all_flows(rows)
+            update_allflows(rows)
 
         except sqlite3.Error as e:
             log_info(logger, f"[ERROR] Error reading from database: {e}")

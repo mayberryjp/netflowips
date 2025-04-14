@@ -1,12 +1,11 @@
 import socket
 import struct
-from const import VERSION, CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
+from const import CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
 import os
 from utils import log_info
 import logging
 from datetime import datetime, timezone
-import sqlite3
-
+from database import connect_to_db
 
 if (IS_CONTAINER):
     LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_LISTEN_ADDRESS)
@@ -14,10 +13,10 @@ if (IS_CONTAINER):
 
 
 # Update or insert flow in the DB
-def update_flow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end):
-    conn = sqlite3.connect(CONST_NEWFLOWS_DB)
+def update_newflow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end):
+    conn = connect_to_db(CONST_NEWFLOWS_DB)
     c = conn.cursor()
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
 
     c.execute('''
         INSERT INTO flows (
@@ -111,7 +110,7 @@ def handle_netflow_v5():
                         tz=timezone.utc
                     ).isoformat()
 
-                    update_flow(
+                    update_newflow(
                         record['src_ip'],
                         record['dst_ip'],
                         record['src_port'],

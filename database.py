@@ -5,8 +5,6 @@ import ipaddress
 import os
 from datetime import datetime
 
-
-
 if (IS_CONTAINER):
     LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
     LOCAL_HOSTS = [LOCAL_HOSTS] if ',' not in LOCAL_HOSTS else LOCAL_HOSTS.split(',')
@@ -51,16 +49,16 @@ def delete_newflowsdb():
         print(f"[ERROR] Error deleting file: {e}")
 
 
-def connect_to_db():
+def connect_to_db(DB_NAME):
     """Establish a connection to the specified database."""
     try:
-        conn = sqlite3.connect(CONST_NEWFLOWS_DB)
+        conn = sqlite3.connect(DB_NAME)
         return conn
     except sqlite3.Error as e:
-        log_info(None, f"Error connecting to database {CONST_NEWFLOWS_DB}: {e}")
+        log_info(None, f"Error connecting to database {DB_NAME}: {e}")
         return None
 
-def update_all_flows(rows):
+def update_allflows(rows):
     """Update allflows.db with the rows from newflows.db."""
     allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
 
@@ -166,7 +164,7 @@ def init_config_db():
     Creates a new database if it doesn't exist and populates default values.
     """
     try:
-        conn = sqlite3.connect(CONST_CONFIG_DB)
+        conn =  connect_to_db(CONST_CONFIG_DB)
         cursor = conn.cursor()
 
         # Create the configuration table if it doesn't exist
