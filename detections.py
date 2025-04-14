@@ -2,7 +2,7 @@ import sqlite3
 import json
 from datetime import datetime
 from utils import log_info  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_HOSTS, IS_CONTAINER  # Assuming LOCAL_HOSTS is defined in const
+from const import CONST_LOCAL_HOSTS, IS_CONTAINER,CONST_LOCALHOSTS_DB  # Assuming LOCAL_HOSTS is defined in const
 from database import connect_to_db  # Import connect_to_db from database.py
 from utils import is_ip_in_range
 import os
@@ -15,7 +15,7 @@ if (IS_CONTAINER):
 
 def update_local_hosts(rows):
     """Check for new IPs in the provided rows and add them to localhosts.db if necessary."""
-    localhosts_conn = connect_to_db("/database/localhosts.db")
+    localhosts_conn = connect_to_db(CONST_LOCALHOSTS_DB)
 
     if localhosts_conn:
         try:
@@ -47,12 +47,12 @@ def update_local_hosts(rows):
                                 "INSERT INTO localhosts (ip_address, first_seen, original_flow) VALUES (?, ?, ?)",
                                 (ip_address, first_seen, original_flow)
                             )
-                            log_info(None, f"Added new IP to localhosts.db: {ip_address}")
+                            log_info(None, f"[INFO] Added new IP to localhosts.db: {ip_address}")
 
             # Commit changes to localhosts.db
             localhosts_conn.commit()
 
         except sqlite3.Error as e:
-            log_info(None, f"Error updating localhosts.db: {e}")
+            log_info(None, f"[ERROR] Error updating {CONST_LOCALHOSTS_DB}: {e}")
         finally:
             localhosts_conn.close()

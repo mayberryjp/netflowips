@@ -7,3 +7,7 @@ MAXMIND_LICENSE_KEY="YOUR_MAXMIND_LICENSE_KEY"
 MAXMIND_URL = f"https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key={MAXMIND_LICENSE_KEY}&suffix=tar.gz"
 CONST_ROUTER_IPADDRESS=["192.168.49.1"]
 IS_CONTAINER=1
+CONST_NEWFLOWS_DB="/database/newflows.db"
+CONST_ALLFLOWS_DB="/database/allflows.db"
+CONST_LOCALHOSTS_DB = "/database/localhosts.db"
+CONST_CONFIG_DB="/database/config.db"

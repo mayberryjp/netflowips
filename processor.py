@@ -28,7 +28,7 @@ def process_data():
             # Delete all records from newflows.db after processing
             delete_all_records_from_newflows()
             # Log the number of rows fetched
-            log_info(logger, f"Fetched {len(rows)} rows from the database.")
+            log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
 
             # Pass the rows to update_local_hosts
             update_local_hosts(rows)
@@ -37,7 +37,7 @@ def process_data():
             update_all_flows(rows)
 
         except sqlite3.Error as e:
-            log_info(logger, f"Error reading from database: {e}")
+            log_info(logger, f"[ERROR] Error reading from database: {e}")
         finally:
             conn.close()
 
@@ -45,7 +45,7 @@ def process_data():
 schedule.every(PROCESSING_INTERVAL).seconds.do(process_data)
 
 if __name__ == "__main__":
-    log_info(logger, "Processor started.")
+    log_info(logger, "[INFO] Processor started.")
     while True:
         schedule.run_pending()
         time.sleep(1)

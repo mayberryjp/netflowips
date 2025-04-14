@@ -1,11 +1,14 @@
 import logging
 import ipaddress
+from datetime import datetime
 
 def log_info(logger, message):
-    """Log a message and print it to the console."""
-    print(message)
+    """Log a message and print it to the console with timestamp."""
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    formatted_message = f"[{timestamp}] {message}"
+    print(formatted_message)
     if logger:
-        logger.info(message)
+        logger.info(formatted_message)
 
 def is_ip_in_range(ip, ranges):
     """Check if an IP address is within the specified ranges."""
