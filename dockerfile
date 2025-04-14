@@ -1,43 +1,25 @@
 # Use an official Python runtime as the base image
-ARG CACHEBUST=1 
-FROM python:3.11.7
+FROM python:3.11.7-slim
 
-# Set the working directory
-WORKDIR /netflowips-v0.0.12
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    git \
+    supervisor \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y supervisor && mkdir -p /var/log/supervisor
-
-RUN cd /
-
+# Clone the repository
 RUN git clone https://github.com/mayberryjp/netflowips.git .
 
-COPY . /netflowips-v0.0.12
+# Set the working directory
+WORKDIR /netflowips-v0.0.13
 
-RUN python -m venv venv
-RUN venv/bin/pip install --upgrade pip
-RUN venv/bin/pip install schedule
-RUN venv/bin/pip install requests
-
-# Install supervisord
-
-
-# Copy your supervisor configuration
-#COPY super.conf /etc/supervisor/supervisord.conf
-
-# Copy the requirements file
-#COPY requirements.txt .
-
-
-# Create a virtual environment and install the dependencies
-
-# Copy the app files
-#COPY myapp/ .
+RUN venv/bin/pip install schedule requests
 
 # Expose the port
 EXPOSE 2055
 
 # Run the app
 #CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
-CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.12/super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips-v0.0.13/super.conf"]
 
 #CMD ["venv/bin/python","-u", "collector.py"]
