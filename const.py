@@ -12,6 +12,7 @@ CONST_ALLFLOWS_DB="/database/allflows.db"
 CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
+CONST_WHITELIST_DB = '/database/whitelist.db'
 # Telegram Bot Configuration
 CONST_TELEGRAM_BOT_TOKEN = ""  # Replace with your Telegram bot token
 CONST_TELEGRAM_CHAT_ID = ""      # Replace with your Telegram group chat ID

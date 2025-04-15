@@ -1,9 +1,9 @@
 import sqlite3  # Import the sqlite3 module
-from database import connect_to_db, update_allflows, delete_all_records_from_newflows, get_config_settings, init_alerts_db # Import from database.py
-from detections import update_local_hosts  # Import update_local_hosts from detections.py
+from database import connect_to_db, update_allflows, delete_all_records, delete_database, get_config_settings, init_alerts_db, init_whitelist_db, init_config_db # Import from database.py
+from detections import update_local_hosts, detect_new_outbound_connections  # Import update_local_hosts from detections.py
 #from maxmind import create_geolocation_db  # Import the function from maxmind.py
 from utils import log_info  # Import log_info from utils
-from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER,CONST_NEWFLOWS_DB  # Import PROCESSING_INTERVAL from const
+from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALERTS_DB, CONST_CONFIG_DB  # Import PROCESSING_INTERVAL from const
 import schedule
 import time
 import logging
@@ -17,23 +17,27 @@ if (IS_CONTAINER):
 
 # Function to process data
 def process_data():
-    config_dict=get_config_settings()
-    init_alerts_db()
+    config_dict = get_config_settings()
+    if not config_dict:
+        log_info(logger, "[ERROR] Failed to load configuration settings")
+        return
+
     """Read data from the database and process it."""
     conn = connect_to_db(CONST_NEWFLOWS_DB)
     if conn:
         try:
             cursor = conn.cursor()
-            # Fetch all rows from the flows table
-            cursor.execute("SELECT * FROM flows")  # Replace 'flows' with your table name
+            cursor.execute("SELECT * FROM flows")
             rows = cursor.fetchall()
-            # Delete all records from newflows.db after processing
-            delete_all_records_from_newflows()
-            # Log the number of rows fetched
+            delete_all_records(CONST_NEWFLOWS_DB)
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
 
-            # Pass the rows to update_local_hosts
-            update_local_hosts(rows,config_dict)
+            # Proper way to check config values with default of 0
+            if config_dict.get("NewHostsDetection", 0) > 0:
+                update_local_hosts(rows, config_dict)
+
+            if config_dict.get("NewOutboundDetection", 0) > 0:
+                detect_new_outbound_connections(rows, config_dict)
 
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
@@ -48,6 +52,11 @@ schedule.every(PROCESSING_INTERVAL).seconds.do(process_data)
 
 if __name__ == "__main__":
     log_info(logger, "[INFO] Processor started.")
+    delete_database(CONST_ALERTS_DB)
+    delete_database(CONST_CONFIG_DB)
+    init_config_db()
+    init_alerts_db()
+    init_whitelist_db()
     while True:
         schedule.run_pending()
         time.sleep(1)

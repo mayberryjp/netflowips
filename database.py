@@ -228,6 +228,26 @@ def delete_all_records_from_newflows():
         finally:
             conn.close()
 
+def delete_all_records(db_name, table_name='flows'):
+    """
+    Delete all records from the specified database and table.
+    
+    Args:
+        db_name (str): The database file path to delete records from
+        table_name (str): The table name to delete records from (default: 'flows')
+    """
+    conn = connect_to_db(db_name)
+    if conn:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(f"DELETE FROM {table_name}")
+            conn.commit()
+            log_info(None, f"[INFO] All records deleted from {db_name}.{table_name}")
+        except sqlite3.Error as e:
+            log_info(None, f"[ERROR] Error deleting records from {db_name}: {e}")
+        finally:
+            conn.close()
+
 def init_config_db():
     """
     Initialize the configuration database with default settings.
@@ -255,7 +275,8 @@ def init_config_db():
                 ('NewHostsDetection', 2),
                 ('LocalFlowsDetection', 1),
                 ('RouterFlowsDetection', 0),
-                ('ForeignFlowsDetection', 1)
+                ('ForeignFlowsDetection', 1),
+                ('NewOutboundDetection', 1)
                 # Add more default configurations here as needed
             ]
             
@@ -331,7 +352,6 @@ def init_alerts_db():
     except sqlite3.Error as e:
         log_info(None, f"[ERROR] Error initializing alerts.db: {e}")
 
-
 def log_alert_to_db(ip_address, flow, category, alert_id_hash, realert=False):
     """
     Logs an alert to the alerts.db SQLite database.
@@ -363,3 +383,31 @@ def log_alert_to_db(ip_address, flow, category, alert_id_hash, realert=False):
         log_info(None, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
         log_info(None, f"[ERROR] Error logging alert to database: {e}")
+
+def init_whitelist_db():
+    """
+    Initialize the whitelist database.
+    Creates a new database if it doesn't exist with whitelist_id and insert_date columns.
+    """
+    try:
+        conn = connect_to_db('whitelist.db')
+        if not conn:
+            log_info(None, "[ERROR] Unable to create whitelist database")
+            return
+
+        cursor = conn.cursor()
+
+        # Create the whitelist table if it doesn't exist
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS whitelist (
+                whitelist_id TEXT PRIMARY KEY,
+                insert_date TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
+        conn.commit()
+        log_info(None, "[INFO] Whitelist database initialized successfully")
+        conn.close()
+
+    except sqlite3.Error as e:
+        log_info(None, f"[ERROR] Error initializing whitelist database: {e}")
