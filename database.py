@@ -133,7 +133,8 @@ def update_allflows(rows, config_dict):
                     rcv_bytes = 0
                 elif involves_router:
                     # Handle flows involving a router IP address
-                    log_info(None, f"[INFO] Flow involves a router IP address: {row}")
+                    if config_dict.get("RouterFlowsDetection") > 0: 
+                        log_info(None, f"[INFO] Flow involves a router IP address: {row}")
                     if config_dict.get("RouterFlowsDetection") == 2:
                             # Send a Telegram message and log the alert
                             message = f"Flow involves a router IP address: {router_ip_seen}\nFlow: {original_flow}"
@@ -148,7 +149,8 @@ def update_allflows(rows, config_dict):
                     rcv_bytes = bytes_ if is_dst_local else 0
                 elif is_src_local and is_dst_local:
                     # Handle flows where both src_ip and dst_ip are in LOCAL_HOSTS
-                    log_info(None, f"[INFO] Flow involves two local hosts: {row}")
+                    if config_dict.get("LocalFlowsDetection") > 0:
+                        log_info(None, f"[INFO] Flow involves two local hosts: {row}")
                     if config_dict.get("LocalFlowsDetection") == 2:
                             # Send a Telegram message and log the alert
                             message = f"Flow involves two local hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
@@ -163,7 +165,8 @@ def update_allflows(rows, config_dict):
                     rcv_bytes = bytes_
                 elif not is_src_local and not is_dst_local:
                     # Handle flows where neither src_ip nor dst_ip is in LOCAL_HOSTS
-                    log_info(None, f"[INFO] Flow involves two foreign hosts: {row}")
+                    if config_dict.get("ForeignFlowsDetection") > 0:
+                        log_info(None, f"[INFO] Flow involves two foreign hosts: {row}")
                     if config_dict.get("ForeignFlowsDetection") == 2:
                             # Send a Telegram message and log the alert
                             message = f"Flow involves two foreign hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
@@ -251,7 +254,7 @@ def init_config_db():
             default_configs = [
                 ('NewHostsDetection', 2),
                 ('LocalFlowsDetection', 1),
-                ('RouterFlowsDetection', 1),
+                ('RouterFlowsDetection', 0),
                 ('ForeignFlowsDetection', 1)
                 # Add more default configurations here as needed
             ]
