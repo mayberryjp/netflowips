@@ -36,22 +36,21 @@ def init_newflows_db():
     conn.commit()
     conn.close()
 
-def delete_newflowsdb():
+def delete_database(db_path):
     """
-    Deletes a file at the given path if it exists.
+    Deletes the specified SQLite database file if it exists.
 
     Args:
-        file_path (str): The full path to the file to be deleted.
+        db_path (str): The full path to the database file to be deleted.
     """
     try:
-        if os.path.exists(CONST_NEWFLOWS_DB):
-            os.remove(CONST_NEWFLOWS_DB)
-            log_info(None, f"[INFO] Deleted: {CONST_NEWFLOWS_DB}")
+        if os.path.exists(db_path):
+            os.remove(db_path)
+            log_info(None, f"[INFO] Deleted: {db_path}")
         else:
-            log_info(None, "[WARN] File does not exist.")
+            log_info(None, f"[INFO] {db_path} does not exist, skipping deletion.")
     except Exception as e:
-        print(f"[ERROR] Error deleting file: {e}")
-
+        log_info(None, f"[ERROR] Error deleting {db_path}: {e}")
 
 def connect_to_db(DB_NAME):
     """Establish a connection to the specified database."""
@@ -361,17 +360,3 @@ def log_alert_to_db(ip_address, flow, category, alert_id_hash, realert=False):
         log_info(None, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
         log_info(None, f"[ERROR] Error logging alert to database: {e}")
-
-
-def delete_config_db():
-    """
-    Deletes the configuration.db SQLite database file if it exists.
-    """
-    try:
-        if os.path.exists(CONST_CONFIG_DB):
-            os.remove(CONST_CONFIG_DB)
-            log_info(None, f"[INFO] Deleted: {CONST_CONFIG_DB}")
-        else:
-            log_info(None, "[INFO] configuration.db does not exist, skipping deletion.")
-    except Exception as e:
-        log_info(None, f"[ERROR] Error deleting configuration.db: {e}")
