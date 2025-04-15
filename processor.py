@@ -1,5 +1,5 @@
 import sqlite3  # Import the sqlite3 module
-from database import connect_to_db, update_allflows, delete_all_records_from_newflows, get_config_settings # Import from database.py
+from database import connect_to_db, update_allflows, delete_all_records_from_newflows, get_config_settings, init_alerts_db # Import from database.py
 from detections import update_local_hosts  # Import update_local_hosts from detections.py
 #from maxmind import create_geolocation_db  # Import the function from maxmind.py
 from utils import log_info  # Import log_info from utils
@@ -18,6 +18,7 @@ if (IS_CONTAINER):
 # Function to process data
 def process_data():
     config_dict=get_config_settings()
+    init_alerts_db()
     """Read data from the database and process it."""
     conn = connect_to_db(CONST_NEWFLOWS_DB)
     if conn:
