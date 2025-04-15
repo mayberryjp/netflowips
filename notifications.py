@@ -6,8 +6,8 @@ from utils import log_info  # Assuming log_info is defined in utils
 import os
 
 if (IS_CONTAINER):
-    TELEGRAM_CHAT_ID = os.getenv("CONST_TELEGRAM_CHAT_ID", CONST_TELEGRAM_CHAT_ID)
-    TELEGRAM_BOT_TOKEN = os.getenv("CONST_TELEGRAM_BOT_TOKEN", CONST_TELEGRAM_BOT_TOKEN)
+    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", CONST_TELEGRAM_CHAT_ID)
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", CONST_TELEGRAM_BOT_TOKEN)
 
 
 def send_telegram_message(message):
