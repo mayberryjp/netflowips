@@ -1,9 +1,10 @@
 import sqlite3
 from utils import log_info  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_HOSTS, IS_CONTAINER,CONST_NEWFLOWS_DB,CONST_ALLFLOWS_DB, CONST_CONFIG_DB  # Assuming LOCAL_HOSTS is defined in const
+from const import CONST_LOCAL_HOSTS, IS_CONTAINER,CONST_NEWFLOWS_DB,CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB  # Assuming LOCAL_HOSTS is defined in const
 import ipaddress
 import os
 from datetime import datetime
+import json
 
 if (IS_CONTAINER):
     LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
@@ -44,7 +45,7 @@ def delete_newflowsdb():
             os.remove(CONST_NEWFLOWS_DB)
             log_info(None,f"[INFO] Deleted: {CONST_NEWFLOWS_DB}")
         else:
-            print("[WARN] File does not exist.")
+            log_info(None,"[WARN] File does not exist.")
     except Exception as e:
         print(f"[ERROR] Error deleting file: {e}")
 
@@ -229,3 +230,68 @@ def get_config_settings():
         log_info(None, f"[ERROR] Error reading configuration database: {e}")
         return None
 
+def init_alerts_db():
+    """
+    Initializes the alerts.db SQLite database if it doesn't already exist.
+    """
+    try:
+        # Check if the database file already exists
+        if not os.path.exists(CONST_ALERTS_DB):
+            conn = sqlite3.connect(CONST_ALERTS_DB)
+            cursor = conn.cursor()
+
+            # Create the alerts table
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS alerts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ip_address TEXT,
+                    flow TEXT,
+                    category TEXT,
+                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            conn.commit()
+            conn.close()
+            log_info(None, "[INFO] alerts.db initialized successfully.")
+        else:
+            log_info(None, "[INFO] alerts.db already exists.")
+    except sqlite3.Error as e:
+        log_info(None, f"[ERROR] Error initializing alerts.db: {e}")
+
+
+def log_alert_to_db(ip_address, flow, category):
+    """
+    Logs an alert to the alerts.db SQLite database.
+
+    Args:
+        ip_address (str): The IP address in question.
+        flow (dict): The flow data as a dictionary.
+        category (str): The alert category name.
+    """
+    try:
+        conn = sqlite3.connect(CONST_ALERTS_DB)
+        cursor = conn.cursor()
+
+        # Ensure the alerts table exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ip_address TEXT,
+                flow TEXT,
+                category TEXT,
+                timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Insert the alert into the database
+        cursor.execute("""
+            INSERT INTO alerts (ip_address, flow, category)
+            VALUES (?, ?, ?)
+        """, (ip_address, json.dumps(flow), category))
+
+        conn.commit()
+        conn.close()
+        log_info(None, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
+    except sqlite3.Error as e:
+        log_info(None, f"[ERROR] Error logging alert to database: {e}")

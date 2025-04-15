@@ -32,7 +32,7 @@ def process_data():
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
 
             # Pass the rows to update_local_hosts
-            update_local_hosts(rows)
+            update_local_hosts(rows,config_dict)
 
             # Pass the rows to update_all_flows
             update_allflows(rows)

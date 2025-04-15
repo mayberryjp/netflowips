@@ -1,4 +1,4 @@
-VERSION="v0.0.17"
+VERSION="v0.0.19"
 CONST_LISTEN_PORT=2055
 CONST_LISTEN_ADDRESS="0.0.0.0"
 CONST_LOCAL_HOSTS=["192.168.48.0/22"]
@@ -11,3 +11,9 @@ CONST_NEWFLOWS_DB="/database/newflows.db"
 CONST_ALLFLOWS_DB="/database/allflows.db"
 CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
+CONST_ALERTS_DB="/database/alerts.db"
+
+# Telegram Bot Configuration
+CONST_TELEGRAM_BOT_TOKEN = "6320437327:AAHMmxAfka4RmtLLlrcwQ7cDPw2FVr4DfJQ"  # Replace with your Telegram bot token
+CONST_TELEGRAM_CHAT_ID = "-4037424339"      # Replace with your Telegram group chat ID
+

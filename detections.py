@@ -2,18 +2,18 @@ import sqlite3
 import json
 from datetime import datetime
 from utils import log_info  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_HOSTS, IS_CONTAINER,CONST_LOCALHOSTS_DB  # Assuming LOCAL_HOSTS is defined in const
-from database import connect_to_db  # Import connect_to_db from database.py
+from const import CONST_LOCAL_HOSTS, IS_CONTAINER, CONST_LOCALHOSTS_DB  # Assuming LOCAL_HOSTS is defined in const
+from database import connect_to_db, log_alert_to_db  # Import connect_to_db from database.py
 from utils import is_ip_in_range
+from notifications import send_telegram_message  # Import notification functions
 import os
-
 
 if (IS_CONTAINER):
     LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
     LOCAL_HOSTS = [LOCAL_HOSTS] if ',' not in LOCAL_HOSTS else LOCAL_HOSTS.split(',')
 
 
-def update_local_hosts(rows):
+def update_local_hosts(rows, config_dict):
     """Check for new IPs in the provided rows and add them to localhosts.db if necessary."""
     localhosts_conn = connect_to_db(CONST_LOCALHOSTS_DB)
 
@@ -48,6 +48,18 @@ def update_local_hosts(rows):
                                 (ip_address, first_seen, original_flow)
                             )
                             log_info(None, f"[INFO] Added new IP to localhosts.db: {ip_address}")
+
+                            # Handle alerts and notifications based on NewHostsDetection config
+                            if config_dict.get("NewHostsDetection") == 2:
+                                # Send a Telegram message and log the alert
+                                message = f"New Host Detected: {ip_address}\nFlow: {original_flow}"
+                                send_telegram_message(message)
+                                log_alert_to_db(ip_address, row, "New Host Detected")
+                                log_info(None, f"[INFO] Alert sent and logged for IP: {ip_address}")
+                            elif config_dict.get("NewHostsDetection") == 1:
+                                # Only log the alert
+                                log_alert_to_db(ip_address, row, "New Host Detected")
+                                log_info(None, f"[INFO] Alert logged for IP: {ip_address}")
 
             # Commit changes to localhosts.db
             localhosts_conn.commit()
