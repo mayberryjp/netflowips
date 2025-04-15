@@ -55,11 +55,9 @@ def update_local_hosts(rows, config_dict):
                                 message = f"New Host Detected: {ip_address}\nFlow: {original_flow}"
                                 send_telegram_message(message)
                                 log_alert_to_db(ip_address, row, "New Host Detected",f"{ip_address}_NewHostsDetection",False)
-                                log_info(None, f"[INFO] Alert sent and logged for IP: {ip_address}")
                             elif config_dict.get("NewHostsDetection") == 1:
                                 # Only log the alert
                                 log_alert_to_db(ip_address, row, "New Host Detected",f"{ip_address}_NewHostsDetection",False)
-                                log_info(None, f"[INFO] Alert logged for IP: {ip_address}")
 
             # Commit changes to localhosts.db
             localhosts_conn.commit()
