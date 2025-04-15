@@ -1,14 +1,17 @@
 import sqlite3
 from utils import log_info  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_HOSTS, IS_CONTAINER,CONST_NEWFLOWS_DB,CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB  # Assuming LOCAL_HOSTS is defined in const
+from const import CONST_LOCAL_HOSTS, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS  # Assuming LOCAL_HOSTS is defined in const
 import ipaddress
 import os
 from datetime import datetime
+from notifications import send_telegram_message  # Import notification functions
 import json
 
 if (IS_CONTAINER):
     LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
     LOCAL_HOSTS = [LOCAL_HOSTS] if ',' not in LOCAL_HOSTS else LOCAL_HOSTS.split(',')
+    ROUTER_IPADDRESS = os.getenv("LOCAL_HOSTS", CONST_ROUTER_IPADDRESS)
+    ROUTER_IPADDRESS = [ROUTER_IPADDRESS] if ',' not in ROUTER_IPADDRESS else ROUTER_IPADDRESS.split(',')
 
 # Initialize the database
 def init_newflows_db():
@@ -43,9 +46,9 @@ def delete_newflowsdb():
     try:
         if os.path.exists(CONST_NEWFLOWS_DB):
             os.remove(CONST_NEWFLOWS_DB)
-            log_info(None,f"[INFO] Deleted: {CONST_NEWFLOWS_DB}")
+            log_info(None, f"[INFO] Deleted: {CONST_NEWFLOWS_DB}")
         else:
-            log_info(None,"[WARN] File does not exist.")
+            log_info(None, "[WARN] File does not exist.")
     except Exception as e:
         print(f"[ERROR] Error deleting file: {e}")
 
@@ -59,7 +62,7 @@ def connect_to_db(DB_NAME):
         log_info(None, f"Error connecting to database {DB_NAME}: {e}")
         return None
 
-def update_allflows(rows):
+def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
     allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
 
@@ -96,11 +99,30 @@ def update_allflows(rows):
                 is_src_local = any(ipaddress.ip_address(src_ip) in ipaddress.ip_network(net) for net in LOCAL_HOSTS)
                 is_dst_local = any(ipaddress.ip_address(dst_ip) in ipaddress.ip_network(net) for net in LOCAL_HOSTS)
 
+                # Determine if the flow involves a router IP address
+                involves_router = any(ipaddress.ip_address(src_ip) in ipaddress.ip_network(net) or
+                                      ipaddress.ip_address(dst_ip) in ipaddress.ip_network(net) for net in ROUTER_IPADDRESS)
+                
+                router_ip_seen = None
+                router_port = None
+
+                for router_ip in ROUTER_IPADDRESS:
+                    if ipaddress.ip_address(src_ip) in ipaddress.ip_network(router_ip):
+                        router_ip_seen = src_ip
+                        router_port = src_port
+                        break
+                    elif ipaddress.ip_address(dst_ip) in ipaddress.ip_network(router_ip):
+                        router_ip_seen = dst_ip
+                        router_port = dst_port
+                        break
+
+                original_flow = json.dumps(row)  # Encode the original flow as JSON
+
                 # Ensure src_ip is always the IP in LOCAL_HOSTS
                 if not is_src_local and is_dst_local:
                     # Swap src_ip and dst_ip
                     src_ip, dst_ip = dst_ip, src_ip
-                    src_port,dst_port = dst_port, src_port
+                    src_port, dst_port = dst_port, src_port
                     sent_pkts = 0
                     sent_bytes = 0
                     rcv_pkts = packets
@@ -110,11 +132,56 @@ def update_allflows(rows):
                     sent_bytes = bytes_
                     rcv_pkts = 0
                     rcv_bytes = 0
+                elif involves_router:
+                    # Handle flows involving a router IP address
+                    log_info(None, f"[INFO] Flow involves a router IP address: {row}")
+                    if config_dict.get("RouterFlowsDetection") == 2:
+                            # Send a Telegram message and log the alert
+                            message = f"Flow involves a router IP address: {router_ip_seen}\nFlow: {original_flow}"
+                            send_telegram_message(message)
+                            log_alert_to_db(router_ip_seen, row, "Flow involves a router IP address",f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection",False)
+                    elif config_dict.get("RouterFlowsDetection") == 1:
+                            # Only log the alert
+                            log_alert_to_db(router_ip_seen, row, "Flow involves a router IP address",f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection",False)
+                    sent_pkts = packets if is_src_local else 0
+                    sent_bytes = bytes_ if is_src_local else 0
+                    rcv_pkts = packets if is_dst_local else 0
+                    rcv_bytes = bytes_ if is_dst_local else 0
+                elif is_src_local and is_dst_local:
+                    # Handle flows where both src_ip and dst_ip are in LOCAL_HOSTS
+                    log_info(None, f"[INFO] Flow involves two local hosts: {row}")
+                    if config_dict.get("LocalFlowsDetection") == 2:
+                            # Send a Telegram message and log the alert
+                            message = f"Flow involves two local hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
+                            send_telegram_message(message)
+                            log_alert_to_db(router_ip_seen, row, "Flow involves two local hosts",f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_LocalFlowsDetection",False)
+                    elif config_dict.get("LocalFlowsDetection") == 1:
+                            # Only log the alert
+                            log_alert_to_db(router_ip_seen, row, "Flow involves two local hosts",f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_LocalFlowsDetection",False)   
+                    sent_pkts = packets
+                    sent_bytes = bytes_
+                    rcv_pkts = packets
+                    rcv_bytes = bytes_
+                elif not is_src_local and not is_dst_local:
+                    # Handle flows where neither src_ip nor dst_ip is in LOCAL_HOSTS
+                    log_info(None, f"[INFO] Flow involves two foreign hosts: {row}")
+                    if config_dict.get("ForeignFlowsDetection") == 2:
+                            # Send a Telegram message and log the alert
+                            message = f"Flow involves two foreign hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
+                            send_telegram_message(message)
+                            log_alert_to_db(router_ip_seen, row, "Flow involves two foreign hosts",f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection",False)
+                    elif config_dict.get("ForeignFlowsDetection") == 1:
+                            # Only log the alert
+                            log_alert_to_db(router_ip_seen, row, "Flow involves two foreign hosts",f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection",False)               
+                    sent_pkts = 0
+                    sent_bytes = 0
+                    rcv_pkts = 0
+                    rcv_bytes = 0
                 else:
                     # Skip rows where neither or both IPs are in LOCAL_HOSTS
                     log_info(None, f"[WARN] Skipping row with unexpected IPs: {row}")
                     continue
-                
+
                 now = datetime.utcnow().isoformat()
                 # Insert or update the flow in allflows.db
                 allflows_cursor.execute("""
@@ -165,7 +232,7 @@ def init_config_db():
     Creates a new database if it doesn't exist and populates default values.
     """
     try:
-        conn =  connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONFIG_DB)
         cursor = conn.cursor()
 
         # Create the configuration table if it doesn't exist
@@ -184,8 +251,9 @@ def init_config_db():
             # Insert default configurations
             default_configs = [
                 ('NewHostsDetection', 2),
-                 ('AlertLocalFlows', 0),
-                 ('AlertRouterFlows',0),
+                ('LocalFlowsDetection', 1),
+                ('RouterFlowsDetection', 1),
+                ('ForeignFlowsDetection', 1)
                 # Add more default configurations here as needed
             ]
             
@@ -240,14 +308,16 @@ def init_alerts_db():
             conn = sqlite3.connect(CONST_ALERTS_DB)
             cursor = conn.cursor()
 
-            # Create the alerts table
+            # Create the alerts table with the updated schema
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS alerts (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id TEXT PRIMARY KEY,  -- Primary key based on concatenating ip_address and category
                     ip_address TEXT,
                     flow TEXT,
                     category TEXT,
-                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+                    times_seen INTEGER DEFAULT 0,
+                    first_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+                    last_seen TEXT DEFAULT CURRENT_TIMESTAMP
                 )
             """)
 
@@ -260,7 +330,7 @@ def init_alerts_db():
         log_info(None, f"[ERROR] Error initializing alerts.db: {e}")
 
 
-def log_alert_to_db(ip_address, flow, category):
+def log_alert_to_db(ip_address, flow, category, alert_id_hash, realert=False):
     """
     Logs an alert to the alerts.db SQLite database.
 
@@ -273,25 +343,35 @@ def log_alert_to_db(ip_address, flow, category):
         conn = sqlite3.connect(CONST_ALERTS_DB)
         cursor = conn.cursor()
 
-        # Ensure the alerts table exists
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS alerts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ip_address TEXT,
-                flow TEXT,
-                category TEXT,
-                timestamp TEXT DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
+        # Generate the primary key by concatenating ip_address and category
 
-        # Insert the alert into the database
+
+        # Insert or update the alert in the database
         cursor.execute("""
-            INSERT INTO alerts (ip_address, flow, category)
-            VALUES (?, ?, ?)
-        """, (ip_address, json.dumps(flow), category))
+            INSERT INTO alerts (id, ip_address, flow, category, times_seen, first_seen, last_seen)
+            VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ON CONFLICT(id)
+            DO UPDATE SET
+                times_seen = times_seen + 1,
+                last_seen = CURRENT_TIMESTAMP
+        """, (alert_id_hash, ip_address, json.dumps(flow), category))
 
         conn.commit()
         conn.close()
         log_info(None, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
         log_info(None, f"[ERROR] Error logging alert to database: {e}")
+
+
+def delete_config_db():
+    """
+    Deletes the configuration.db SQLite database file if it exists.
+    """
+    try:
+        if os.path.exists(CONST_CONFIG_DB):
+            os.remove(CONST_CONFIG_DB)
+            log_info(None, f"[INFO] Deleted: {CONST_CONFIG_DB}")
+        else:
+            log_info(None, "[INFO] configuration.db does not exist, skipping deletion.")
+    except Exception as e:
+        log_info(None, f"[ERROR] Error deleting configuration.db: {e}")

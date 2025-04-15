@@ -36,7 +36,7 @@ def process_data():
             update_local_hosts(rows,config_dict)
 
             # Pass the rows to update_all_flows
-            update_allflows(rows)
+            update_allflows(rows, config_dict)
 
         except sqlite3.Error as e:
             log_info(logger, f"[ERROR] Error reading from database: {e}")
