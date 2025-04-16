@@ -19,7 +19,9 @@ CONST_DEFAULT_CONFIGS = [
     ('LocalFlowsDetection', 1),
     ('RouterFlowsDetection', 0),
     ('ForeignFlowsDetection', 1),
-    ('NewOutboundDetection', 1)
+    ('NewOutboundDetection', 1),
+    ('GeolocationFlowsDetection', 1),
+    ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
     # Add more default configurations here as needed
 ]
 # Telegram Bot Configuration

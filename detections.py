@@ -169,6 +169,9 @@ def router_flows_detection(rows, config_dict):
                                 f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection", False)
 
 
+
+
+
 def local_flows_detection(rows, config_dict):
     """
     Detect and handle flows where both src_ip and dst_ip are in LOCAL_HOSTS,
@@ -227,3 +230,61 @@ def foreign_flows_detection(rows, config_dict):
             elif config_dict.get("ForeignFlowsDetection") == 1:
                 log_alert_to_db(src_ip, row, "Flow involves two foreign hosts",
                                 f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection", False)
+
+
+def detect_geolocation_flows(rows, config_dict, geolocation_data):
+    """
+    Detect and handle flows where either src_ip or dst_ip is located in a banned country
+    using in-memory geolocation data.
+
+    Args:
+        rows: List of flow records.
+        config_dict: Dictionary containing configuration settings, including BannedCountryList.
+        geolocation_data: List of tuples containing (network, country_name).
+    """
+    # Get the list of banned countries from the config_dict
+    banned_countries = config_dict.get("BannedCountryList", "")
+    banned_countries = [country.strip() for country in banned_countries.split(",") if country.strip()]
+
+    if not banned_countries:
+        log_info(None, "[INFO] No banned countries specified in BannedCountryList. Skipping geolocation detection.")
+        return
+
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
+
+        # Check if src_ip or dst_ip is in a banned country
+        src_country = None
+        dst_country = None
+
+        for network, country_name in geolocation_data:
+            if country_name in banned_countries:
+                if ipaddress.ip_address(src_ip) in ipaddress.ip_network(network):
+                    src_country = country_name
+                if ipaddress.ip_address(dst_ip) in ipaddress.ip_network(network):
+                    dst_country = country_name
+
+            # Break early if both IPs are already matched
+            if src_country or dst_country:
+                break
+
+        if src_country or dst_country:
+            original_flow = json.dumps(row)
+            log_info(None, f"[INFO] Flow involves an IP located in a banned country: {row}")
+
+            # Prepare alert message
+            message = f"Flow involves an IP located in a banned country:\n" \
+                      f"Source IP: {src_ip} ({src_country or 'N/A'})\n" \
+                      f"Destination IP: {dst_ip} ({dst_country or 'N/A'})\n" \
+                      f"Flow: {original_flow}"
+
+            # Send alert based on configuration
+            if config_dict.get("GeolocationFlowsDetection") == 2:
+                # Send Telegram alert and log to database
+                send_telegram_message(message)
+                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",
+                                f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)
+            elif config_dict.get("GeolocationFlowsDetection") == 1:
+                # Only log to database
+                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",
+                                f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)
