@@ -270,7 +270,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
 
         if src_country or dst_country:
             original_flow = json.dumps(row)
-            log_info(None, f"[INFO] Flow involves an IP located in a banned country: {row}")
+            log_info(None, f"[INFO] Flow involves an IP located in a banned country source: {src_country} destination: {dst_country}: {row}")
 
             # Prepare alert message
             message = f"Flow involves an IP located in a banned country:\n" \
