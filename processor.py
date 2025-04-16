@@ -29,13 +29,13 @@ def process_data():
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM flows")
             rows = cursor.fetchall()
-            delete_all_records(CONST_NEWFLOWS_DB)
+
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
+            delete_all_records(CONST_NEWFLOWS_DB)
 
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
 
-            
             # Proper way to check config values with default of 0
             if config_dict.get("NewHostsDetection", 0) > 0:
                 update_local_hosts(rows, config_dict)
