@@ -1,6 +1,7 @@
 import sqlite3  # Import the sqlite3 module
 from database import connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
 from detections import update_local_hosts, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_local_hosts from detections.py
+from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from utils import log_info  # Import log_info from utils
 from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
 import schedule
@@ -62,6 +63,7 @@ schedule.every(PROCESSING_INTERVAL).seconds.do(process_data)
 if __name__ == "__main__":
     log_info(logger, "[INFO] Processor started.")
     
+    send_test_telegram_message()
     #delete databases to start clean - temporary
     #delete_database(CONST_ALERTS_DB)
     delete_database(CONST_CONFIG_DB)

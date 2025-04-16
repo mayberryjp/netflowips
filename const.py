@@ -1,4 +1,4 @@
-VERSION="v0.0.25"
+VERSION="v0.0.26"
 CONST_LISTEN_PORT=2055
 CONST_LISTEN_ADDRESS="0.0.0.0"
 CONST_LOCAL_HOSTS="192.168.48.0/22"
@@ -13,6 +13,7 @@ CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
+CONST_SITE= 'homelab'
 CONST_DEFAULT_CONFIGS = [
     ('NewHostsDetection', 2),
     ('LocalFlowsDetection', 1),
