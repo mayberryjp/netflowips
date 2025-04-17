@@ -20,4 +20,5 @@ RUN pip install schedule requests
 EXPOSE 2055
 
 # Run the app
-CMD ["/usr/bin/supervisord", "-n", "-c", "/homelabids/super.conf"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/homelabids/super.conf"]
+CMD ["-n"]
