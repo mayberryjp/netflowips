@@ -7,8 +7,9 @@ def log_info(logger, message):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     formatted_message = f"[{timestamp}] {message}"
     print(formatted_message)
-    if logger:
-        logger.info(formatted_message)
+    logger=logger or logging.getLogger(__name__)
+    logger.info(formatted_message)
+    
 
 def is_ip_in_range(ip, ranges):
     """Check if an IP address is within the specified ranges."""
