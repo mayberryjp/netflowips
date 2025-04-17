@@ -42,10 +42,7 @@ def parse_netflow_v5_header(data):
 def parse_netflow_v5_record(data, offset):
     fields = struct.unpack('!IIIHHIIIIHHBBBBHHBBH', data[offset:offset+48])
     length = len(fields)
-    #for i in range(0, length):
-   #     print(f"{fields[i]}")
-
- #   print(f"src ip: {socket.inet_ntoa(struct.pack('!I', fields[0]))} dst ip: {socket.inet_ntoa(struct.pack('!I', fields[1]))} src port: {fields[9]} dst port: {fields[10]} protocol: {fields[13]} packets: {fields[5]} bytes: {fields[6]}")
+ 
     return {
         'src_ip': socket.inet_ntoa(struct.pack('!I', fields[0])),
         'dst_ip': socket.inet_ntoa(struct.pack('!I', fields[1])),
