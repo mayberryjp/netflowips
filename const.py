@@ -28,7 +28,7 @@ CONST_DEFAULT_CONFIGS = [
     ('ApprovedLocalNtpServersList','192.168.230.236,192.168.49.80'),
     ('ApprovedLocalDnsServersList','192.168.230.236,192.168.49.80'),
     ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.8.4,1.1.1.1'),
-    ('ApprovedNtpStratumServersList','')
+    ('ApprovedNtpStratumServersList','1.1.1.1'),
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
     # Add more default configurations here as needed
 ]
