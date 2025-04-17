@@ -4,7 +4,7 @@ services:
     network_mode: host
     container_name: homelabids
     restart: "unless-stopped"
-    image: homelabids:v0.0.29
+    image: homelabids:v0.0.30
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/homelabids:/database
