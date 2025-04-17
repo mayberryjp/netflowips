@@ -1,13 +1,10 @@
 version: "3"
 services:
-  netflowips:
+  homelabids:
     network_mode: host
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    container_name: netflowips
+    container_name: homelabids
     restart: "unless-stopped"
-    image: netflowips:v0.0.29
+    image: homelabids:v0.0.29
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /docker/netflowips:/database
+      - /docker/homelabids:/database

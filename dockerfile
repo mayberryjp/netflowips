@@ -1,7 +1,7 @@
 # Use an official Python runtime as the base image
 FROM python:3.11.7-slim
 
-RUN rm -rf /netflowips
+RUN rm -rf /homelabids
 # Install system packages
 RUN apt-get update && apt-get install -y \
     git \
@@ -9,10 +9,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
-RUN git clone https://github.com/mayberryjp/netflowips.git /netflowips
+RUN git clone https://github.com/mayberryjp/homelabids.git /homelabids
 
 # Set the working directory
-WORKDIR /netflowips
+WORKDIR /homelabids
 
 RUN pip install schedule requests
 
@@ -20,4 +20,4 @@ RUN pip install schedule requests
 EXPOSE 2055
 
 # Run the app
-CMD ["/usr/bin/supervisord", "-n", "-c", "/netflowips/super.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/homelabids/super.conf"]
