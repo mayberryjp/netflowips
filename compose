@@ -7,7 +7,7 @@ services:
       - 8.8.4.4
     container_name: netflowips
     restart: "unless-stopped"
-    image: netflowips:v0.0.26
+    image: netflowips:v0.0.27
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/netflowips:/database
