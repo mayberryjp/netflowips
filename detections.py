@@ -1,12 +1,13 @@
 import sqlite3
 import json
 from datetime import datetime
-from utils import log_info, is_ip_in_range  # Assuming log_info and is_ip_in_range are defined in utils
+from utils import log_info, is_ip_in_range, log_warn, log_error  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_LOCAL_HOSTS, IS_CONTAINER, CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS  # Assuming constants are defined in const
 from database import connect_to_db, log_alert_to_db  # Import connect_to_db from database.py
 from notifications import send_telegram_message  # Import notification functions
 import os
 import ipaddress
+import logging
 
 if (IS_CONTAINER):
     LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
@@ -16,6 +17,8 @@ if (IS_CONTAINER):
 
 def update_local_hosts(rows, config_dict):
     """Check for new IPs in the provided rows and add them to localhosts.db if necessary."""
+    logger = logging.getLogger(__name__)
+
     localhosts_conn = connect_to_db(CONST_LOCALHOSTS_DB)
 
     if localhosts_conn:
@@ -49,7 +52,7 @@ def update_local_hosts(rows, config_dict):
                                 (ip_address, first_seen, original_flow)
                             )
 
-                            log_info(None, f"[INFO] Added new IP to localhosts.db: {ip_address}")
+                            log_info(logger, f"[INFO] Added new IP to localhosts.db: {ip_address}")
 
                             # Handle alerts and notifications based on NewHostsDetection config
                             if config_dict.get("NewHostsDetection") == 2:
@@ -65,7 +68,7 @@ def update_local_hosts(rows, config_dict):
             localhosts_conn.commit()
 
         except sqlite3.Error as e:
-            log_info(None, f"[ERROR] Error updating {CONST_LOCALHOSTS_DB}: {e}")
+            log_error(logger, f"[ERROR] Error updating {CONST_LOCALHOSTS_DB}: {e}")
         finally:
             localhosts_conn.close()
 
@@ -79,10 +82,10 @@ def detect_new_outbound_connections(rows, config_dict):
         rows: List of flow records
         config_dict: Dictionary containing configuration settings
     """
-
+    logger = logging.getLogger(__name__)
     alerts_conn = connect_to_db(CONST_ALERTS_DB)
     if not alerts_conn:
-        log_info(None, "[ERROR] Unable to connect to alerts database")
+        log_error(logger, "[ERROR] Unable to connect to alerts database")
         return
 
     try:
@@ -114,7 +117,7 @@ def detect_new_outbound_connections(rows, config_dict):
                              f"Remote server: {dst_ip}:{dst_port}\n"
                              f"Protocol: {protocol}")
                     
-                    log_info(None, f"[INFO] {message}")
+                    log_info(logger, f"[INFO] {message}")
                     # Log alert based on configuration level
                     if config_dict.get("NewOutboundDetection") == 2:
                         # Send Telegram alert and log to database
@@ -129,7 +132,7 @@ def detect_new_outbound_connections(rows, config_dict):
 
 
     except Exception as e:
-        log_info(None, f"[ERROR] Error in detect_new_outbound_connections: {e}")
+        log_error(logger, f"[ERROR] Error in detect_new_outbound_connections: {e}")
     finally:
         alerts_conn.close()
 
@@ -138,6 +141,7 @@ def router_flows_detection(rows, config_dict):
     """
     Detect and handle flows involving a router IP address.
     """
+    logger = logging.getLogger(__name__)
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
 
@@ -157,7 +161,7 @@ def router_flows_detection(rows, config_dict):
         if router_ip_seen:
             original_flow = json.dumps(row)
 
-            log_info(None, f"[INFO] Flow involves a router IP address: {row}")
+            log_info(logger, f"[INFO] Flow involves a router IP address: {row}")
 
             if config_dict.get("RouterFlowsDetection") == 2:
                 message = f"Flow involves a router IP address: {router_ip_seen}\nFlow: {original_flow}"
@@ -177,6 +181,7 @@ def local_flows_detection(rows, config_dict):
     Detect and handle flows where both src_ip and dst_ip are in LOCAL_HOSTS,
     excluding any flows involving the ROUTER_IPADDRESS array.
     """
+    logger = logging.getLogger(__name__)
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
 
@@ -194,7 +199,7 @@ def local_flows_detection(rows, config_dict):
         if is_src_local and is_dst_local and not involves_router:
             original_flow = json.dumps(row)
 
-            log_info(None, f"[INFO] Flow involves two local hosts (excluding router): {row}")
+            log_info(logger, f"[INFO] Flow involves two local hosts (excluding router): {row}")
 
             if config_dict.get("LocalFlowsDetection") == 2:
                 message = f"Flow involves two local hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
@@ -210,6 +215,7 @@ def foreign_flows_detection(rows, config_dict):
     """
     Detect and handle flows where neither src_ip nor dst_ip is in LOCAL_HOSTS.
     """
+    logger = logging.getLogger(__name__)
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
 
@@ -220,7 +226,7 @@ def foreign_flows_detection(rows, config_dict):
         if not is_src_local and not is_dst_local:
             original_flow = json.dumps(row)
 
-            log_info(None, f"[INFO] Flow involves two foreign hosts: {row}")
+            log_info(logger, f"[INFO] Flow involves two foreign hosts: {row}")
 
             if config_dict.get("ForeignFlowsDetection") == 2:
                 message = f"Flow involves two foreign hosts: {src_ip} and {dst_ip}\nFlow: {original_flow}"
@@ -242,12 +248,13 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
         config_dict: Dictionary containing configuration settings, including BannedCountryList.
         geolocation_data: List of tuples containing (network, country_name).
     """
+    logger = logging.getLogger(__name__)
     # Get the list of banned countries from the config_dict
     banned_countries = config_dict.get("BannedCountryList", "")
     banned_countries = [country.strip() for country in banned_countries.split(",") if country.strip()]
 
     if not banned_countries:
-        log_info(None, "[INFO] No banned countries specified in BannedCountryList. Skipping geolocation detection.")
+        log_info(logger, f"[INFO] No banned countries specified in BannedCountryList. Skipping geolocation detection.")
         return
 
     for row in rows:
@@ -270,7 +277,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
 
         if src_country or dst_country:
             original_flow = json.dumps(row)
-            log_info(None, f"[INFO] Flow involves an IP located in a banned country source: {src_ip} {src_country} destination: {dst_ip} {dst_country}: {row}")
+            log_info(logger, f"[INFO] Flow involves an IP located in a banned country source: {src_ip} {src_country} destination: {dst_ip} {dst_country}: {row}")
 
             # Prepare alert message
             message = f"Flow involves an IP located in a banned country:\n" \

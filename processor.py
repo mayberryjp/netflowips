@@ -3,7 +3,7 @@ from database import connect_to_db, update_allflows, delete_all_records, create_
 from detections import update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_local_hosts from detections.py
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
-from utils import log_info  # Import log_info from utils
+from utils import log_info, log_warn, log_error  # Import log_info from utils
 from const import CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
 import schedule
 import time
@@ -11,16 +11,17 @@ import logging
 import os
 
 # Initialize logger
-logger = logging.getLogger(__name__)
+
 
 if (IS_CONTAINER):
     PROCESSING_INTERVAL=os.getenv("PROCESSING_INTERVAL", CONST_PROCESSING_INTERVAL)
 
 # Function to process data
 def process_data():
+    logger = logging.getLogger(__name__)
     config_dict = get_config_settings()
     if not config_dict:
-        log_info(logger, "[ERROR] Failed to load configuration settings")
+        log_error(logger, "[ERROR] Failed to load configuration settings")
         return
 
     """Read data from the database and process it."""
@@ -60,7 +61,7 @@ def process_data():
                 detect_geolocation_flows(rows, config_dict, geolocation_data)
                 
         except sqlite3.Error as e:
-            log_info(logger, f"[ERROR] Error reading from database: {e}")
+            log_error(logger, f"[ERROR] Error reading from database: {e}")
         finally:
             conn.close()
 
@@ -68,7 +69,9 @@ def process_data():
 schedule.every(PROCESSING_INTERVAL).seconds.do(process_data)
 
 if __name__ == "__main__":
-    log_info(logger, "[INFO] Processor started.")
+    logger = logging.getLogger(__name__)
+
+    log_info(logger, f"[INFO] Processor started.")
     
     create_geolocation_db()
     geolocation_data = load_geolocation_data()

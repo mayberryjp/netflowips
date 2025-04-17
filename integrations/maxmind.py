@@ -1,8 +1,9 @@
 import sqlite3
 import csv
 import os
-from utils import log_info  # Assuming log_info is already defined
+from utils import log_info, log_warn, log_error  # Assuming log_info is already defined
 from database import connect_to_db  # Assuming connect_to_db is already defined
+import logging
 
 def create_geolocation_db(
     blocks_csv_path="geolite/GeoLite2-Country-Blocks-IPv4.csv",
@@ -17,17 +18,18 @@ def create_geolocation_db(
         locations_csv_path (str): The path to the GeoLite2 country locations CSV file.
         db_name (str): The name of the SQLite database to create.
     """
+    logger = logging.getLogger(__name__)
     try:
         # Step 1: Check if the CSV files exist
         if not os.path.exists(blocks_csv_path):
-            log_info(None, f"[ERROR] Country blocks CSV file not found at {blocks_csv_path}.")
+            log_error(logger, f"[ERROR] Country blocks CSV file not found at {blocks_csv_path}.")
             return
         if not os.path.exists(locations_csv_path):
-            log_info(None, f"[ERROR] Country locations CSV file not found at {locations_csv_path}.")
+            log_error(logger, f"[ERROR] Country locations CSV file not found at {locations_csv_path}.")
             return
 
         # Step 2: Load the country locations data into a dictionary
-        log_info(None, "Loading country locations data...")
+        log_info(logger, "[INFO] Loading country locations data...")
         locations = {}
         with open(locations_csv_path, "r", encoding="utf-8") as locations_file:
             reader = csv.DictReader(locations_file)
@@ -37,7 +39,7 @@ def create_geolocation_db(
                 locations[geoname_id] = country_name
 
         # Step 3: Create the SQLite database
-        log_info(None, f"Creating SQLite database: {db_name}...")
+        log_info(logger, f"[INFO] Creating SQLite database: {db_name}...")
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
 
@@ -55,7 +57,7 @@ def create_geolocation_db(
         """)
 
         # Step 4: Populate the database from the country blocks CSV file
-        log_info(None, "Populating the SQLite database with country blocks data...")
+        log_info(logger, f"[INFO] Populating the SQLite database with country blocks data...")
         with open(blocks_csv_path, "r", encoding="utf-8") as blocks_file:
             reader = csv.DictReader(blocks_file)
             for row in reader:
@@ -80,10 +82,10 @@ def create_geolocation_db(
         conn.commit()
         conn.close()
 
-        log_info(None, f"Geolocation database {db_name} created successfully.")
+        log_info(logger, f"[INFO] Geolocation database {db_name} created successfully.")
 
     except Exception as e:
-        log_info(None, f"Error creating geolocation database: {e}")
+        log_error(logger, f"[ERROR] Error creating geolocation database: {e}")
 
 def load_geolocation_data():
     """
@@ -92,6 +94,7 @@ def load_geolocation_data():
     Returns:
         list: A list of tuples containing (network, country_name).
     """
+    logger = logging.getLogger(__name__)
     geolocation_data = []
     conn = connect_to_db("/database/geolocation.db")
     if conn:
@@ -99,9 +102,9 @@ def load_geolocation_data():
             cursor = conn.cursor()
             cursor.execute("SELECT network, country_name FROM geolocation")
             geolocation_data = cursor.fetchall()
-            log_info(None, f"[INFO] Loaded {len(geolocation_data)} geolocation entries into memory.")
+            log_info(logger, f"[INFO] Loaded {len(geolocation_data)} geolocation entries into memory.")
         except sqlite3.Error as e:
-            log_info(None, f"[ERROR] Error loading geolocation data: {e}")
+            log_error(logger, f"[ERROR] Error loading geolocation data: {e}")
         finally:
             conn.close()
     return geolocation_data

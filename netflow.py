@@ -2,7 +2,7 @@ import socket
 import struct
 from const import CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
 import os
-from utils import log_info
+from utils import log_info, log_warn, log_error
 import logging
 from datetime import datetime, timezone
 from database import connect_to_db
@@ -81,14 +81,14 @@ def handle_netflow_v5():
             data, addr = s.recvfrom(8192)
             try:
                 if len(data) < 24:
-                    log_info(logger, "[WARN] Packet too short for NetFlow v5 header")
+                    log_warn(logger, "[WARN] Packet too short for NetFlow v5 header")
                     continue
 
                 # Parse NetFlow v5 header
                 version, count, sys_uptime, unix_secs, unix_nsecs, flow_sequence, engine_type, engine_id, sampling_interval = parse_netflow_v5_header(data)
 
                 if version != 5:
-                    log_info(logger, f"[WARN] Unsupported NetFlow version: {version}")
+                    log_warn(logger, f"[WARN] Unsupported NetFlow version: {version}")
                     continue
 
                 offset = 24
@@ -128,4 +128,4 @@ def handle_netflow_v5():
                 log_info(logger, f"[INFO] Processed {count} flows from packet. Total flows processed: {flow_count}")
 
             except Exception as e:
-                log_info(logger, f"[ERROR] Failed to process NetFlow v5 packet: {e}")
+                log_error(logger, f"[ERROR] Failed to process NetFlow v5 packet: {e}")
