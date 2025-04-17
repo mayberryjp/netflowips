@@ -20,7 +20,7 @@ CONST_DEFAULT_CONFIGS = [
     ('RouterFlowsDetection', 0),
     ('ForeignFlowsDetection', 1),
     ('NewOutboundDetection', 1),
-    ('GeolocationFlowsDetection', 2),
+    ('GeolocationFlowsDetection', 1),
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
     # Add more default configurations here as needed
 ]
