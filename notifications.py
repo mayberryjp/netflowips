@@ -12,19 +12,24 @@ if (IS_CONTAINER):
     SITE = os.getenv("SITE", CONST_SITE)
 
 
-def send_telegram_message(message):
+def send_telegram_message(message, flow):
     """
     Sends a message to a Telegram group chat.
 
     Args:
         message (str): The message to send.
+        flow: The flow data associated with the alert.
     """
     logger = logging.getLogger(__name__)
     try:
+        # Create header with warning emoji and site name
+        header = f"⚠️ Security Alert - {SITE}\n\n"
+        formatted_message = header + message
+
         url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
         payload = {
             "chat_id": TELEGRAM_CHAT_ID,
-            "text": message,
+            "text": formatted_message,
             "parse_mode": "HTML"
         }
         response = requests.post(url, json=payload)

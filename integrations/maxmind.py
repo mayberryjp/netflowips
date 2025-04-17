@@ -4,6 +4,13 @@ import os
 from utils import log_info, log_warn, log_error  # Assuming log_info is already defined
 from database import connect_to_db  # Assuming connect_to_db is already defined
 import logging
+from const import CONST_LOCAL_NETWORKS, CONST_SITE, IS_CONTAINER
+
+
+if IS_CONTAINER:
+    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS)
+    LOCAL_NETWORKS = [LOCAL_NETWORKS] if ',' not in LOCAL_NETWORKS else LOCAL_NETWORKS.split(',')
+    SITE = os.getenv("SITE", CONST_SITE)
 
 def create_geolocation_db(
     blocks_csv_path="geolite/GeoLite2-Country-Blocks-IPv4.csv",
@@ -12,6 +19,7 @@ def create_geolocation_db(
 ):
     """
     Reads the MaxMind GeoLite2 database from CSV files and creates a SQLite database.
+    Also adds LOCAL_NETWORKS with SITE_NAME as country.
 
     Args:
         blocks_csv_path (str): The path to the GeoLite2 country blocks CSV file.
@@ -77,6 +85,21 @@ def create_geolocation_db(
                     row.get("is_anonymous_proxy"),
                     row.get("is_satellite_provider")
                 ))
+
+        # After processing CSV files, add LOCAL_NETWORKS
+        log_info(logger, f"[INFO] Adding LOCAL_NETWORKS to geolocation database...")
+        for network in LOCAL_NETWORKS:
+            cursor.execute("""
+                INSERT OR REPLACE INTO geolocation (
+                    network,
+                    country_name,
+                    is_anonymous_proxy,
+                    is_satellite_provider
+                ) VALUES (?, ?, 0, 0)
+            """, (
+                network,
+                SITE
+            ))
 
         # Commit changes and close the connection
         conn.commit()

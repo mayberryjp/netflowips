@@ -1,6 +1,6 @@
 import sqlite3  # Import the sqlite3 module
 from database import connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
-from detections import update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_local_hosts from detections.py
+from detections import update_LOCAL_NETWORKS, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_LOCAL_NETWORKS from detections.py
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from utils import log_info, log_warn, log_error  # Import log_info from utils
@@ -40,7 +40,7 @@ def process_data():
 
             # Proper way to check config values with default of 0
             if config_dict.get("NewHostsDetection", 0) > 0:
-                update_local_hosts(rows, config_dict)
+                update_LOCAL_NETWORKS(rows, config_dict)
 
             if config_dict.get("NewOutboundDetection", 0) > 0:
                 detect_new_outbound_connections(rows, config_dict)

@@ -1,7 +1,7 @@
-VERSION="v0.0.31"
+VERSION="v0.0.32"
 CONST_LISTEN_PORT=2055
 CONST_LISTEN_ADDRESS="0.0.0.0"
-CONST_LOCAL_HOSTS="192.168.48.0/22"
+CONST_LOCAL_NETWORKS="192.168.48.0/22"
 CONST_PROCESSING_INTERVAL=60
 MAXMIND_LICENSE_KEY="YOUR_MAXMIND_LICENSE_KEY"
 MAXMIND_URL = f"https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key={MAXMIND_LICENSE_KEY}&suffix=tar.gz"
@@ -21,6 +21,14 @@ CONST_DEFAULT_CONFIGS = [
     ('ForeignFlowsDetection', 1),
     ('NewOutboundDetection', 1),
     ('GeolocationFlowsDetection', 1),
+    ('BypassLocalDnsDetection', 0),
+    ('IncorrectAuthoritativeDnsDetection', 0),
+    ('BypassLocalNtpDetection', 0),
+    ('IncorrectNtpStratrumDetection', 0),
+    ('ApprovedLocalNtpServersList','192.168.230.236,192.168.49.80'),
+    ('ApprovedLocalDnsServersList','192.168.230.236,192.168.49.80'),
+    ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.8.4,1.1.1.1'),
+    ('ApprovedNtpStratumServersList','')
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
     # Add more default configurations here as needed
 ]
@@ -65,6 +73,8 @@ CONST_CREATE_ALERTS_SQL='''
         ip_address TEXT,
         flow TEXT,
         category TEXT,
+        alert_enrichment_1 TEXT,
+        alert_enrichment_2 TEXT,
         times_seen INTEGER DEFAULT 0,
         first_seen TEXT DEFAULT CURRENT_TIMESTAMP,
         last_seen TEXT DEFAULT CURRENT_TIMESTAMP

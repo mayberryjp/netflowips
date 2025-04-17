@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 from utils import log_info  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_HOSTS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS
+from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS
 import ipaddress
 import os
 from datetime import datetime
@@ -11,8 +11,8 @@ import json
 logger = logging.getLogger(__name__)  # Create a logger for this module
 
 if IS_CONTAINER:
-    LOCAL_HOSTS = os.getenv("LOCAL_HOSTS", CONST_LOCAL_HOSTS)
-    LOCAL_HOSTS = [LOCAL_HOSTS] if ',' not in LOCAL_HOSTS else LOCAL_HOSTS.split(',')
+    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS)
+    LOCAL_NETWORKS = [LOCAL_NETWORKS] if ',' not in LOCAL_NETWORKS else LOCAL_NETWORKS.split(',')
 
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
@@ -130,19 +130,19 @@ def get_config_settings():
         logger.error(f"[ERROR] Error reading configuration database: {e}")
         return None
 
-def log_alert_to_db(ip_address, flow, category, alert_id_hash, realert=False):
+def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
     """Logs an alert to the alerts.db SQLite database."""
     try:
         conn = sqlite3.connect(CONST_ALERTS_DB)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO alerts (id, ip_address, flow, category, times_seen, first_seen, last_seen)
-            VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen)
+            VALUES (?, ?, ?, ?, 1, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT(id)
             DO UPDATE SET
                 times_seen = times_seen + 1,
                 last_seen = CURRENT_TIMESTAMP
-        """, (alert_id_hash, ip_address, json.dumps(flow), category))
+        """, (alert_id_hash, ip_address, json.dumps(flow), category, alert_enrichment_1, alert_enrichment_2))
         conn.commit()
         conn.close()
         log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
