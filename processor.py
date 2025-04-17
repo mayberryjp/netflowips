@@ -59,7 +59,9 @@ def process_data():
             if config_dict.get("GeolocationFlowsDetection", 0) > 0 and banned_countries:
                 # Call the geolocation detection function here
                 detect_geolocation_flows(rows, config_dict, geolocation_data)
-                
+        
+            log_info(logger,f"[INFO] Processing finished.")   
+
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error reading from database: {e}")
         finally:
