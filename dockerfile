@@ -19,6 +19,8 @@ RUN pip install schedule requests
 # Expose the port
 EXPOSE 2055
 
+ENV PYTHONUNBUFFERED=1
+
 # Run the app
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/homelabids/super.conf"]
 CMD ["-n"]
