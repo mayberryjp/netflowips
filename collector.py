@@ -1,8 +1,12 @@
-from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL
+from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_START_COLLECTOR
 from database import delete_database, create_database
 from netflow import handle_netflow_v5
 from utils import log_info
 import logging
+import os
+
+if (IS_CONTAINER):
+    START_COLLECTOR = os.getenv("START_COLLECTOR", CONST_START_COLLECTOR)
 
 # Entry point
 if __name__ == "__main__":

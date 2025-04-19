@@ -8,6 +8,8 @@ from notifications import send_telegram_message  # Import notification functions
 import os
 import ipaddress
 import logging
+import socket
+import struct
 
 if (IS_CONTAINER):
     LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS)
@@ -117,7 +119,7 @@ def detect_new_outbound_connections(rows, config_dict):
                              f"Remote server: {dst_ip}:{dst_port}\n"
                              f"Protocol: {protocol}")
                     
-                    log_info(logger, f"[INFO] {message}")
+                    log_info(logger, f"[INFO] New outbound connection detected: {src_ip} -> {dst_ip}:{dst_port}")
                     # Log alert based on configuration level
                     if config_dict.get("NewOutboundDetection") == 2:
                         # Send Telegram alert and log to database
@@ -238,59 +240,166 @@ def foreign_flows_detection(rows, config_dict):
                                 f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection", False)
 
 
+def ip_to_int(ip_addr):
+    """Convert an IP address to an integer using inet_aton."""
+    try:
+        return struct.unpack('!L', socket.inet_aton(ip_addr))[0]
+    except:
+        return None
+
 def detect_geolocation_flows(rows, config_dict, geolocation_data):
     """
     Detect and handle flows where either src_ip or dst_ip is located in a banned country
-    using in-memory geolocation data.
+    using numeric IP comparison.
 
     Args:
-        rows: List of flow records.
-        config_dict: Dictionary containing configuration settings, including BannedCountryList.
-        geolocation_data: List of tuples containing (network, country_name).
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+        geolocation_data: List of tuples containing (network, start_ip, end_ip, netmask, country_name)
     """
     logger = logging.getLogger(__name__)
+    
     # Get the list of banned countries from the config_dict
     banned_countries = config_dict.get("BannedCountryList", "")
     banned_countries = [country.strip() for country in banned_countries.split(",") if country.strip()]
 
     if not banned_countries:
-        log_info(logger, f"[INFO] No banned countries specified in BannedCountryList. Skipping geolocation detection.")
+        log_warn(logger, f"[WARN] fNo banned countries specified in BannedCountryList. Skipping geolocation detection.")
         return
 
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
 
-        # Check if src_ip or dst_ip is in a banned country
-        src_country = None
-        dst_country = None
+        # Convert IPs to integers for comparison
+        src_ip_int = ip_to_int(src_ip)
+        dst_ip_int = ip_to_int(dst_ip)
+        
+        if not src_ip_int or not dst_ip_int:
+            continue
 
-        for network, country_name in geolocation_data:
-            if country_name in banned_countries:
-                if ipaddress.ip_address(src_ip) in ipaddress.ip_network(network):
-                    src_country = country_name
-                if ipaddress.ip_address(dst_ip) in ipaddress.ip_network(network):
-                    dst_country = country_name
+        # Find matching networks for source IP
+        src_matches = [
+            (netmask, country_name) 
+            for _, start_ip, end_ip, netmask, country_name in geolocation_data 
+            if start_ip <= src_ip_int <= end_ip and country_name in banned_countries
+        ]
+        
+        # Find matching networks for destination IP
+        dst_matches = [
+            (netmask, country_name) 
+            for _, start_ip, end_ip, netmask, country_name in geolocation_data 
+            if start_ip <= dst_ip_int <= end_ip and country_name in banned_countries
+        ]
 
-            # Break early if both IPs are already matched
-            if src_country or dst_country:
-                break
+        # Get the most specific match (highest netmask) if multiple matches exist
+        src_country = max(src_matches, key=lambda x: x[0])[1] if src_matches else None
+        dst_country = max(dst_matches, key=lambda x: x[0])[1] if dst_matches else None
 
         if src_country or dst_country:
             original_flow = json.dumps(row)
+
             log_info(logger, f"[INFO] Flow involves an IP located in a banned country source: {src_ip} {src_country} destination: {dst_ip} {dst_country}")
 
-            # Prepare alert message
-            message = f"Flow involves an IP located in a banned country:\n" \
-                      f"Source IP: {src_ip} ({src_country or 'N/A'})\n" \
-                      f"Destination IP: {dst_ip} ({dst_country or 'N/A'})\n"
+            message = (f"Flow involves an IP located in a banned country:\n"
+                      f"Source IP: {src_ip} ({src_country or 'N/A'})\n"
+                      f"Destination IP: {dst_ip} ({dst_country or 'N/A'})")
 
             # Send alert based on configuration
             if config_dict.get("GeolocationFlowsDetection") == 2:
                 # Send Telegram alert and log to database
                 send_telegram_message(message,original_flow[0:5])
                 log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",dst_ip,dst_country,
-                                f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)
+                                f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)                
             elif config_dict.get("GeolocationFlowsDetection") == 1:
                 # Only log to database
                 log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",dst_ip,dst_country,
                                 f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)
+
+
+def detect_unauthorized_ntp(rows, config_dict):
+    """
+    Detect NTP traffic (port 123) that doesn't involve approved NTP servers.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    # Get the list of approved NTP servers
+    approved_ntp_servers = config_dict.get("ApprovedLocalNtpServersList", "").split(",")
+    if not approved_ntp_servers:
+        log_warn(logger, "[WARN] No approved NTP servers configured")
+        return
+
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
+        
+        # Check if this is NTP traffic (port 123)
+        if src_port == 123 or dst_port == 123:
+            # Check if either IP is in the approved list
+            if src_ip not in approved_ntp_servers and dst_ip not in approved_ntp_servers:
+                # Create a unique identifier for this alert
+                alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
+                
+                log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
+                
+                message = (f"Unauthorized NTP Traffic Detected:\n"
+                            f"Source: {src_ip}:{src_port}\n"
+                            f"Destination: {dst_ip}:{dst_port}\n"
+                            f"Protocol: {protocol}")
+                    
+                # Log alert based on configuration level
+                if int(config_dict.get("BypassLocalNtpDetection")) == 2:
+                    # Send Telegram alert and log to database
+                    send_telegram_message(message, row)
+                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected",dst_ip,dst_port,
+                                        alert_id, False)
+                elif int(config_dict.get("BypassLocalNtpDetection")) == 1:
+                    # Only log to database
+                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected",dst_ip,dst_port,
+                                        alert_id, False)
+
+
+
+def detect_unauthorized_dns(rows, config_dict):
+    """
+    Detect DNS traffic (port 53) that doesn't involve approved DNS servers.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    # Get the list of approved NTP servers
+    approved_dns_servers = config_dict.get("ApprovedLocalDnsServersList", "").split(",")
+    if not approved_dns_servers:
+        log_warn(logger, "[WARN] No approved DNS servers configured")
+        return
+
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
+        
+        # Check if this is NTP traffic (port 123)
+        if src_port == 53 or dst_port == 53:
+            # Check if either IP is in the approved list
+            if src_ip not in approved_dns_servers and dst_ip not in approved_dns_servers:
+                # Create a unique identifier for this alert
+                alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
+                
+                log_info(logger, f"[INFO] Unauthorized DNS Traffic Detected: {src_ip} -> {dst_ip}")
+                
+                message = (f"Unauthorized DNS Traffic Detected:\n"
+                            f"Source: {src_ip}:{src_port}\n"
+                            f"Destination: {dst_ip}:{dst_port}\n"
+                            f"Protocol: {protocol}")
+                    
+                # Log alert based on configuration level
+                if int(config_dict.get("BypassLocalDnsDetection")) == 2:
+                    # Send Telegram alert and log to database
+                    send_telegram_message(message, row)
+                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected",dst_ip,dst_port,
+                                        alert_id, False)
+                elif int(config_dict.get("BypassLocalDnsDetection")) == 1:
+                    # Only log to database
+                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected",dst_ip,dst_port,
+                                        alert_id, False)
