@@ -11,6 +11,7 @@ CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
+CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','test_source_2.db']
 CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'homelab'
 CONST_REINITIALIZE_DB = 1
@@ -86,13 +87,13 @@ CONST_CREATE_ALERTS_SQL='''
 CONST_CREATE_WHITELIST_SQL='''
     CREATE TABLE IF NOT EXISTS whitelist (
         whitelist_id TEXT PRIMARY KEY,
-        src_ip TEXT,
-        dst_ip TEXT,
-        dst_port INTEGER,
-        protocol INTEGER,
-        insert_date TEXT DEFAULT CURRENT_TIMESTAMP
-        enabled INTEGER DEFAULT 1,
-        description TEXT
+        whitelist_src_ip TEXT,
+        whitelist_dst_ip TEXT,
+        whitelist_dst_port INTEGER,
+        whitelist_protocol INTEGER,
+        whitelist_insert_date TEXT DEFAULT CURRENT_TIMESTAMP
+        whitelist_enabled INTEGER DEFAULT 1,
+        whitelist_description TEXT
     )'''
 
 CONST_CREATE_CONFIG_SQL='''

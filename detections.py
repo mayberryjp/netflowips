@@ -409,3 +409,40 @@ def detect_unauthorized_dns(rows, config_dict):
                                         alert_id, False)
 
 
+def remove_whitelist(rows, whitelist_entries):
+    """
+    Remove rows that match whitelist entries.
+    
+    Args:
+        rows: List of flow records
+        whitelist_entries: List of whitelist entries from database
+        
+    Returns:
+        list: Filtered rows with whitelisted entries removed
+    """
+    logger = logging.getLogger(__name__)
+
+    if not whitelist_entries:
+        return rows
+
+    filtered_rows = []
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
+        is_whitelisted = False
+        
+        for whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol in whitelist_entries:
+            # Check if the flow matches any whitelist entry
+            src_match = (whitelist_src_ip == src_ip or whitelist_src_ip == dst_ip)
+            dst_match = (whitelist_dst_ip == dst_ip or whitelist_dst_ip == src_ip)
+            port_match = (int(whitelist_dst_port) in (src_port, dst_port))
+            protocol_match = (int(whitelist_protocol) == protocol)
+            
+            if src_match and dst_match and port_match and protocol_match:
+                is_whitelisted = True
+                break
+        
+        if not is_whitelisted:
+            filtered_rows.append(row)
+    
+    log_info(logger, f"[INFO] Removed {len(rows) - len(filtered_rows)} whitelisted flows")
+    return filtered_rows

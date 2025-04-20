@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 from utils import log_info, log_error, log_warn  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS
+from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS, CONST_WHITELIST_DB
 import ipaddress
 import os
 from datetime import datetime
@@ -148,5 +148,39 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
         log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
         logger.error(f"[ERROR] Error logging alert to database: {e}")
+
+def get_whitelist_entries():
+    """
+    Retrieve active entries from the whitelist database.
+    
+    Returns:
+        list: List of tuples containing (alert_id, category, insert_date)
+              Returns None if there's an error
+    """
+    try:
+        conn = connect_to_db(CONST_WHITELIST_DB)
+        if not conn:
+            log_info(logger, "[ERROR] Unable to connect to whitelist database")
+            return None
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol
+            FROM whitelist 
+            WHERE whitelist_enabled = 1
+            ORDER BY insert_date DESC
+        """)
+        entries = cursor.fetchall()
+
+        log_info(logger, f"[INFO] Retrieved {len(entries)} active whitelist entries")
+        
+        return entries
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error retrieving whitelist entries: {e}")
+        return None
+    finally:
+        if conn:
+            conn.close()
 
 

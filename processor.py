@@ -1,6 +1,6 @@
 import sqlite3  # Import the sqlite3 module
-from database import connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
-from detections import update_LOCAL_NETWORKS, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_LOCAL_NETWORKS from detections.py
+from database import get_whitelist_entries, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
+from detections import remove_whitelist, update_LOCAL_NETWORKS, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_LOCAL_NETWORKS from detections.py
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from utils import log_info, log_warn, log_error  # Import log_info from utils
@@ -35,6 +35,7 @@ def process_data(geolocation_data):
             cursor.execute("SELECT * FROM flows")
             rows = cursor.fetchall()
 
+            # delete newflows so collector can write clean to it again as quickly as possible
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
             if (CLEAN_NEWFLOWS):
                 delete_all_records(CONST_NEWFLOWS_DB)
@@ -42,27 +43,32 @@ def process_data(geolocation_data):
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
 
+            # process whitelisted entries and remove from detection rows
+            whitelist_entries = get_whitelist_entries()
+            log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
+            filtered_rows = remove_whitelist(rows, whitelist_entries)
+
             # Proper way to check config values with default of 0
             if config_dict.get("NewHostsDetection", 0) > 0:
-                update_LOCAL_NETWORKS(rows, config_dict)
+                update_LOCAL_NETWORKS(filtered_rows, config_dict)
 
             if config_dict.get("NewOutboundDetection", 0) > 0:
-                detect_new_outbound_connections(rows, config_dict)
+                detect_new_outbound_connections(filtered_rows, config_dict)
 
             if config_dict.get("RouterFlowsDetection", 0) > 0:
-                router_flows_detection(rows, config_dict)
+                router_flows_detection(filtered_rows, config_dict)
 
             if config_dict.get("ForeignFlowsDetection", 0) > 0:
-                foreign_flows_detection(rows, config_dict)
+                foreign_flows_detection(filtered_rows, config_dict)
 
             if config_dict.get("LocalFlowsDetection", 0) > 0:
-                local_flows_detection(rows, config_dict)
+                local_flows_detection(filtered_rows, config_dict)
 
             banned_countries = config_dict.get("BannedCountryList", "").strip()
 
             if config_dict.get("GeolocationFlowsDetection", 0) > 0 and banned_countries:
                 # Call the geolocation detection function here
-                detect_geolocation_flows(rows, config_dict, geolocation_data)
+                detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
         
             log_info(logger,f"[INFO] Processing finished.")   
 
