@@ -29,7 +29,7 @@ def process_data(geolocation_data):
 
     """Read data from the database and process it."""
     conn = connect_to_db(CONST_NEWFLOWS_DB)
-    if conn:
+    if conn and SCHEDULE_PROCESSOR:
         try:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM flows")
@@ -100,9 +100,8 @@ if __name__ == "__main__":
 
     # Initialize configurations
     init_configurations()
-    process_data(geolocation_data)
+    #process_data(geolocation_data)
 
-    if (SCHEDULE_PROCESSOR):
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
