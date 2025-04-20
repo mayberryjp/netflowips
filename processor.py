@@ -71,9 +71,6 @@ def process_data(geolocation_data):
         finally:
             conn.close()
 
-# Schedule the task to run every 60 seconds
-schedule.every(PROCESSING_INTERVAL).seconds.do(process_data)
-
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
@@ -95,13 +92,12 @@ if __name__ == "__main__":
     create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
     create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
 
+    # Initialize configurations
+    init_configurations()
+
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
 
-    # Initialize configurations
-    init_configurations()
-    #process_data(geolocation_data)
-
     while True:
-        schedule.run_pending()
-        time.sleep(1)
+        process_data(geolocation_data)
+        time.sleep(60)
