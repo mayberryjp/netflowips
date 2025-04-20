@@ -1,6 +1,6 @@
 import sqlite3
 import logging
-from utils import log_info  # Assuming log_info is defined in utils
+from utils import log_info, log_error, log_warn  # Assuming log_info is defined in utils
 from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS
 import ipaddress
 import os
@@ -48,7 +48,7 @@ def create_database(db_name, create_table_sql):
         log_info(logger, f"[INFO] {db_name} initialized successfully.")
         conn.close()
     except sqlite3.Error as e:
-        logger.error(f"[ERROR] Error initializing {db_name}: {e}")
+        log_error(logger,f"[ERROR] Error initializing {db_name}: {e}")
 
 def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""

@@ -5,9 +5,9 @@ import socket
 import struct
 from ipaddress import IPv4Network
 from utils import log_info, log_warn, log_error  # Assuming log_info is already defined
-from database import connect_to_db  # Assuming connect_to_db is already defined
+from database import connect_to_db, create_database  # Assuming connect_to_db is already defined
 import logging
-from const import CONST_LOCAL_NETWORKS, CONST_SITE, IS_CONTAINER
+from const import CONST_LOCAL_NETWORKS, CONST_SITE, IS_CONTAINER, CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL
 
 
 if IS_CONTAINER:
@@ -40,7 +40,6 @@ def ip_network_to_range(network):
 def create_geolocation_db(
     blocks_csv_path="geolite/GeoLite2-Country-Blocks-IPv4.csv",
     locations_csv_path="geolite/GeoLite2-Country-Locations-en.csv",
-    db_name="/database/geolocation.db"
 ):
     """
     Reads the MaxMind GeoLite2 database from CSV files and creates a SQLite database.
@@ -71,26 +70,14 @@ def create_geolocation_db(
                 country_name = row.get("country_name", "")
                 locations[geoname_id] = country_name
 
-        # Step 3: Create the SQLite database
-        log_info(logger, f"[INFO] Creating SQLite database: {db_name}...")
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
 
-        # Create the table with new columns
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS geolocation (
-                network TEXT PRIMARY KEY,
-                start_ip INTEGER,
-                end_ip INTEGER,
-                netmask INTEGER,
-                geoname_id INTEGER,
-                country_name TEXT,
-                registered_country_geoname_id INTEGER,
-                represented_country_geoname_id INTEGER,
-                is_anonymous_proxy INTEGER,
-                is_satellite_provider INTEGER
-            )
-        """)
+        create_database(CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL)
+
+        conn=connect_to_db(CONST_GEOLOCATION_DB)
+        if conn is None:
+            log_error(logger, f"[ERROR] Failed to connect to the database {CONST_GEOLOCATION_DB}.")
+            return
+        cursor = conn.cursor()
 
         # Step 4: Populate the database from the country blocks CSV file
         log_info(logger, f"[INFO] Populating the SQLite database with country blocks data...")
@@ -107,21 +94,14 @@ def create_geolocation_db(
                 
                 cursor.execute("""
                     INSERT OR IGNORE INTO geolocation (
-                        network, start_ip, end_ip, netmask, geoname_id, country_name,
-                        registered_country_geoname_id, represented_country_geoname_id,
-                        is_anonymous_proxy, is_satellite_provider
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        network, start_ip, end_ip, netmask, country_name
+                    ) VALUES (?, ?, ?, ?, ?)
                 """, (
                     network,
                     start_ip,
                     end_ip,
                     netmask,
-                    geoname_id,
-                    country_name,
-                    row.get("registered_country_geoname_id"),
-                    row.get("represented_country_geoname_id"),
-                    row.get("is_anonymous_proxy"),
-                    row.get("is_satellite_provider")
+                    country_name
                 ))
 
         # After processing CSV files, add LOCAL_NETWORKS
@@ -133,9 +113,8 @@ def create_geolocation_db(
                 
             cursor.execute("""
                 INSERT OR REPLACE INTO geolocation (
-                    network, start_ip, end_ip, netmask,
-                    country_name, is_anonymous_proxy, is_satellite_provider
-                ) VALUES (?, ?, ?, ?, ?, 0, 0)
+                    network, start_ip, end_ip, netmask, country_name
+                ) VALUES (?, ?, ?, ?, ?)
             """, (
                 network,
                 start_ip,
@@ -151,7 +130,7 @@ def create_geolocation_db(
         conn.commit()
         conn.close()
 
-        log_info(logger, f"[INFO] Geolocation database {db_name} created successfully.")
+        log_info(logger, f"[INFO] Geolocation database {CONST_GEOLOCATION_DB} created successfully.")
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error creating geolocation database: {e}")
@@ -165,11 +144,11 @@ def load_geolocation_data():
     """
     logger = logging.getLogger(__name__)
     geolocation_data = []
-    conn = connect_to_db("/database/geolocation.db")
+    conn = connect_to_db(CONST_GEOLOCATION_DB)
     if conn:
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT network, country_name FROM geolocation")
+            cursor.execute("SELECT network, start_ip, end_ip, netmask, country_name FROM geolocation")
             geolocation_data = cursor.fetchall()
             log_info(logger, f"[INFO] Loaded {len(geolocation_data)} geolocation entries into memory.")
         except sqlite3.Error as e:

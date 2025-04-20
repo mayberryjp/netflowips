@@ -255,7 +255,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
     Args:
         rows: List of flow records
         config_dict: Dictionary containing configuration settings
-        geolocation_data: List of tuples containing (network, start_ip, end_ip, netmask, country_name)
+        geolocation_data: List of tuples containing (start_ip, end_ip, netmask, country_name)
     """
     logger = logging.getLogger(__name__)
     
@@ -264,7 +264,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
     banned_countries = [country.strip() for country in banned_countries.split(",") if country.strip()]
 
     if not banned_countries:
-        log_warn(logger, f"[WARN] fNo banned countries specified in BannedCountryList. Skipping geolocation detection.")
+        log_warn(logger, "[WARN] No banned countries specified in BannedCountryList. Skipping geolocation detection.")
         return
 
     for row in rows:
@@ -280,14 +280,18 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
         # Find matching networks for source IP
         src_matches = [
             (netmask, country_name) 
-            for _, start_ip, end_ip, netmask, country_name in geolocation_data 
+            for entry in geolocation_data
+            if len(entry) == 4  # Ensure the tuple has the expected structure
+            for start_ip, end_ip, netmask, country_name in [entry]
             if start_ip <= src_ip_int <= end_ip and country_name in banned_countries
         ]
         
         # Find matching networks for destination IP
         dst_matches = [
             (netmask, country_name) 
-            for _, start_ip, end_ip, netmask, country_name in geolocation_data 
+            for entry in geolocation_data
+            if len(entry) == 4  # Ensure the tuple has the expected structure
+            for start_ip, end_ip, netmask, country_name in [entry]
             if start_ip <= dst_ip_int <= end_ip and country_name in banned_countries
         ]
 
@@ -307,12 +311,12 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
             # Send alert based on configuration
             if config_dict.get("GeolocationFlowsDetection") == 2:
                 # Send Telegram alert and log to database
-                send_telegram_message(message,original_flow[0:5])
-                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",dst_ip,dst_country,
+                send_telegram_message(message, original_flow[0:5])
+                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country", dst_ip, dst_country,
                                 f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)                
             elif config_dict.get("GeolocationFlowsDetection") == 1:
                 # Only log to database
-                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country",dst_ip,dst_country,
+                log_alert_to_db(src_ip, row, "Flow involves an IP in a banned country", dst_ip, dst_country,
                                 f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection", False)
 
 

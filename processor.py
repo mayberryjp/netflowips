@@ -4,7 +4,7 @@ from detections import update_LOCAL_NETWORKS, detect_geolocation_flows, detect_n
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from utils import log_info, log_warn, log_error  # Import log_info from utils
-from const import CONST_SCHEDULE_PROCESSOR, CONST_CLEAN_NEWFLOWS,CONST_REINITIALIZE_DB,CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
+from const import CONST_GEOLOCATION_DB, CONST_SCHEDULE_PROCESSOR, CONST_CLEAN_NEWFLOWS,CONST_REINITIALIZE_DB,CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
 import schedule
 import time
 import logging
@@ -20,7 +20,7 @@ if (IS_CONTAINER):
     SCHEDULE_PROCESSOR=os.getenv("SCHEDULE_PROCESSOR", CONST_SCHEDULE_PROCESSOR)
 
 # Function to process data
-def process_data():
+def process_data(geolocation_data):
     logger = logging.getLogger(__name__)
     config_dict = get_config_settings()
     if not config_dict:
@@ -78,30 +78,29 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     log_info(logger, f"[INFO] Processor started.")
-    
-    create_geolocation_db()
-    geolocation_data = load_geolocation_data()
 
     send_test_telegram_message()
     delete_database(CONST_CONFIG_DB)
 
     if (REINITIALIZE_DB):
-        delete_database(CONST_NEWFLOWS_DB)
         delete_database(CONST_ALLFLOWS_DB)
         delete_database(CONST_ALERTS_DB)
         delete_database(CONST_WHITELIST_DB)
         delete_database(CONST_CONFIG_DB)
+        delete_database(CONST_GEOLOCATION_DB)
 
     # Initialize all required databases
-    create_database(CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL)
     create_database(CONST_ALLFLOWS_DB, CONST_CREATE_ALLFLOWS_SQL)
     create_database(CONST_ALERTS_DB, CONST_CREATE_ALERTS_SQL)
     create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
     create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
 
+    create_geolocation_db()
+    geolocation_data = load_geolocation_data()
+
     # Initialize configurations
     init_configurations()
-    process_data()
+    process_data(geolocation_data)
 
     if (SCHEDULE_PROCESSOR):
         while True:

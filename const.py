@@ -11,13 +11,14 @@ CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
+CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'homelab'
-CONST_REINITIALIZE_DB = 0
+CONST_REINITIALIZE_DB = 1
 CONST_CLEAN_NEWFLOWS = 0
 CONST_START_COLLECTOR = 1
 CONST_SCHEDULE_PROCESSOR = 0
 CONST_DEFAULT_CONFIGS = [
-    ('NewHostsDetection', 2),
+    ('NewHostsDetection', 1),
     ('LocalFlowsDetection', 1),
     ('RouterFlowsDetection', 0),
     ('ForeignFlowsDetection', 1),
@@ -94,4 +95,11 @@ CONST_CREATE_CONFIG_SQL='''
         value INTEGER
     )'''
 
-
+CONST_CREATE_GEOLOCATION_SQL="""
+            CREATE TABLE IF NOT EXISTS geolocation (
+                network TEXT PRIMARY KEY,
+                start_ip INTEGER,
+                end_ip INTEGER,
+                netmask INTEGER,
+                country_name TEXT
+            )"""
