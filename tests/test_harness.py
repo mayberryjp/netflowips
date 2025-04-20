@@ -224,11 +224,11 @@ def main():
     log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
     filtered_rows = remove_whitelist(rows, whitelist_entries)
 
-    #update_local_hosts(filtered_rows, config_dict)
-    #detect_new_outbound_connections(filtered_rows, config_dict)
-    #router_flows_detection(filtered_rows, config_dict)
-    #foreign_flows_detection(filtered_rows, config_dict)
-    #local_flows_detection(filtered_rows, config_dict)
+    update_local_hosts(filtered_rows, config_dict)
+    detect_new_outbound_connections(filtered_rows, config_dict)
+    router_flows_detection(filtered_rows, config_dict)
+    foreign_flows_detection(filtered_rows, config_dict)
+    local_flows_detection(filtered_rows, config_dict)
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
