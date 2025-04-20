@@ -1,9 +1,9 @@
 VERSION="v0.0.33"
 CONST_LISTEN_PORT=2055
 CONST_LISTEN_ADDRESS="0.0.0.0"
-CONST_LOCAL_NETWORKS="192.168.48.0/22"
+CONST_LOCAL_NETWORKS="192.168.48.0/22,192.168.230.0/24"
 CONST_PROCESSING_INTERVAL=60
-CONST_ROUTER_IPADDRESS="192.168.49.1"
+CONST_ROUTER_IPADDRESS="192.168.49.1,192.168.230.1"
 IS_CONTAINER=1
 CONST_NEWFLOWS_DB="/database/newflows.db"
 CONST_ALLFLOWS_DB="/database/allflows.db"
@@ -11,7 +11,7 @@ CONST_LOCALHOSTS_DB = "/database/localhosts.db"
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
-CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','test_source_2.db']
+CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','/database/test_source_2.db']
 CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'homelab'
 CONST_REINITIALIZE_DB = 1
@@ -91,7 +91,7 @@ CONST_CREATE_WHITELIST_SQL='''
         whitelist_dst_ip TEXT,
         whitelist_dst_port INTEGER,
         whitelist_protocol INTEGER,
-        whitelist_insert_date TEXT DEFAULT CURRENT_TIMESTAMP
+        whitelist_insert_date TEXT DEFAULT CURRENT_TIMESTAMP,
         whitelist_enabled INTEGER DEFAULT 1,
         whitelist_description TEXT
     )'''
@@ -110,3 +110,10 @@ CONST_CREATE_GEOLOCATION_SQL="""
                 netmask INTEGER,
                 country_name TEXT
             )"""
+
+CONST_CREATE_LOCALHOSTS_SQL="""
+                CREATE TABLE IF NOT EXISTS localhosts (
+                    ip_address TEXT PRIMARY KEY,
+                    first_seen TEXT,
+                    original_flow TEXT
+                )"""

@@ -38,8 +38,8 @@ def ip_network_to_range(network):
         return None, None, None
 
 def create_geolocation_db(
-    blocks_csv_path="geolite/GeoLite2-Country-Blocks-IPv4.csv",
-    locations_csv_path="geolite/GeoLite2-Country-Locations-en.csv",
+    blocks_csv_path="/database/geolite/GeoLite2-Country-Blocks-IPv4.csv",
+    locations_csv_path="/database/geolite/GeoLite2-Country-Locations-en.csv",
 ):
     """
     Reads the MaxMind GeoLite2 database from CSV files and creates a SQLite database.

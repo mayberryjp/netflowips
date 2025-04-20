@@ -11,8 +11,7 @@ import json
 logger = logging.getLogger(__name__)  # Create a logger for this module
 
 if IS_CONTAINER:
-    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS)
-    LOCAL_NETWORKS = [LOCAL_NETWORKS] if ',' not in LOCAL_NETWORKS else LOCAL_NETWORKS.split(',')
+    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS).split(',')
 
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
@@ -137,7 +136,7 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen)
-            VALUES (?, ?, ?, ?, 1, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT(id)
             DO UPDATE SET
                 times_seen = times_seen + 1,
@@ -149,7 +148,7 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
     except sqlite3.Error as e:
         logger.error(f"[ERROR] Error logging alert to database: {e}")
 
-def get_whitelist_entries():
+def get_whitelist():
     """
     Retrieve active entries from the whitelist database.
     
@@ -168,13 +167,12 @@ def get_whitelist_entries():
             SELECT whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol
             FROM whitelist 
             WHERE whitelist_enabled = 1
-            ORDER BY insert_date DESC
         """)
-        entries = cursor.fetchall()
+        whitelist = cursor.fetchall()
 
-        log_info(logger, f"[INFO] Retrieved {len(entries)} active whitelist entries")
+        log_info(logger, f"[INFO] Retrieved {len(whitelist)} active whitelist entries")
         
-        return entries
+        return whitelist
 
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error retrieving whitelist entries: {e}")
@@ -182,5 +180,75 @@ def get_whitelist_entries():
     finally:
         if conn:
             conn.close()
+
+def get_row_count(db_name, table_name):
+    """
+    Get the total number of rows in a specified database table.
+    
+    Args:
+        db_name (str): The database file path
+        table_name (str): The table name to count rows from
+        
+    Returns:
+        int: Number of rows in the table, or -1 if there's an error
+    """
+    try:
+        conn = connect_to_db(db_name)
+        if not conn:
+            log_error(logger, f"[ERROR] Unable to connect to database {db_name}")
+            return -1
+
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+        count = cursor.fetchone()[0]
+    
+        return count
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error counting rows in {db_name}.{table_name}: {e}")
+        return -1
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
+def get_alerts_summary():
+    """
+    Get a summary of alerts by category from alerts.db.
+    Prints total count and breakdown by category.
+    """
+    try:
+        conn = connect_to_db(CONST_ALERTS_DB)
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database")
+            return
+
+        cursor = conn.cursor()
+        
+        # Get total count
+        cursor.execute("SELECT COUNT(*) FROM alerts")
+        total_count = cursor.fetchone()[0]
+        
+        # Get counts by category
+        cursor.execute("""
+            SELECT category, COUNT(*) as count 
+            FROM alerts 
+            GROUP BY category 
+            ORDER BY count DESC
+        """)
+        categories = cursor.fetchall()
+        
+        # Log the summary
+        log_info(logger, f"[INFO] Total alerts: {total_count}")
+        log_info(logger, "[INFO] Breakdown by category:")
+        for category, count in categories:
+            percentage = (count / total_count * 100) if total_count > 0 else 0
+            log_info(logger, f"[INFO]   {category}: {count} ({percentage:.1f}%)")
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error getting alerts summary: {e}")
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
 
 
