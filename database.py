@@ -149,3 +149,4 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
     except sqlite3.Error as e:
         logger.error(f"[ERROR] Error logging alert to database: {e}")
 
+

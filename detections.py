@@ -407,3 +407,5 @@ def detect_unauthorized_dns(rows, config_dict):
                     # Only log to database
                     log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected",dst_ip,dst_port,
                                         alert_id, False)
+
+

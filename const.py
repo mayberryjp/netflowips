@@ -86,7 +86,13 @@ CONST_CREATE_ALERTS_SQL='''
 CONST_CREATE_WHITELIST_SQL='''
     CREATE TABLE IF NOT EXISTS whitelist (
         whitelist_id TEXT PRIMARY KEY,
+        src_ip TEXT,
+        dst_ip TEXT,
+        dst_port INTEGER,
+        protocol INTEGER,
         insert_date TEXT DEFAULT CURRENT_TIMESTAMP
+        enabled INTEGER DEFAULT 1,
+        description TEXT
     )'''
 
 CONST_CREATE_CONFIG_SQL='''
