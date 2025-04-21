@@ -449,27 +449,28 @@ def detect_unauthorized_ntp(rows, config_dict):
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if either IP is not in the approved NTP servers list
-        if src_ip not in approved_ntp_servers and is_ip_in_range(src_ip, LOCAL_NETWORKS):
+        if src_ip not in approved_ntp_servers:
+            if is_ip_in_range(src_ip, LOCAL_NETWORKS):
             # Create a unique identifier for this alert
-            alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
+                alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
 
-            log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
+                log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
 
-            message = (f"Unauthorized NTP Traffic Detected:\n"
-                       f"Source: {src_ip}:{src_port}\n"
-                       f"Destination: {dst_ip}:{dst_port}\n"
-                       f"Protocol: {protocol}")
+                message = (f"Unauthorized NTP Traffic Detected:\n"
+                        f"Source: {src_ip}:{src_port}\n"
+                        f"Destination: {dst_ip}:{dst_port}\n"
+                        f"Protocol: {protocol}")
 
-            # Log alert based on configuration level
-            if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
-                # Send Telegram alert and log to database
-                send_telegram_message(message, row)
-                log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                alert_id, False)
-            elif int(config_dict.get("BypassLocalNtpDetection", 0)) == 1:
-                # Only log to database
-                log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                alert_id, False)
+                # Log alert based on configuration level
+                if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
+                    # Send Telegram alert and log to database
+                    send_telegram_message(message, row)
+                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
+                                    alert_id, False)
+                elif int(config_dict.get("BypassLocalNtpDetection", 0)) == 1:
+                    # Only log to database
+                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
+                                    alert_id, False)
 
 
 def detect_unauthorized_dns(rows, config_dict):
@@ -495,27 +496,28 @@ def detect_unauthorized_dns(rows, config_dict):
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if either IP is not in the approved DNS servers list
-        if src_ip not in approved_dns_servers and is_ip_in_range(src_ip, LOCAL_NETWORKS):
+        if src_ip not in approved_dns_servers :
+            if is_ip_in_range(src_ip, LOCAL_NETWORKS):
             # Create a unique identifier for this alert
-            alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
+                alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
 
-            log_info(logger, f"[INFO] Unauthorized DNS Traffic Detected: {src_ip} -> {dst_ip}")
+                log_info(logger, f"[INFO] Unauthorized DNS Traffic Detected: {src_ip} -> {dst_ip}")
 
-            message = (f"Unauthorized DNS Traffic Detected:\n"
-                        f"Source: {src_ip}:{src_port}\n"
-                        f"Destination: {dst_ip}:{dst_port}\n"
-                        f"Protocol: {protocol}")
+                message = (f"Unauthorized DNS Traffic Detected:\n"
+                            f"Source: {src_ip}:{src_port}\n"
+                            f"Destination: {dst_ip}:{dst_port}\n"
+                            f"Protocol: {protocol}")
 
-            # Log alert based on configuration level
-            if int(config_dict.get("BypassLocalDnsDetection", 0)) == 2:
-                # Send Telegram alert and log to database
-                send_telegram_message(message, row)
-                log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                alert_id, False)
-            elif int(config_dict.get("BypassLocalDnsDetection", 0)) == 1:
-                # Only log to database
-                log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                alert_id, False)
+                # Log alert based on configuration level
+                if int(config_dict.get("BypassLocalDnsDetection", 0)) == 2:
+                    # Send Telegram alert and log to database
+                    send_telegram_message(message, row)
+                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
+                                    alert_id, False)
+                elif int(config_dict.get("BypassLocalDnsDetection", 0)) == 1:
+                    # Only log to database
+                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
+                                    alert_id, False)
 
 
 def detect_incorrect_authoritative_dns(rows, config_dict):
