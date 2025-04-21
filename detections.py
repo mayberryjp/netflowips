@@ -305,7 +305,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
     logger = logging.getLogger(__name__)
     
     # Debug: Print sample of geolocation data
-    log_info(logger, f"[DEBUG] First few geolocation entries: {geolocation_data[:2]}")
+    #log_info(logger, f"[DEBUG] First few geolocation entries: {geolocation_data[:2]}")
     
     # Convert banned countries to a set for O(1) lookups
     banned_countries = set(
@@ -319,7 +319,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
         return
 
     # Debug: Print banned countries
-    log_info(logger, f"[DEBUG] Banned countries: {banned_countries}")
+    #log_info(logger, f"[DEBUG] Banned countries: {banned_countries}")
 
     # Pre-process geolocation data into ranges
     geo_ranges = []
