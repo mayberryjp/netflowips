@@ -443,7 +443,7 @@ def detect_unauthorized_ntp(rows, config_dict):
 
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
 
-    filtered_rows = [row for row in rows if row[2] == 123 or row[3] == 123]
+    filtered_rows = [row for row in rows if row[3] == 123]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
@@ -490,13 +490,13 @@ def detect_unauthorized_dns(rows, config_dict):
         return
     
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
-    filtered_rows = [row for row in rows if row[2] == 53 or row[3] == 53]
+    filtered_rows = [row for row in rows if row[3] == 53]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if either IP is not in the approved DNS servers list
-        if src_ip not in approved_dns_servers :
+        if src_ip not in approved_dns_servers:
             if is_ip_in_range(src_ip, LOCAL_NETWORKS):
             # Create a unique identifier for this alert
                 alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
@@ -537,7 +537,7 @@ def detect_incorrect_authoritative_dns(rows, config_dict):
         return
 
     APPROVED_LOCAL_DNS_SERVERS_LIST = set(config_dict.get("ApprovedLocalDnsServersList", "").split(","))
-    filtered_rows = [row for row in rows if row[2] == 53 or row[3] == 53]
+    filtered_rows = [row for row in rows if row[3] == 53]
     
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
@@ -583,7 +583,7 @@ def detect_incorrect_ntp_stratum(rows, config_dict):
         return
     
     APPROVED_LOCAL_NTP_SERVERS_LIST = set(config_dict.get("ApprovedLocalNtpServersList", "").split(","))
-    filtered_rows = [row for row in rows if row[2] == 123 or row[3] == 123]
+    filtered_rows = [row for row in rows if row[3] == 123]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
