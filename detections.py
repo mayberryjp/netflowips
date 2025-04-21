@@ -375,7 +375,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
 
         #log_info(logger, f"[DEBUG] src_ip: {src_ip}, dst_ip: {dst_ip}, src_country: {src_country}, dst_country: {dst_country}")
         if src_country or dst_country:
-            log_info(logger, f"[INFO] Flow involves an IP in a banned country:: {src_ip} ({src_country}) and {dst_ip} ({dst_country})")
+            log_info(logger, f"[INFO] Flow involves an IP in a banned country: {src_ip} ({src_country}) and {dst_ip} ({dst_country})")
 
             matches += 1
             message = (f"Flow involves an IP in a banned country:\n"
