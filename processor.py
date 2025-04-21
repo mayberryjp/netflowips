@@ -84,12 +84,15 @@ def process_data(geolocation_data):
             conn.close()
 
 if __name__ == "__main__":
+
+    # wait a bit for startup so collector can init configurations
+    time.sleep(5)
+
     logger = logging.getLogger(__name__)
 
     log_info(logger, f"[INFO] Processor started.")
 
     send_test_telegram_message()
-    delete_database(CONST_CONFIG_DB)
 
     if (REINITIALIZE_DB):
         delete_database(CONST_ALLFLOWS_DB)
@@ -104,9 +107,6 @@ if __name__ == "__main__":
     create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
     create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
     create_database(CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL)
-
-    # Initialize configurations
-    init_configurations()
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
