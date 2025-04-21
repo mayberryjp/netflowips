@@ -54,7 +54,9 @@ from detections import (
     foreign_flows_detection,
     local_flows_detection,
     detect_geolocation_flows,
-    remove_whitelist
+    remove_whitelist,
+    detect_unauthorized_ntp,
+    detect_unauthorized_dns
 )
 
 def copy_flows_to_newflows():
@@ -113,8 +115,8 @@ def copy_flows_to_newflows():
 
 def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
     """
-    Log test execution results to a JSON file by appending new results.
-    
+    Log test execution results to a new JSON file for each test run.
+
     Args:
         start_time: Test start timestamp
         end_time: Test end timestamp
@@ -136,7 +138,8 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
         categories = {category: count for category, count in alerts_cursor.fetchall()}
         alerts_conn.close()
 
-        new_result = {
+        # Prepare the test result data
+        test_result = {
             "execution_date": datetime.now().strftime("%Y-%m-%d"),
             "start_time": start_time.isoformat(),
             "end_time": end_time.isoformat(),
@@ -155,29 +158,19 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
             "alert_categories": categories
         }
 
-        # Ensure the tests directory exists
-        test_dir = Path(__file__).parent
-        results_file = test_dir / 'test_results.json'
+        # Ensure the test_results directory exists
+        test_results_dir = Path(__file__).parent / "test_results"
+        test_results_dir.mkdir(exist_ok=True)
 
-        # Load existing results or create empty list
-        existing_results = []
-        if results_file.exists():
-            try:
-                with open(results_file, 'r') as f:
-                    existing_results = json.load(f)
-                    if not isinstance(existing_results, list):
-                        existing_results = [existing_results]
-            except json.JSONDecodeError:
-                log_warn(logger, f"[WARN] Could not parse existing results file, creating new one")
+        # Create a new file for this test run
+        filename = f"{start_time.strftime('%Y-%m-%d_%H-%M-%S')}.json"
+        results_file = test_results_dir / filename
 
-        # Append new result
-        existing_results.append(new_result)
-
-        # Write all results back to file
+        # Write the test result to the file in a pretty JSON format
         with open(results_file, 'w') as f:
-            json.dump(existing_results, f)
-        
-        log_info(logger, f"[INFO] Test results appended to {results_file}")
+            json.dump(test_result, f, indent=4)
+
+        log_info(logger, f"[INFO] Test results written to {results_file}")
 
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to write test results: {e}")
@@ -229,6 +222,8 @@ def main():
     router_flows_detection(filtered_rows, config_dict)
     foreign_flows_detection(filtered_rows, config_dict)
     local_flows_detection(filtered_rows, config_dict)
+    detect_unauthorized_dns(filtered_rows, config_dict)
+    detect_unauthorized_ntp(filtered_rows, config_dict)
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
