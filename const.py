@@ -12,7 +12,7 @@ CONST_WHITELIST_DB = '/database/whitelist.db'
 CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','/database/test_source_2.db']
 CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'TEST'
-CONST_REINITIALIZE_DB = 1
+CONST_REINITIALIZE_DB = 0
 CONST_CREATE_NEWFLOWS_SQL='''
     CREATE TABLE IF NOT EXISTS flows (
         src_ip TEXT,

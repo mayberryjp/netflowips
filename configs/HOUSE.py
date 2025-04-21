@@ -1,5 +1,5 @@
 CONST_DEFAULT_CONFIGS = [
-    ('NewHostsDetection', 2),
+    ('NewHostsDetection', 1),
     ('LocalFlowsDetection', 1),
     ('RouterFlowsDetection', 0),
     ('ForeignFlowsDetection', 1),

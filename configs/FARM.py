@@ -1,5 +1,5 @@
 CONST_DEFAULT_CONFIGS = [
-    ('NewHostsDetection', 2),
+    ('NewHostsDetection', 1),
     ('LocalFlowsDetection', 1),
     ('RouterFlowsDetection', 0),
     ('ForeignFlowsDetection', 1),
@@ -21,6 +21,7 @@ CONST_DEFAULT_CONFIGS = [
     ('TelegramChatId','-4037424339'),
     ('ScheduleProcessor','1'),
     ('StartCollector','1'),
-    ('CleanNewFlows','1')
+    ('CleanNewFlows','1'),
     # Add more default configurations here as needed
+   ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
 ]
