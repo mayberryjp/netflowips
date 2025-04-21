@@ -1,13 +1,17 @@
 import sqlite3
 import logging
 from utils import log_info, log_error  # Assuming log_info is defined in utils
-from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB
+from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER
 import ipaddress
 import os
 from datetime import datetime
 import json
 import importlib
-config = importlib.import_module(f"configs.{CONST_SITE}")
+
+if (IS_CONTAINER):
+    SITE = os.getenv("SITE", CONST_SITE)
+
+config = importlib.import_module(f"configs.{SITE}")
 
 logger = logging.getLogger(__name__)  # Create a logger for this module
 
