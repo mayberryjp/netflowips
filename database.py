@@ -7,16 +7,11 @@ import os
 from datetime import datetime
 import json
 import importlib
-
-if (IS_CONTAINER):
-    SITE = os.getenv("SITE", CONST_SITE)
-
-config = importlib.import_module(f"configs.{SITE}")
-
-logger = logging.getLogger(__name__)  # Create a logger for this module
+  # Create a logger for this module
 
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
+    logger = logging.getLogger(__name__)
     try:
         if os.path.exists(db_path):
             os.remove(db_path)
@@ -28,6 +23,7 @@ def delete_database(db_path):
 
 def connect_to_db(DB_NAME):
     """Establish a connection to the specified database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = sqlite3.connect(DB_NAME)
         return conn
@@ -37,6 +33,7 @@ def connect_to_db(DB_NAME):
 
 def create_database(db_name, create_table_sql):
     """Initializes a SQLite database with the specified schema."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(db_name)
         if not conn:
@@ -53,6 +50,7 @@ def create_database(db_name, create_table_sql):
 
 def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
+    logger = logging.getLogger(__name__)
     allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
     if allflows_conn:
         try:
@@ -81,6 +79,7 @@ def update_allflows(rows, config_dict):
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
+    logger = logging.getLogger(__name__)
     conn = connect_to_db(db_name)
     if conn:
         try:
@@ -95,11 +94,18 @@ def delete_all_records(db_name, table_name='flows'):
 
 def init_configurations():
     """Inserts default configurations into the CONST_CONFIG_DB database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
             logger.error("[ERROR] Unable to connect to configuration database")
             return
+
+        if (IS_CONTAINER):
+            SITE = os.getenv("SITE", CONST_SITE)
+
+        config = importlib.import_module(f"configs.{SITE}")
+        log_info(logger, f"[INFO] Reading configuration from configs/{SITE}")
 
         cursor = conn.cursor()
         for key, value in config.CONST_DEFAULT_CONFIGS:
@@ -115,6 +121,7 @@ def init_configurations():
 
 def get_config_settings():
     """Read configuration settings from the configuration database into a dictionary."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
@@ -133,6 +140,7 @@ def get_config_settings():
 
 def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
     """Logs an alert to the alerts.db SQLite database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = sqlite3.connect(CONST_ALERTS_DB)
         cursor = conn.cursor()
@@ -158,6 +166,7 @@ def get_whitelist():
         list: List of tuples containing (alert_id, category, insert_date)
               Returns None if there's an error
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_WHITELIST_DB)
         if not conn:
@@ -194,6 +203,7 @@ def get_row_count(db_name, table_name):
     Returns:
         int: Number of rows in the table, or -1 if there's an error
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(db_name)
         if not conn:
@@ -218,6 +228,7 @@ def get_alerts_summary():
     Get a summary of alerts by category from alerts.db.
     Prints total count and breakdown by category.
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_ALERTS_DB)
         if not conn:
