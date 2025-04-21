@@ -23,6 +23,9 @@ def create_geolocation_db(
         db_name (str): The name of the SQLite database to create.
     """
     logger = logging.getLogger(__name__)
+
+    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
+    
     try:
         # Step 1: Check if the CSV files exist
         if not os.path.exists(blocks_csv_path):
@@ -79,7 +82,7 @@ def create_geolocation_db(
         # After processing CSV files, add LOCAL_NETWORKS
         log_info(logger, f"[INFO] Adding LOCAL_NETWORKS to geolocation database...")
         config_dict = get_config_settings()
-        for network in config_dict['LocalNetworks'].split(','):
+        for network in LOCAL_NETWORKS:
             start_ip, end_ip, netmask = ip_network_to_range(network)
             if start_ip is None:
                 continue

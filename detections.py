@@ -22,6 +22,7 @@ def update_local_hosts(rows, config_dict):
 
     # Connect to the localhosts database
     localhosts_conn = connect_to_db(CONST_LOCALHOSTS_DB)
+    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
     if not localhosts_conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
         return
@@ -39,7 +40,7 @@ def update_local_hosts(rows, config_dict):
                 ip_address = row[range_index]
 
                 # Check if the IP is within any of the allowed network ranges
-                is_local = is_ip_in_range(ip_address, config_dict['LocalNetworks'].split(','))
+                is_local = is_ip_in_range(ip_address, LOCAL_NETWORKS)
 
                 if is_local and ip_address not in existing_localhosts:
                     # Add the new IP to localhosts.db
@@ -84,7 +85,7 @@ def detect_new_outbound_connections(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     alerts_conn = connect_to_db(CONST_ALERTS_DB)
-    
+
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     if not alerts_conn:
         log_error(logger, "[ERROR] Unable to connect to alerts database")
