@@ -11,6 +11,7 @@ if (IS_CONTAINER):
 # Entry point
 if __name__ == "__main__":
 
+    delete_database(CONST_CONFIG_DB)
     create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
     init_configurations()
     config_dict = get_config_settings()
