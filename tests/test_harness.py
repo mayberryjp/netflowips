@@ -45,7 +45,8 @@ from database import (
     create_database,
     init_configurations,
     get_row_count,
-    get_alerts_summary
+    get_alerts_summary,
+    import_whitelists
 )
 from detections import (
     update_local_hosts,
@@ -216,6 +217,8 @@ def main():
     log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_NEWFLOWS_DB}")
 
     update_allflows(rows, config_dict)
+
+    import_whitelists(config_dict)
 
     whitelist_entries = get_whitelist()
     log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")

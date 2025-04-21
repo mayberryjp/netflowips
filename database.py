@@ -248,5 +248,47 @@ def get_alerts_summary():
         if 'conn' in locals():
             conn.close()
 
+def import_whitelists(config_dict):
+    """
+    Import whitelist entries into the whitelist database from a config_dict entry.
+
+    Args:
+        config_dict (dict): Configuration dictionary containing whitelist entries.
+                            Expected format: "WhitelistEntries" -> JSON string of list of tuples
+                            Each tuple: (src_ip, dst_ip, dst_port, protocol)
+    """
+    logger = logging.getLogger(__name__)
+    whitelist_entries_json = config_dict.get("WhitelistEntries", "[]")
+    whitelist_entries = json.loads(whitelist_entries_json)
+
+    if not whitelist_entries:
+        log_info(logger, "[INFO] No whitelist entries found in config_dict.")
+        return
+
+    conn = connect_to_db(CONST_WHITELIST_DB)
+    if not conn:
+        log_error(logger, "[ERROR] Unable to connect to whitelist database.")
+        return
+
+    try:
+        cursor = conn.cursor()
+
+        # Insert whitelist entries into the database
+        for entry in whitelist_entries:
+            src_ip, dst_ip, dst_port, protocol = entry
+            cursor.execute("""
+                INSERT OR IGNORE INTO whitelist (
+                    whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
+                ) VALUES (?, ?, ?, ?, 1)
+            """, (src_ip, dst_ip, dst_port, protocol))
+
+        conn.commit()
+        log_info(logger, f"[INFO] Imported {len(whitelist_entries)} whitelist entries into the database.")
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error importing whitelist entries: {e}")
+    finally:
+        conn.close()
+
 
 
