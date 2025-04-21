@@ -24,6 +24,7 @@ def create_geolocation_db(
     """
     logger = logging.getLogger(__name__)
 
+    config_dict = get_config_settings()
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
     
     try:
@@ -81,7 +82,7 @@ def create_geolocation_db(
 
         # After processing CSV files, add LOCAL_NETWORKS
         log_info(logger, f"[INFO] Adding LOCAL_NETWORKS to geolocation database...")
-        config_dict = get_config_settings()
+
         for network in LOCAL_NETWORKS:
             start_ip, end_ip, netmask = ip_network_to_range(network)
             if start_ip is None:

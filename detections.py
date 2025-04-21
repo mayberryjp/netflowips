@@ -449,16 +449,16 @@ def detect_unauthorized_ntp(rows, config_dict):
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if either IP is not in the approved NTP servers list
-        if src_ip not in approved_ntp_servers and src_ip in LOCAL_NETWORKS:
+        if src_ip not in approved_ntp_servers and is_ip_in_range(src_ip, LOCAL_NETWORKS):
             # Create a unique identifier for this alert
             alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
 
             log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
 
             message = (f"Unauthorized NTP Traffic Detected:\n"
-                        f"Source: {src_ip}:{src_port}\n"
-                        f"Destination: {dst_ip}:{dst_port}\n"
-                        f"Protocol: {protocol}")
+                       f"Source: {src_ip}:{src_port}\n"
+                       f"Destination: {dst_ip}:{dst_port}\n"
+                       f"Protocol: {protocol}")
 
             # Log alert based on configuration level
             if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
@@ -495,7 +495,7 @@ def detect_unauthorized_dns(rows, config_dict):
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if either IP is not in the approved DNS servers list
-        if src_ip not in approved_dns_servers and src_ip in LOCAL_NETWORKS:
+        if src_ip not in approved_dns_servers and is_ip_in_range(src_ip, LOCAL_NETWORKS):
             # Create a unique identifier for this alert
             alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
 
