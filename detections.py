@@ -84,6 +84,8 @@ def detect_new_outbound_connections(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     alerts_conn = connect_to_db(CONST_ALERTS_DB)
+    
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     if not alerts_conn:
         log_error(logger, "[ERROR] Unable to connect to alerts database")
         return
@@ -97,7 +99,7 @@ def detect_new_outbound_connections(rows, config_dict):
             # Check if source IP is in any of the local networks
             is_src_local = False
 
-            if is_ip_in_range(src_ip, config_dict['LocalNetworks'].split(',')):
+            if is_ip_in_range(src_ip, LOCAL_NETWORKS):
                 is_src_local = True
             
             # If source is local and destination port is lower (indicating server),
@@ -146,7 +148,7 @@ def router_flows_detection(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
 
-    ROUTER_LIST = config_dict['RouterIpAddresses'].split(',')
+    ROUTER_LIST = set(config_dict['RouterIpAddresses'].split(','))
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
 
@@ -195,8 +197,8 @@ def local_flows_detection(rows, config_dict):
     excluding any flows involving ROUTER_IPADDRESS.
     """
 
-    ROUTER_LIST = config_dict['RouterIpAddresses'].split(',')
-    LOCAL_NETWORKS = config_dict['LocalNetworks'].split(',')
+    ROUTER_LIST = set(config_dict['RouterIpAddresses'].split(','))
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
 
     logger = logging.getLogger(__name__)
     for row in rows:
@@ -251,7 +253,7 @@ def foreign_flows_detection(rows, config_dict):
     Detect and handle flows where neither src_ip nor dst_ip is in LOCAL_NETWORKS.
     """
     logger = logging.getLogger(__name__)
-    LOCAL_NETWORKS=config_dict['LocalNetworks'].split(',')
+    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
 
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
@@ -430,45 +432,43 @@ def detect_unauthorized_ntp(rows, config_dict):
         config_dict: Dictionary containing configuration settings
     """
 
-
     logger = logging.getLogger(__name__)
     # Get the list of approved NTP servers
-    approved_ntp_servers = config_dict.get("ApprovedLocalNtpServersList", "").split(",")
+    approved_ntp_servers = set(config_dict.get("ApprovedLocalNtpServersList", "").split(","))
+
     if not approved_ntp_servers:
         log_warn(logger, "[WARN] No approved NTP servers configured")
         return
 
-    LOCAL_NETWORKS=config_dict['LocalNetworks'].split(',')
+    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
 
     filtered_rows = [row for row in rows if row[2] == 123 or row[3] == 123]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
-        # Check if src_ip is in local networks
-        if is_ip_in_range(src_ip, LOCAL_NETWORKS):
-            # Check if either IP is not in the approved NTP servers list
-            if src_ip not in approved_ntp_servers and dst_ip not in approved_ntp_servers:
-                # Create a unique identifier for this alert
-                alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
+        # Check if either IP is not in the approved NTP servers list
+        if src_ip not in approved_ntp_servers and src_ip in LOCAL_NETWORKS:
+            # Create a unique identifier for this alert
+            alert_id = f"{src_ip}_{dst_ip}__UnauthorizedNTP"
 
-                log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
+            log_info(logger, f"[INFO] Unauthorized NTP Traffic Detected: {src_ip} -> {dst_ip}")
 
-                message = (f"Unauthorized NTP Traffic Detected:\n"
-                            f"Source: {src_ip}:{src_port}\n"
-                            f"Destination: {dst_ip}:{dst_port}\n"
-                            f"Protocol: {protocol}")
+            message = (f"Unauthorized NTP Traffic Detected:\n"
+                        f"Source: {src_ip}:{src_port}\n"
+                        f"Destination: {dst_ip}:{dst_port}\n"
+                        f"Protocol: {protocol}")
 
-                # Log alert based on configuration level
-                if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
-                    # Send Telegram alert and log to database
-                    send_telegram_message(message, row)
-                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
-                elif int(config_dict.get("BypassLocalNtpDetection", 0)) == 1:
-                    # Only log to database
-                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
+            # Log alert based on configuration level
+            if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
+                # Send Telegram alert and log to database
+                send_telegram_message(message, row)
+                log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
+                                alert_id, False)
+            elif int(config_dict.get("BypassLocalNtpDetection", 0)) == 1:
+                # Only log to database
+                log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
+                                alert_id, False)
 
 
 def detect_unauthorized_dns(rows, config_dict):
@@ -482,41 +482,39 @@ def detect_unauthorized_dns(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     # Get the list of approved DNS servers
-    approved_dns_servers = config_dict.get("ApprovedLocalDnsServersList", "").split(",")
+    approved_dns_servers = set(config_dict.get("ApprovedLocalDnsServersList", "").split(","))
     if not approved_dns_servers:
         log_warn(logger, "[WARN] No approved DNS servers configured")
         return
     
-    LOCAL_NETWORKS=config_dict['LocalNetworks'].split(',')
+    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
     filtered_rows = [row for row in rows if row[2] == 53 or row[3] == 53]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
-        # Check if src_ip is in local networks
-        if is_ip_in_range(src_ip, LOCAL_NETWORKS):
-                # Check if either IP is not in the approved DNS servers list
-                if src_ip not in approved_dns_servers and dst_ip not in approved_dns_servers:
-                    # Create a unique identifier for this alert
-                    alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
+        # Check if either IP is not in the approved DNS servers list
+        if src_ip not in approved_dns_servers and src_ip in LOCAL_NETWORKS:
+            # Create a unique identifier for this alert
+            alert_id = f"{src_ip}_{dst_ip}__UnauthorizedDNS"
 
-                    log_info(logger, f"[INFO] Unauthorized DNS Traffic Detected: {src_ip} -> {dst_ip}")
+            log_info(logger, f"[INFO] Unauthorized DNS Traffic Detected: {src_ip} -> {dst_ip}")
 
-                    message = (f"Unauthorized DNS Traffic Detected:\n"
-                                f"Source: {src_ip}:{src_port}\n"
-                                f"Destination: {dst_ip}:{dst_port}\n"
-                                f"Protocol: {protocol}")
+            message = (f"Unauthorized DNS Traffic Detected:\n"
+                        f"Source: {src_ip}:{src_port}\n"
+                        f"Destination: {dst_ip}:{dst_port}\n"
+                        f"Protocol: {protocol}")
 
-                    # Log alert based on configuration level
-                    if int(config_dict.get("BypassLocalDnsDetection", 0)) == 2:
-                        # Send Telegram alert and log to database
-                        send_telegram_message(message, row)
-                        log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                        alert_id, False)
-                    elif int(config_dict.get("BypassLocalDnsDetection", 0)) == 1:
-                        # Only log to database
-                        log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                        alert_id, False)
+            # Log alert based on configuration level
+            if int(config_dict.get("BypassLocalDnsDetection", 0)) == 2:
+                # Send Telegram alert and log to database
+                send_telegram_message(message, row)
+                log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
+                                alert_id, False)
+            elif int(config_dict.get("BypassLocalDnsDetection", 0)) == 1:
+                # Only log to database
+                log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
+                                alert_id, False)
 
 
 def detect_incorrect_authoritative_dns(rows, config_dict):
@@ -530,41 +528,39 @@ def detect_incorrect_authoritative_dns(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     # Get the list of approved authoritative DNS servers
-    approved_authoritative_dns_servers = config_dict.get("ApprovedAuthoritativeDnsServersList", "").split(",")
+    approved_authoritative_dns_servers = set(config_dict.get("ApprovedAuthoritativeDnsServersList", "").split(","))
     if not approved_authoritative_dns_servers:
         log_warn(logger, "[WARN] No approved authoritative DNS servers configured")
         return
 
-    APPROVED_LOCAL_DNS_SERVERS_LIST = config_dict.get("ApprovedLocalDnsServersList", "").split(",")
+    APPROVED_LOCAL_DNS_SERVERS_LIST = set(config_dict.get("ApprovedLocalDnsServersList", "").split(","))
     filtered_rows = [row for row in rows if row[2] == 53 or row[3] == 53]
     
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if src_ip is in local networks
-        if src_ip in APPROVED_LOCAL_DNS_SERVERS_LIST:
+        if src_ip in APPROVED_LOCAL_DNS_SERVERS_LIST and dst_ip not in approved_authoritative_dns_servers:
             # Check if dst_ip is not in the approved authoritative DNS servers list
-            if dst_ip not in approved_authoritative_dns_servers:
-                # Create a unique identifier for this alert
-                alert_id = f"{src_ip}_{dst_ip}__IncorrectAuthoritativeDNS"
+            alert_id = f"{src_ip}_{dst_ip}__IncorrectAuthoritativeDNS"
 
-                log_info(logger, f"[INFO] Incorrect Authoritative DNS Detected: {src_ip} -> {dst_ip}")
+            log_info(logger, f"[INFO] Incorrect Authoritative DNS Detected: {src_ip} -> {dst_ip}")
 
-                message = (f"Incorrect Authoritative DNS Detected:\n"
-                            f"Source: {src_ip}:{src_port}\n"
-                            f"Destination: {dst_ip}:{dst_port}\n"
-                            f"Protocol: {protocol}")
+            message = (f"Incorrect Authoritative DNS Detected:\n"
+                        f"Source: {src_ip}:{src_port}\n"
+                        f"Destination: {dst_ip}:{dst_port}\n"
+                        f"Protocol: {protocol}")
 
-                # Log alert based on configuration level
-                if int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 2:
-                    # Send Telegram alert and log to database
-                    send_telegram_message(message, row)
-                    log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
-                                    alert_id, False)
-                elif int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 1:
-                    # Only log to database
-                    log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
-                                    alert_id, False)
+            # Log alert based on configuration level
+            if int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 2:
+                # Send Telegram alert and log to database
+                send_telegram_message(message, row)
+                log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
+                                alert_id, False)
+            elif int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 1:
+                # Only log to database
+                log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
+                                alert_id, False)
 
 
 def detect_incorrect_ntp_stratum(rows, config_dict):
@@ -578,41 +574,39 @@ def detect_incorrect_ntp_stratum(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     # Get the list of approved NTP stratum servers
-    approved_ntp_stratum_servers = config_dict.get("ApprovedNtpStratumServersList", "").split(",")
+    approved_ntp_stratum_servers = set(config_dict.get("ApprovedNtpStratumServersList", "").split(","))
     if not approved_ntp_stratum_servers:
         log_warn(logger, "[WARN] No approved NTP stratum servers configured")
         return
     
-    APPROVED_LOCAL_NTP_SERVERS_LIST = config_dict.get("ApprovedLocalNtpServersList", "").split(",")
+    APPROVED_LOCAL_NTP_SERVERS_LIST = set(config_dict.get("ApprovedLocalNtpServersList", "").split(","))
     filtered_rows = [row for row in rows if row[2] == 123 or row[3] == 123]
 
     for row in filtered_rows:
         src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
 
         # Check if src_ip is in local networks
-        if src_ip in APPROVED_LOCAL_NTP_SERVERS_LIST:
+        if src_ip in APPROVED_LOCAL_NTP_SERVERS_LIST and dst_ip not in approved_ntp_stratum_servers:
             # Check if dst_ip is not in the approved NTP stratum servers list
-            if dst_ip not in approved_ntp_stratum_servers:
-                # Create a unique identifier for this alert
-                alert_id = f"{src_ip}_{dst_ip}__IncorrectNTPStratum"
+            alert_id = f"{src_ip}_{dst_ip}__IncorrectNTPStratum"
 
-                log_info(logger, f"[INFO] Incorrect NTP Stratum Detected: {src_ip} -> {dst_ip}")
+            log_info(logger, f"[INFO] Incorrect NTP Stratum Detected: {src_ip} -> {dst_ip}")
 
-                message = (f"Incorrect NTP Stratum Detected:\n"
-                            f"Source: {src_ip}:{src_port}\n"
-                            f"Destination: {dst_ip}:{dst_port}\n"
-                            f"Protocol: {protocol}")
+            message = (f"Incorrect NTP Stratum Detected:\n"
+                        f"Source: {src_ip}:{src_port}\n"
+                        f"Destination: {dst_ip}:{dst_port}\n"
+                        f"Protocol: {protocol}")
 
-                # Log alert based on configuration level
-                if int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 2:
-                    # Send Telegram alert and log to database
-                    send_telegram_message(message, row)
-                    log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
-                                    alert_id, False)
-                elif int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 1:
-                    # Only log to database
-                    log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
-                                    alert_id, False)
+            # Log alert based on configuration level
+            if int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 2:
+                # Send Telegram alert and log to database
+                send_telegram_message(message, row)
+                log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
+                                alert_id, False)
+            elif int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 1:
+                # Only log to database
+                log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
+                                alert_id, False)
 
 
 def remove_whitelist(rows, whitelist_entries):
