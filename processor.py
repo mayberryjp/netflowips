@@ -10,9 +10,6 @@ import time
 import logging
 import os
 
-# Initialize logger
-
-
 if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
 
