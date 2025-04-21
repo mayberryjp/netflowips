@@ -116,7 +116,7 @@ def copy_flows_to_newflows():
             if 'newflows_conn' in locals():
                 newflows_conn.close()
 
-def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, detection_timestamps):
+def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, detection_durations):
     """
     Log test execution results to a new JSON file for each test run.
 
@@ -126,7 +126,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
         duration: Test duration in seconds
         total_rows: Total number of rows processed
         filtered_rows: Number of rows after whitelist filtering
-        detection_timestamps: Dictionary containing timestamps for detection functions
+        detection_durations: Dictionary containing durations for detection functions
     """
     logger = logging.getLogger(__name__)
     try:
@@ -160,7 +160,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "geolocation": get_row_count(CONST_GEOLOCATION_DB, 'geolocation')
             },
             "alert_categories": categories,
-            "detection_timestamps": detection_timestamps
+            "detection_durations": detection_durations
         }
 
         # Ensure the test_results directory exists
@@ -221,70 +221,60 @@ def main():
     log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
     filtered_rows = remove_whitelist(rows, whitelist_entries)
 
-    # Dictionary to store timestamps for each detection function
-    detection_timestamps = {}
+    # Dictionary to store durations for each detection function
+    detection_durations = {}
 
-    # Run detection functions and log timestamps
-    detection_timestamps['update_local_hosts_start'] = datetime.now()
+    # Run detection functions and calculate durations
+    start = datetime.now()
     update_local_hosts(filtered_rows, config_dict)
-    detection_timestamps['update_local_hosts_end'] = datetime.now()
+    detection_durations['update_local_hosts'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['detect_new_outbound_connections_start'] = datetime.now()
+    start = datetime.now()
     detect_new_outbound_connections(filtered_rows, config_dict)
-    detection_timestamps['detect_new_outbound_connections_end'] = datetime.now()
+    detection_durations['detect_new_outbound_connections'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['router_flows_detection_start'] = datetime.now()
+    start = datetime.now()
     router_flows_detection(filtered_rows, config_dict)
-    detection_timestamps['router_flows_detection_end'] = datetime.now()
+    detection_durations['router_flows_detection'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['foreign_flows_detection_start'] = datetime.now()
+    start = datetime.now()
     foreign_flows_detection(filtered_rows, config_dict)
-    detection_timestamps['foreign_flows_detection_end'] = datetime.now()
+    detection_durations['foreign_flows_detection'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['local_flows_detection_start'] = datetime.now()
+    start = datetime.now()
     local_flows_detection(filtered_rows, config_dict)
-    detection_timestamps['local_flows_detection_end'] = datetime.now()
+    detection_durations['local_flows_detection'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['detect_unauthorized_dns_start'] = datetime.now()
+    start = datetime.now()
     detect_unauthorized_dns(filtered_rows, config_dict)
-    detection_timestamps['detect_unauthorized_dns_end'] = datetime.now()
+    detection_durations['detect_unauthorized_dns'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['detect_unauthorized_ntp_start'] = datetime.now()
+    start = datetime.now()
     detect_unauthorized_ntp(filtered_rows, config_dict)
-    detection_timestamps['detect_unauthorized_ntp_end'] = datetime.now()
+    detection_durations['detect_unauthorized_ntp'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['detect_incorrect_ntp_stratum_start'] = datetime.now()
+    start = datetime.now()
     detect_incorrect_ntp_stratum(filtered_rows, config_dict)
-    detection_timestamps['detect_incorrect_ntp_stratum_end'] = datetime.now()
+    detection_durations['detect_incorrect_ntp_stratum'] = (datetime.now() - start).total_seconds()
 
-    detection_timestamps['detect_incorrect_authoritative_dns_start'] = datetime.now()
+    start = datetime.now()
     detect_incorrect_authoritative_dns(filtered_rows, config_dict)
-    detection_timestamps['detect_incorrect_authoritative_dns_end'] = datetime.now()
+    detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
 
-    log_info(logger,"[INFO] Preparing to detect geolocation flows...")
-    detection_timestamps['detect_geolocation_flows_start'] = datetime.now()
+    log_info(logger, "[INFO] Preparing to detect geolocation flows...")
+    start = datetime.now()
     detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
-    detection_timestamps['detect_geolocation_flows_end'] = datetime.now()
+    detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
-    log_info(logger,f"[INFO] Processing finished.")   
+    log_info(logger, "[INFO] Processing finished.")
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
     log_info(logger, f"[INFO] Total execution time: {duration:.2f} seconds")
 
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_NEWFLOWS_DB, 'flows')} in {CONST_NEWFLOWS_DB}")
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_ALLFLOWS_DB, 'allflows')} in {CONST_ALLFLOWS_DB}")               
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_ALERTS_DB, 'alerts')} in {CONST_ALERTS_DB}")
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_WHITELIST_DB, 'whitelist')} in {CONST_WHITELIST_DB}")    
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_LOCALHOSTS_DB, 'localhosts')} in {CONST_LOCALHOSTS_DB}")
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_CONFIG_DB, 'configuration')} in {CONST_CONFIG_DB}")
-    log_info(logger, f"[INFO] Rows in {get_row_count(CONST_GEOLOCATION_DB, 'geolocation')} in {CONST_GEOLOCATION_DB}")  
-    
-    get_alerts_summary()
-
-    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_timestamps)
+    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_durations)
 
 if __name__ == "__main__":
     main()
