@@ -56,7 +56,9 @@ from detections import (
     detect_geolocation_flows,
     remove_whitelist,
     detect_unauthorized_ntp,
-    detect_unauthorized_dns
+    detect_unauthorized_dns,
+    detect_incorrect_authoritative_dns,
+    detect_incorrect_ntp_stratum
 )
 
 def copy_flows_to_newflows():
@@ -224,6 +226,8 @@ def main():
     local_flows_detection(filtered_rows, config_dict)
     detect_unauthorized_dns(filtered_rows, config_dict)
     detect_unauthorized_ntp(filtered_rows, config_dict)
+    detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+    detect_incorrect_authoritative_dns(filtered_rows, config_dict)
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()

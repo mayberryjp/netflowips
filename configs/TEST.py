@@ -1,0 +1,26 @@
+CONST_DEFAULT_CONFIGS = [
+    ('NewHostsDetection', 1),
+    ('LocalFlowsDetection', 1),
+    ('RouterFlowsDetection', 0),
+    ('ForeignFlowsDetection', 1),
+    ('NewOutboundDetection', 1),
+    ('GeolocationFlowsDetection', 1),
+    ('BypassLocalDnsDetection', 1),
+    ('IncorrectAuthoritativeDnsDetection', 1),
+    ('BypassLocalNtpDetection', 1),
+    ('IncorrectNtpStratrumDetection', 1),
+    ('ApprovedLocalNtpServersList','192.168.230.236,192.168.49.80'),
+    ('ApprovedLocalDnsServersList','192.168.230.236,192.168.49.80'),
+    ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1'),
+    ('ApprovedNtpStratumServersList','162.159.200.123,162.159.200.123,216.239.35.0,216.239.35.4'),
+    ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
+    ('LocalNetworks','192.168.48.0/22,192.168.230.0/24'),
+    ('RouterIpAddresses','192.168.49.1,192.168.230.1'),
+    ('ProcessingInterval','60'),
+    ('TelegramBotToken',''),
+    ('TelegramChatId',''),
+    ('ScheduleProcessor','0'),
+    ('StartCollector','1'),
+    ('CleanNewFlows','0')
+    # Add more default configurations here as needed
+]

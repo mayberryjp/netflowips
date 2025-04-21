@@ -1,41 +1,13 @@
 import sqlite3
 import csv
 import os
-import socket
-import struct
-from ipaddress import IPv4Network
-from utils import log_info, log_warn, log_error  # Assuming log_info is already defined
-from database import connect_to_db, create_database  # Assuming connect_to_db is already defined
+from utils import log_info, log_error, ip_network_to_range  # Assuming log_info is already defined
+from database import connect_to_db, create_database, get_config_settings  # Assuming connect_to_db is already defined
 import logging
-from const import CONST_LOCAL_NETWORKS, CONST_SITE, IS_CONTAINER, CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL
-
+from const import CONST_SITE, IS_CONTAINER, CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL
 
 if IS_CONTAINER:
-    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS)
-    LOCAL_NETWORKS = [LOCAL_NETWORKS] if ',' not in LOCAL_NETWORKS else LOCAL_NETWORKS.split(',')
     SITE = os.getenv("SITE", CONST_SITE)
-
-def ip_network_to_range(network):
-    """
-    Convert a CIDR network to start and end IP addresses as integers using inet_aton.
-    
-    Args:
-        network (str): Network in CIDR notation (e.g., '192.168.1.0/24')
-    
-    Returns:
-        tuple: (start_ip, end_ip, netmask) as integers
-    """
-    try:
-        net = IPv4Network(network)
-        # Convert IP addresses to integers using inet_aton and struct.unpack
-        start_ip = struct.unpack('!L', socket.inet_aton(str(net.network_address)))[0]
-        end_ip = struct.unpack('!L', socket.inet_aton(str(net.broadcast_address)))[0]
-        netmask = struct.unpack('!L', socket.inet_aton(str(net.netmask)))[0]
-        
-        return start_ip, end_ip, netmask
-    except Exception as e:
-        log_warn(None, f"[WARN] Invalid network format {network}: {e}")
-        return None, None, None
 
 def create_geolocation_db(
     blocks_csv_path="/database/geolite/GeoLite2-Country-Blocks-IPv4.csv",
@@ -106,7 +78,8 @@ def create_geolocation_db(
 
         # After processing CSV files, add LOCAL_NETWORKS
         log_info(logger, f"[INFO] Adding LOCAL_NETWORKS to geolocation database...")
-        for network in LOCAL_NETWORKS:
+        config_dict = get_config_settings()
+        for network in config_dict['LocalNetworks'].split(','):
             start_ip, end_ip, netmask = ip_network_to_range(network)
             if start_ip is None:
                 continue

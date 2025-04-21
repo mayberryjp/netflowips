@@ -1,6 +1,6 @@
 import socket
 import struct
-from const import CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
+from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
 import os
 from utils import log_info, log_warn, log_error
 import logging
@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 from database import connect_to_db
 
 if (IS_CONTAINER):
-    LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_LISTEN_ADDRESS)
-    LISTEN_PORT=os.getenv("LISTEN_PORT", CONST_LISTEN_PORT) 
+    LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
+    LISTEN_PORT=os.getenv("LISTEN_PORT", CONST_COLLECTOR_LISTEN_PORT) 
 
 
 # Update or insert flow in the DB

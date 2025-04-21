@@ -1,17 +1,15 @@
 import sqlite3
 import logging
-from utils import log_info, log_error, log_warn  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS, CONST_WHITELIST_DB
+from utils import log_info, log_error  # Assuming log_info is defined in utils
+from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB
 import ipaddress
 import os
 from datetime import datetime
-from notifications import send_telegram_message
 import json
+import importlib
+config = importlib.import_module(f"configs.{CONST_SITE}")
 
 logger = logging.getLogger(__name__)  # Create a logger for this module
-
-if IS_CONTAINER:
-    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS).split(',')
 
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
@@ -100,7 +98,7 @@ def init_configurations():
             return
 
         cursor = conn.cursor()
-        for key, value in CONST_DEFAULT_CONFIGS:
+        for key, value in config.CONST_DEFAULT_CONFIGS:
             cursor.execute("""
                 INSERT OR IGNORE INTO configuration (key, value)
                 VALUES (?, ?)

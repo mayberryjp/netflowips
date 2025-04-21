@@ -4,6 +4,7 @@ import json
 import socket
 import struct
 from datetime import datetime
+from ipaddress import IPv4Network
 
 
 def log_info(logger, message):
@@ -38,6 +39,28 @@ def is_ip_in_range(ip, ranges):
     except ValueError as e:
         log_error(logger, f"[ERROR] Invalid IP address or range: {e}")
         return False
+
+def ip_network_to_range(network):
+    """
+    Convert a CIDR network to start and end IP addresses as integers using inet_aton.
+    
+    Args:
+        network (str): Network in CIDR notation (e.g., '192.168.1.0/24')
+    
+    Returns:
+        tuple: (start_ip, end_ip, netmask) as integers
+    """
+    try:
+        net = IPv4Network(network)
+        # Convert IP addresses to integers using inet_aton and struct.unpack
+        start_ip = struct.unpack('!L', socket.inet_aton(str(net.network_address)))[0]
+        end_ip = struct.unpack('!L', socket.inet_aton(str(net.broadcast_address)))[0]
+        netmask = struct.unpack('!L', socket.inet_aton(str(net.netmask)))[0]
+        
+        return start_ip, end_ip, netmask
+    except Exception as e:
+        log_warn(None, f"[WARN] Invalid network format {network}: {e}")
+        return None, None, None
 
 def dump_json(obj):
     """

@@ -1,10 +1,10 @@
 import sqlite3  # Import the sqlite3 module
 from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
-from detections import remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection  # Import update_LOCAL_NETWORKS from detections.py
+from detections import remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum  # Import from detections.py, 
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from utils import log_info, log_warn, log_error  # Import log_info from utils
-from const import CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL, CONST_GEOLOCATION_DB, CONST_SCHEDULE_PROCESSOR, CONST_CLEAN_NEWFLOWS,CONST_REINITIALIZE_DB,CONST_PROCESSING_INTERVAL, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
+from const import CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL, CONST_GEOLOCATION_DB, CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_NEWFLOWS_DB, CONST_ALLFLOWS_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_CONFIG_DB, CONST_CREATE_WHITELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
 import schedule
 import time
 import logging
@@ -14,10 +14,7 @@ import os
 
 
 if (IS_CONTAINER):
-    PROCESSING_INTERVAL=os.getenv("PROCESSING_INTERVAL", CONST_PROCESSING_INTERVAL)
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
-    CLEAN_NEWFLOWS=os.getenv("CLEAN_NEWFLOWS", CONST_CLEAN_NEWFLOWS)
-    SCHEDULE_PROCESSOR=os.getenv("SCHEDULE_PROCESSOR", CONST_SCHEDULE_PROCESSOR)
 
 # Function to process data
 def process_data(geolocation_data):
@@ -29,7 +26,7 @@ def process_data(geolocation_data):
 
     """Read data from the database and process it."""
     conn = connect_to_db(CONST_NEWFLOWS_DB)
-    if conn and SCHEDULE_PROCESSOR:
+    if conn and config_dict['ScheduleProcessor'] == 1:
         try:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM flows")
@@ -37,7 +34,7 @@ def process_data(geolocation_data):
 
             # delete newflows so collector can write clean to it again as quickly as possible
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
-            if (CLEAN_NEWFLOWS):
+            if (config_dict['CleanNewFlows'] == 1):
                 delete_all_records(CONST_NEWFLOWS_DB)
 
             # Pass the rows to update_all_flows
@@ -64,8 +61,19 @@ def process_data(geolocation_data):
             if config_dict.get("LocalFlowsDetection", 0) > 0:
                 local_flows_detection(filtered_rows, config_dict)
 
+            if config_dict.get("UnauthorizedDNSDetection", 0) > 0:
+                detect_unauthorized_dns(filtered_rows, config_dict)
+            
+            if config_dict.get("UnauthorizedNTPDetection", 0) > 0:
+                detect_unauthorized_ntp(filtered_rows, config_dict)
+
+            if config_dict.get("IncorrectAuthoritativeDnsDetection", 0) > 0:
+                detect_incorrect_authoritative_dns(filtered_rows, config_dict) 
+
+            if config_dict.get("IncorrectNtpStratumDetection", 0) > 0:
+                detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+
             if config_dict.get("GeolocationFlowsDetection", 0) > 0:
-                # Call the geolocation detection function here
                 detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
         
             log_info(logger,f"[INFO] Processing finished.")   
