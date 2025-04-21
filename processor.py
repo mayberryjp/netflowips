@@ -1,5 +1,5 @@
 import sqlite3  # Import the sqlite3 module
-from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations  # Import from database.py
+from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations, import_whitelists  # Import from database.py
 from detections import remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum  # Import from detections.py, 
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
@@ -19,7 +19,7 @@ if (IS_CONTAINER):
 # Function to process data
 def process_data(geolocation_data):
     logger = logging.getLogger(__name__)
-    
+
     config_dict = get_config_settings()
     if not config_dict:
         log_error(logger, "[ERROR] Failed to load configuration settings")
@@ -41,6 +41,8 @@ def process_data(geolocation_data):
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
 
+            import_whitelists(config_dict)
+            
             # process whitelisted entries and remove from detection rows
             whitelist_entries = get_whitelist()
             log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
