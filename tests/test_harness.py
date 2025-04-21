@@ -61,6 +61,7 @@ from detections import (
     detect_incorrect_ntp_stratum
 )
 
+
 def copy_flows_to_newflows():
     """
     Copy all flows from source databases defined in CONST_TEST_SOURCE_DB to newflows.db
@@ -115,7 +116,7 @@ def copy_flows_to_newflows():
             if 'newflows_conn' in locals():
                 newflows_conn.close()
 
-def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
+def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, detection_timestamps):
     """
     Log test execution results to a new JSON file for each test run.
 
@@ -125,6 +126,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
         duration: Test duration in seconds
         total_rows: Total number of rows processed
         filtered_rows: Number of rows after whitelist filtering
+        detection_timestamps: Dictionary containing timestamps for detection functions
     """
     logger = logging.getLogger(__name__)
     try:
@@ -157,7 +159,8 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
                 "configuration": get_row_count(CONST_CONFIG_DB, 'configuration'),
                 "geolocation": get_row_count(CONST_GEOLOCATION_DB, 'geolocation')
             },
-            "alert_categories": categories
+            "alert_categories": categories,
+            "detection_timestamps": detection_timestamps
         }
 
         # Ensure the test_results directory exists
@@ -180,7 +183,6 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows):
 def main():
     """Main function to copy flows from multiple databases"""
     start_time = datetime.now()
-
     logger = logging.getLogger(__name__)
 
     delete_database(CONST_ALLFLOWS_DB)
@@ -219,21 +221,53 @@ def main():
     log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
     filtered_rows = remove_whitelist(rows, whitelist_entries)
 
+    # Dictionary to store timestamps for each detection function
+    detection_timestamps = {}
+
+    # Run detection functions and log timestamps
+    detection_timestamps['update_local_hosts_start'] = datetime.now()
     update_local_hosts(filtered_rows, config_dict)
+    detection_timestamps['update_local_hosts_end'] = datetime.now()
+
+    detection_timestamps['detect_new_outbound_connections_start'] = datetime.now()
     detect_new_outbound_connections(filtered_rows, config_dict)
+    detection_timestamps['detect_new_outbound_connections_end'] = datetime.now()
+
+    detection_timestamps['router_flows_detection_start'] = datetime.now()
     router_flows_detection(filtered_rows, config_dict)
+    detection_timestamps['router_flows_detection_end'] = datetime.now()
+
+    detection_timestamps['foreign_flows_detection_start'] = datetime.now()
     foreign_flows_detection(filtered_rows, config_dict)
+    detection_timestamps['foreign_flows_detection_end'] = datetime.now()
+
+    detection_timestamps['local_flows_detection_start'] = datetime.now()
     local_flows_detection(filtered_rows, config_dict)
+    detection_timestamps['local_flows_detection_end'] = datetime.now()
+
+    detection_timestamps['detect_unauthorized_dns_start'] = datetime.now()
     detect_unauthorized_dns(filtered_rows, config_dict)
+    detection_timestamps['detect_unauthorized_dns_end'] = datetime.now()
+
+    detection_timestamps['detect_unauthorized_ntp_start'] = datetime.now()
     detect_unauthorized_ntp(filtered_rows, config_dict)
+    detection_timestamps['detect_unauthorized_ntp_end'] = datetime.now()
+
+    detection_timestamps['detect_incorrect_ntp_stratum_start'] = datetime.now()
     detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+    detection_timestamps['detect_incorrect_ntp_stratum_end'] = datetime.now()
+
+    detection_timestamps['detect_incorrect_authoritative_dns_start'] = datetime.now()
     detect_incorrect_authoritative_dns(filtered_rows, config_dict)
+    detection_timestamps['detect_incorrect_authoritative_dns_end'] = datetime.now()
 
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
 
     log_info(logger,"[INFO] Preparing to detect geolocation flows...")
+    detection_timestamps['detect_geolocation_flows_start'] = datetime.now()
     detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    detection_timestamps['detect_geolocation_flows_end'] = datetime.now()
 
     log_info(logger,f"[INFO] Processing finished.")   
     end_time = datetime.now()
@@ -250,7 +284,7 @@ def main():
     
     get_alerts_summary()
 
-    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows))
+    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_timestamps)
 
 if __name__ == "__main__":
     main()
