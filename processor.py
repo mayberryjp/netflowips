@@ -105,7 +105,7 @@ if __name__ == "__main__":
     create_database(CONST_ALLFLOWS_DB, CONST_CREATE_ALLFLOWS_SQL)
     create_database(CONST_ALERTS_DB, CONST_CREATE_ALERTS_SQL)
     create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
-    create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
+    #create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
     create_database(CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL)
 
     create_geolocation_db()

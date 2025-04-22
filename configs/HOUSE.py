@@ -17,8 +17,8 @@ CONST_DEFAULT_CONFIGS = [
     ('LocalNetworks','192.168.48.0/22'),
     ('RouterIpAddresses','192.168.49.1'),
     ('ProcessingInterval','60'),
-    ('TelegramBotToken','6320437327:AAHMmxAfka4RmtLLlrcwQ7cDPw2FVr4DfJQ'),
-    ('TelegramChatId','-4037424339'),
+    ('TelegramBotToken',''),
+    ('TelegramChatId',''),
     ('ScheduleProcessor','1'),
     ('StartCollector','1'),
     ('CleanNewFlows','1')
