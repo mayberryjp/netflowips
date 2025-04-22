@@ -41,6 +41,7 @@ def is_ip_in_range(ip, ranges):
         return False
 
 def ip_network_to_range(network):
+    logger = logging.getLogger(__name__)
     """
     Convert a CIDR network to start and end IP addresses as integers using inet_aton.
     
@@ -59,7 +60,7 @@ def ip_network_to_range(network):
         
         return start_ip, end_ip, netmask
     except Exception as e:
-        log_warn(None, f"[WARN] Invalid network format {network}: {e}")
+        log_warn(logger, f"[WARN] Invalid network format {network}: {e}")
         return None, None, None
 
 def dump_json(obj):
@@ -72,10 +73,11 @@ def dump_json(obj):
     Returns:
         str: Pretty-printed JSON string or error message if serialization fails
     """
+    logger = logging.getLogger(__name__)
     try:
         return json.dumps(obj, indent=2, sort_keys=True, default=str)
     except Exception as e:
-        log_error(None, f"[ERROR] Failed to serialize object to JSON: {e}")
+        log_error(logger, f"[ERROR] Failed to serialize object to JSON: {e}")
         return str(obj)
     
 def ip_to_int(ip_addr):
