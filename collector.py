@@ -1,17 +1,29 @@
-from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_START_COLLECTOR
-from database import delete_database, create_database
+from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE
+from database import delete_database, create_database, get_config_settings, init_configurations
 from netflow import handle_netflow_v5
-from utils import log_info
+from utils import log_info, log_error, dump_json
 import logging
 import os
 
 if (IS_CONTAINER):
-    START_COLLECTOR = os.getenv("START_COLLECTOR", CONST_START_COLLECTOR)
+    SITE = os.getenv("SITE", CONST_SITE)
 
 # Entry point
 if __name__ == "__main__":
-    logger = logging.getLogger(__name__)
-    log_info(logger, f"[INFO] Starting NetFlow v5 collector {VERSION}")
+
+    #delete_database(CONST_CONFIG_DB)
+    #create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
+    #init_configurations()
+    config_dict = get_config_settings()
+    logger = logging.getLogger(__name__) 
+    if not config_dict:
+        log_error(logger, "[ERROR] Failed to load configuration settings")
+        exit(1)
+
+    log_info(logger, f"Current configuration at start, config will refresh automatically every time processor runs:\n {dump_json(config_dict)}")
+    log_info(logger, f"[INFO] Starting NetFlow v5 collector {VERSION} at {SITE}")
     delete_database(CONST_NEWFLOWS_DB)
     create_database(CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL)
-    handle_netflow_v5()
+    if config_dict['StartCollector'] == 1:
+        # Start the collector
+        handle_netflow_v5()

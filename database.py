@@ -1,20 +1,17 @@
 import sqlite3
 import logging
-from utils import log_info, log_error, log_warn  # Assuming log_info is defined in utils
-from const import CONST_LOCAL_NETWORKS, IS_CONTAINER, CONST_DEFAULT_CONFIGS, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_ROUTER_IPADDRESS, CONST_WHITELIST_DB
+from utils import log_info, log_error  # Assuming log_info is defined in utils
+from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER
 import ipaddress
 import os
 from datetime import datetime
-from notifications import send_telegram_message
 import json
-
-logger = logging.getLogger(__name__)  # Create a logger for this module
-
-if IS_CONTAINER:
-    LOCAL_NETWORKS = os.getenv("LOCAL_NETWORKS", CONST_LOCAL_NETWORKS).split(',')
+import importlib
+  # Create a logger for this module
 
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
+    logger = logging.getLogger(__name__)
     try:
         if os.path.exists(db_path):
             os.remove(db_path)
@@ -26,6 +23,7 @@ def delete_database(db_path):
 
 def connect_to_db(DB_NAME):
     """Establish a connection to the specified database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = sqlite3.connect(DB_NAME)
         return conn
@@ -35,6 +33,7 @@ def connect_to_db(DB_NAME):
 
 def create_database(db_name, create_table_sql):
     """Initializes a SQLite database with the specified schema."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(db_name)
         if not conn:
@@ -51,6 +50,7 @@ def create_database(db_name, create_table_sql):
 
 def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
+    logger = logging.getLogger(__name__)
     allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
     if allflows_conn:
         try:
@@ -79,6 +79,7 @@ def update_allflows(rows, config_dict):
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
+    logger = logging.getLogger(__name__)
     conn = connect_to_db(db_name)
     if conn:
         try:
@@ -93,14 +94,21 @@ def delete_all_records(db_name, table_name='flows'):
 
 def init_configurations():
     """Inserts default configurations into the CONST_CONFIG_DB database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
             logger.error("[ERROR] Unable to connect to configuration database")
             return
 
+        if (IS_CONTAINER):
+            SITE = os.getenv("SITE", CONST_SITE)
+
+        config = importlib.import_module(f"configs.{SITE}")
+        log_info(logger, f"[INFO] Reading configuration from configs/{SITE}")
+
         cursor = conn.cursor()
-        for key, value in CONST_DEFAULT_CONFIGS:
+        for key, value in config.CONST_DEFAULT_CONFIGS:
             cursor.execute("""
                 INSERT OR IGNORE INTO configuration (key, value)
                 VALUES (?, ?)
@@ -113,6 +121,7 @@ def init_configurations():
 
 def get_config_settings():
     """Read configuration settings from the configuration database into a dictionary."""
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
@@ -131,6 +140,7 @@ def get_config_settings():
 
 def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
     """Logs an alert to the alerts.db SQLite database."""
+    logger = logging.getLogger(__name__)
     try:
         conn = sqlite3.connect(CONST_ALERTS_DB)
         cursor = conn.cursor()
@@ -156,6 +166,7 @@ def get_whitelist():
         list: List of tuples containing (alert_id, category, insert_date)
               Returns None if there's an error
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_WHITELIST_DB)
         if not conn:
@@ -192,6 +203,7 @@ def get_row_count(db_name, table_name):
     Returns:
         int: Number of rows in the table, or -1 if there's an error
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(db_name)
         if not conn:
@@ -216,6 +228,7 @@ def get_alerts_summary():
     Get a summary of alerts by category from alerts.db.
     Prints total count and breakdown by category.
     """
+    logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_ALERTS_DB)
         if not conn:
@@ -249,6 +262,48 @@ def get_alerts_summary():
     finally:
         if 'conn' in locals():
             conn.close()
+
+def import_whitelists(config_dict):
+    """
+    Import whitelist entries into the whitelist database from a config_dict entry.
+
+    Args:
+        config_dict (dict): Configuration dictionary containing whitelist entries.
+                            Expected format: "WhitelistEntries" -> JSON string of list of tuples
+                            Each tuple: (src_ip, dst_ip, dst_port, protocol)
+    """
+    logger = logging.getLogger(__name__)
+    whitelist_entries_json = config_dict.get("WhitelistEntries", "[]")
+    whitelist_entries = json.loads(whitelist_entries_json)
+
+    if not whitelist_entries:
+        log_info(logger, "[INFO] No whitelist entries found in config_dict.")
+        return
+
+    conn = connect_to_db(CONST_WHITELIST_DB)
+    if not conn:
+        log_error(logger, "[ERROR] Unable to connect to whitelist database.")
+        return
+
+    try:
+        cursor = conn.cursor()
+
+        # Insert whitelist entries into the database
+        for entry in whitelist_entries:
+            src_ip, dst_ip, dst_port, protocol = entry
+            cursor.execute("""
+                INSERT OR IGNORE INTO whitelist (
+                    whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
+                ) VALUES (?, ?, ?, ?, 1)
+            """, (src_ip, dst_ip, dst_port, protocol))
+
+        conn.commit()
+        log_info(logger, f"[INFO] Imported {len(whitelist_entries)} whitelist entries into the database.")
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error importing whitelist entries: {e}")
+    finally:
+        conn.close()
 
 
 

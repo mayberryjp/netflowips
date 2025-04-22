@@ -1,6 +1,6 @@
 import socket
 import struct
-from const import CONST_LISTEN_ADDRESS, CONST_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
+from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
 import os
 from utils import log_info, log_warn, log_error
 import logging
@@ -8,8 +8,8 @@ from datetime import datetime, timezone
 from database import connect_to_db
 
 if (IS_CONTAINER):
-    LISTEN_ADDRESS=os.getenv("LISTEN_ADDRESS", CONST_LISTEN_ADDRESS)
-    LISTEN_PORT=os.getenv("LISTEN_PORT", CONST_LISTEN_PORT) 
+    COLLECTOR_LISTEN_ADDRESS=os.getenv("COLLECTOR_LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
+    COLLECTOR_LISTEN_PORT=os.getenv("COLLECTOR_LISTEN_PORT", CONST_COLLECTOR_LISTEN_PORT) 
 
 
 # Update or insert flow in the DB
@@ -70,8 +70,8 @@ def handle_netflow_v5():
     logger = logging.getLogger(__name__)
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.bind((LISTEN_ADDRESS, LISTEN_PORT))
-        log_info(logger, f"[INFO] NetFlow v5 collector listening on {LISTEN_ADDRESS}:{LISTEN_PORT}")
+        s.bind((COLLECTOR_LISTEN_ADDRESS, COLLECTOR_LISTEN_PORT))
+        log_info(logger, f"[INFO] NetFlow v5 collector listening on {COLLECTOR_LISTEN_ADDRESS}:{COLLECTOR_LISTEN_PORT}")
 
         while True:
             flow_count = 0  # Initialize a counter for the number of flows processed
