@@ -21,6 +21,7 @@ CONST_DEFAULT_CONFIGS = [
     ('TelegramChatId',''),
     ('ScheduleProcessor','1'),
     ('StartCollector','1'),
-    ('CleanNewFlows','1')
+    ('CleanNewFlows','1'),
+    ('DeadConnectionDetection','1')
     # Add more default configurations here as needed
 ]

@@ -14,7 +14,7 @@ CONST_DEFAULT_CONFIGS = [
     ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1'),
     ('ApprovedNtpStratumServersList','162.159.200.123,162.159.200.123,216.239.35.0,216.239.35.4'),
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
-    ('LocalNetworks','192.168.230.0/24'),
+    ('LocalNetworks','192.168.230.0/24,192.168.8.1/32'),
     ('RouterIpAddresses','192.168.230.1'),
     ('ProcessingInterval','60'),
     ('TelegramBotToken',''),
@@ -22,6 +22,7 @@ CONST_DEFAULT_CONFIGS = [
     ('ScheduleProcessor','1'),
     ('StartCollector','1'),
     ('CleanNewFlows','1'),
+    ('DeadConnectionDetection','1'),
     # Add more default configurations here as needed
    ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
 ]

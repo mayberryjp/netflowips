@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB # Assuming constants are defined in const
-from database import connect_to_db, log_alert_to_db  # Import connect_to_db from database.py
+from database import connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
 from notifications import send_telegram_message  # Import notification functions
 import logging
 
@@ -674,6 +674,7 @@ def detect_dead_connections(config_dict):
                         a1.packets as forward_packets,
                         a1.bytes as forward_bytes,
                         a1.times_seen as forward_seen,
+						a1.tags as row_tags,
                         COALESCE(a2.packets, 0) as reverse_packets,
                         COALESCE(a2.bytes, 0) as reverse_bytes,
                         COALESCE(a2.times_seen, 0) as reverse_seen
@@ -692,11 +693,13 @@ def detect_dead_connections(config_dict):
                     forward_packets,
                     reverse_packets,
                     connection_protocol,
+					row_tags,
                     COUNT(*) as connection_count,
                     sum(forward_packets) as f_packets,
                     sum(reverse_packets) as r_packets
                     from ConnectionPairs
                 WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
+				AND row_tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
@@ -724,6 +727,11 @@ def detect_dead_connections(config_dict):
             
             log_info(logger, f"[INFO] {message}")
             
+            # Add a Tag to the matching row using update_tag
+            if not update_tag_to_allflows("allflows", "DeadConnectionDetection", src_ip, dst_ip, dst_port):
+                log_error(logger, f"[ERROR] Failed to add tag for flow: {src_ip} -> {dst_ip}:{dst_port}")
+
+            # Handle alerts based on configuration
             if config_dict.get("DeadConnectionDetection") == 2:
                 send_telegram_message(message, row)
                 log_alert_to_db(

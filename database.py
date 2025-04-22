@@ -305,5 +305,57 @@ def import_whitelists(config_dict):
     finally:
         conn.close()
 
+def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
+    """
+    Update the tag for a specific row in the database.
+
+    Args:
+        db_name (str): The database name.
+        table_name (str): The table name.
+        tag (str): The tag to add.
+        src_ip (str): The source IP address.
+        dst_ip (str): The destination IP address.
+        dst_port (int): The destination port.
+
+    Returns:
+        bool: True if the update was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    conn = connect_to_db(CONST_ALLFLOWS_DB)
+    if not conn:
+        log_error(logger, f"[ERROR] Unable to connect to database: {CONST_ALLFLOWS_DB}")
+        return False
+
+    try:
+        cursor = conn.cursor()
+
+        # Retrieve the existing tag
+        cursor.execute(f"""
+            SELECT tags FROM {table_name}
+            WHERE src_ip = ? AND dst_ip = ? AND dst_port = ?
+        """, (src_ip, dst_ip, dst_port))
+        result = cursor.fetchone()
+
+        existing_tag = result[0] if result and result[0] else ""  # Get the existing tag or default to an empty string
+
+        # Append the new tag to the existing tag
+        updated_tag = f"{existing_tag};{tag}" if existing_tag else tag
+
+        # Update the tag in the database
+        cursor.execute(f"""
+            UPDATE {table_name}
+            SET tags = ?
+            WHERE src_ip = ? AND dst_ip = ? AND dst_port = ?
+        """, (updated_tag, src_ip, dst_ip, dst_port))
+        conn.commit()
+
+        log_info(logger, f"[INFO] Tag '{tag}' added to flow: {src_ip} -> {dst_ip}:{dst_port}. Updated tag: '{updated_tag}'")
+        return True
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Failed to add tag to flow: {e}")
+        return False
+    finally:
+        conn.close()
+
 
 

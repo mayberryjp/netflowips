@@ -1,6 +1,6 @@
 import sqlite3  # Import the sqlite3 module
 from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations, import_whitelists  # Import from database.py
-from detections import remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum  # Import from detections.py, 
+from detections import remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections # Import from detections.py, 
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from utils import log_info, log_warn, log_error  # Import log_info from utils
@@ -77,6 +77,9 @@ def process_data(geolocation_data):
 
             if config_dict.get("GeolocationFlowsDetection", 0) > 0:
                 detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+            
+            if config_dict.get("DeadConnectionDetection", 0) > 0:
+                detect_dead_connections(filtered_rows, config_dict)
         
             log_info(logger,f"[INFO] Processing finished.")   
 

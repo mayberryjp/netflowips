@@ -22,6 +22,7 @@ CONST_DEFAULT_CONFIGS = [
     ('ScheduleProcessor','0'),
     ('StartCollector','1'),
     ('CleanNewFlows','0'),
+    ('DeadConnectionDetection','1'),
     # Add more default configurations here as needed
    ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
 ]
