@@ -2,16 +2,10 @@ import sqlite3
 import json
 from datetime import datetime
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int  # Assuming log_info and is_ip_in_range are defined in utils
-from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB # Assuming constants are defined in const
+from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB # Assuming constants are defined in const
 from database import connect_to_db, log_alert_to_db  # Import connect_to_db from database.py
 from notifications import send_telegram_message  # Import notification functions
-import os
-import ipaddress
 import logging
-import socket
-import struct
-import time
-
 
 def update_local_hosts(rows, config_dict):
     """
@@ -670,15 +664,47 @@ def detect_dead_connections(config_dict):
         
         # Query for dead connections
         cursor.execute("""
-            SELECT * FROM allflows 
-            WHERE sent_pkts > 1 
-            AND rcv_pkts = 0 
-            AND times_seen > 5 
-            AND (protocol != 1 AND protocol != 2)
-            AND (dst_ip NOT LIKE '224%' 
-                 AND dst_ip NOT LIKE '239%' 
-                 AND dst_ip NOT LIKE '255%')
-        """)
+                WITH ConnectionPairs AS (
+                    SELECT 
+                        a1.src_ip as initiator_ip,
+                        a1.dst_ip as responder_ip,
+                        a1.src_port as initiator_port,
+                        a1.dst_port as responder_port,
+                        a1.protocol as connection_protocol,
+                        a1.packets as forward_packets,
+                        a1.bytes as forward_bytes,
+                        a1.times_seen as forward_seen,
+                        COALESCE(a2.packets, 0) as reverse_packets,
+                        COALESCE(a2.bytes, 0) as reverse_bytes,
+                        COALESCE(a2.times_seen, 0) as reverse_seen
+                    FROM allflows a1
+                    LEFT JOIN allflows a2 ON 
+                        a2.src_ip = a1.dst_ip 
+                        AND a2.dst_ip = a1.src_ip
+                        AND a2.src_port = a1.dst_port
+                        AND a2.dst_port = a1.src_port
+                        AND a2.protocol = a1.protocol
+                )
+                SELECT 
+                    initiator_ip,
+                    responder_ip,
+                    responder_port,
+                    forward_packets,
+                    reverse_packets,
+                    connection_protocol,
+                    COUNT(*) as connection_count,
+                    sum(forward_packets) as f_packets,
+                    sum(reverse_packets) as r_packets
+                    from ConnectionPairs
+                WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
+                AND responder_ip NOT LIKE '224%'  -- Exclude multicast
+                AND responder_ip NOT LIKE '239%'  -- Exclude multicast
+                AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
+                GROUP BY initiator_ip, responder_ip, responder_port, connection_protocol
+                HAVING 
+                    f_packets > 2
+                    AND r_packets < 1"""
+                       )
         
         dead_connections = cursor.fetchall()
         log_info(logger, f"[INFO] Found {len(dead_connections)} potential dead connections")
@@ -686,20 +712,15 @@ def detect_dead_connections(config_dict):
         for row in dead_connections:
             src_ip = row[0]
             dst_ip = row[1]
-            src_port = row[2]
-            dst_port = row[3]
-            protocol = row[4]
-            sent_pkts = row[5]
-            times_seen = row[10]
+            dst_port = row[2]
+            protocol = row[5]
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
             
             message = (f"Dead Connection Detected:\n"
-                      f"Source: {src_ip}:{src_port}\n"
+                      f"Source: {src_ip}\n"
                       f"Destination: {dst_ip}:{dst_port}\n"
-                      f"Protocol: {protocol}\n"
-                      f"Sent Packets: {sent_pkts}\n"
-                      f"Times Seen: {times_seen}")
+                      f"Protocol: {protocol}\n")
             
             log_info(logger, f"[INFO] {message}")
             
@@ -710,7 +731,7 @@ def detect_dead_connections(config_dict):
                     row,
                     "Dead Connection Detected",
                     dst_ip,
-                    f"Sent:{sent_pkts}, Seen:{times_seen}",
+                    dst_port,
                     alert_id,
                     False
                 )
@@ -720,7 +741,7 @@ def detect_dead_connections(config_dict):
                     row,
                     "Dead Connection Detected",
                     dst_ip,
-                    f"Sent:{sent_pkts}, Seen:{times_seen}",
+                    dst_port,
                     alert_id,
                     False
                 )

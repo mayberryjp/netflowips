@@ -56,6 +56,7 @@ from detections import (
     local_flows_detection,
     detect_geolocation_flows,
     remove_whitelist,
+    detect_dead_connections,
     detect_unauthorized_ntp,
     detect_unauthorized_dns,
     detect_incorrect_authoritative_dns,
@@ -229,39 +230,43 @@ def main():
 
     # Run detection functions and calculate durations
     start = datetime.now()
-    update_local_hosts(filtered_rows, config_dict)
+    #update_local_hosts(filtered_rows, config_dict)
     detection_durations['update_local_hosts'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_new_outbound_connections(filtered_rows, config_dict)
+    #detect_new_outbound_connections(filtered_rows, config_dict)
     detection_durations['detect_new_outbound_connections'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    router_flows_detection(filtered_rows, config_dict)
+    #router_flows_detection(filtered_rows, config_dict)
     detection_durations['router_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    foreign_flows_detection(filtered_rows, config_dict)
+    #foreign_flows_detection(filtered_rows, config_dict)
     detection_durations['foreign_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    local_flows_detection(filtered_rows, config_dict)
+    #local_flows_detection(filtered_rows, config_dict)
     detection_durations['local_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_unauthorized_dns(filtered_rows, config_dict)
+    detect_dead_connections(config_dict)
+    detection_durations['detect_dead_connections'] = (datetime.now() - start).total_seconds()
+
+    start = datetime.now()
+    #detect_unauthorized_dns(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_unauthorized_ntp(filtered_rows, config_dict)
+    #detect_unauthorized_ntp(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_ntp'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+    #detect_incorrect_ntp_stratum(filtered_rows, config_dict)
     detection_durations['detect_incorrect_ntp_stratum'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_incorrect_authoritative_dns(filtered_rows, config_dict)
+    #detect_incorrect_authoritative_dns(filtered_rows, config_dict)
     detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
 
     create_geolocation_db()
@@ -269,7 +274,7 @@ def main():
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     start = datetime.now()
-    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Processing finished.")
