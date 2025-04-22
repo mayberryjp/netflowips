@@ -1,7 +1,7 @@
 from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE
 from database import delete_database, create_database, get_config_settings, init_configurations
 from netflow import handle_netflow_v5
-from utils import log_info, log_error
+from utils import log_info, log_error, dump_json
 import logging
 import os
 
@@ -20,6 +20,7 @@ if __name__ == "__main__":
         log_error(logger, "[ERROR] Failed to load configuration settings")
         exit(1)
 
+    log_info(logger, f"Current configuration at start, config will refresh automatically every time processor runs:\n {dump_json(config_dict)}")
     log_info(logger, f"[INFO] Starting NetFlow v5 collector {VERSION} at {SITE}")
     delete_database(CONST_NEWFLOWS_DB)
     create_database(CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL)
