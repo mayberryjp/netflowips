@@ -1,16 +1,17 @@
 from bottle import Bottle, request, response
 import sqlite3
 import json
+import os
 from database import connect_to_db
 from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LOCALHOSTS_DB, IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT
-import os
+from utils import log_info, log_warn, log_error  # Import logging functions
 
 # Initialize the Bottle app
 app = Bottle()
 
-if (IS_CONTAINER):
-    API_LISTEN_ADDRESS=os.getenv("API_LISTEN_ADDRESS", CONST_API_LISTEN_ADDRESS)
-    API_LISTEN_PORT=os.getenv("API_LISTEN_PORT", CONST_API_LISTEN_PORT) 
+if IS_CONTAINER:
+    API_LISTEN_ADDRESS = os.getenv("API_LISTEN_ADDRESS", CONST_API_LISTEN_ADDRESS)
+    API_LISTEN_PORT = os.getenv("API_LISTEN_PORT", CONST_API_LISTEN_PORT)
 
 # Helper function to set JSON response headers
 def set_json_response():
@@ -22,17 +23,25 @@ def configurations():
     db_name = CONST_CONFIG_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
 
     if request.method == 'GET':
-        # Fetch all configurations
-        cursor.execute("SELECT * FROM configuration")
-        rows = cursor.fetchall()
-        conn.close()
-        set_json_response()
-        return json.dumps([{"key": row[0], "value": row[1]} for row in rows])
+        try:
+            # Fetch all configurations
+            cursor.execute("SELECT * FROM configuration")
+            rows = cursor.fetchall()
+            conn.close()
+            set_json_response()
+            log_info(None, "Fetched all configurations successfully.")
+            return json.dumps([{"key": row[0], "value": row[1]} for row in rows])
+        except sqlite3.Error as e:
+            conn.close()
+            log_error(None, f"Error fetching configurations: {e}")
+            response.status = 500
+            return {"error": str(e)}
 
     elif request.method == 'POST':
         # Add a new configuration
@@ -44,9 +53,11 @@ def configurations():
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Added new configuration: {key}")
             return {"message": "Configuration added successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error adding configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -55,6 +66,7 @@ def modify_configuration(key):
     db_name = CONST_CONFIG_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -68,9 +80,11 @@ def modify_configuration(key):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Updated configuration: {key}")
             return {"message": "Configuration updated successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error updating configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -81,9 +95,11 @@ def modify_configuration(key):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Deleted configuration: {key}")
             return {"message": "Configuration deleted successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error deleting configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -93,17 +109,25 @@ def alerts():
     db_name = CONST_ALERTS_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
 
     if request.method == 'GET':
-        # Fetch all alerts
-        cursor.execute("SELECT * FROM alerts")
-        rows = cursor.fetchall()
-        conn.close()
-        set_json_response()
-        return json.dumps([{"id": row[0], "message": row[1], "timestamp": row[2]} for row in rows])
+        try:
+            # Fetch all alerts
+            cursor.execute("SELECT * FROM alerts")
+            rows = cursor.fetchall()
+            conn.close()
+            set_json_response()
+            log_info(None, "Fetched all alerts successfully.")
+            return json.dumps([{"id": row[0], "message": row[1], "timestamp": row[2]} for row in rows])
+        except sqlite3.Error as e:
+            conn.close()
+            log_error(None, f"Error fetching alerts: {e}")
+            response.status = 500
+            return {"error": str(e)}
 
     elif request.method == 'POST':
         # Add a new alert
@@ -115,9 +139,11 @@ def alerts():
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Added new alert: {message}")
             return {"message": "Alert added successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error adding alert: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -126,6 +152,7 @@ def modify_alert(id):
     db_name = CONST_ALERTS_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -140,9 +167,11 @@ def modify_alert(id):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Updated alert: {id}")
             return {"message": "Alert updated successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error updating alert: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -153,9 +182,11 @@ def modify_alert(id):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Deleted alert: {id}")
             return {"message": "Alert deleted successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error deleting alert: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -165,17 +196,25 @@ def whitelist():
     db_name = CONST_WHITELIST_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
 
     if request.method == 'GET':
-        # Fetch all whitelist entries
-        cursor.execute("SELECT * FROM whitelist")
-        rows = cursor.fetchall()
-        conn.close()
-        set_json_response()
-        return json.dumps([{"id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4]} for row in rows])
+        try:
+            # Fetch all whitelist entries
+            cursor.execute("SELECT * FROM whitelist")
+            rows = cursor.fetchall()
+            conn.close()
+            set_json_response()
+            log_info(None, "Fetched all whitelist entries successfully.")
+            return json.dumps([{"id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4]} for row in rows])
+        except sqlite3.Error as e:
+            conn.close()
+            log_error(None, f"Error fetching whitelist entries: {e}")
+            response.status = 500
+            return {"error": str(e)}
 
     elif request.method == 'POST':
         # Add a new whitelist entry
@@ -190,9 +229,11 @@ def whitelist():
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Added new whitelist entry: {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
             return {"message": "Whitelist entry added successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error adding whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -201,6 +242,7 @@ def modify_whitelist(id):
     db_name = CONST_WHITELIST_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -218,9 +260,11 @@ def modify_whitelist(id):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Updated whitelist entry: {id}")
             return {"message": "Whitelist entry updated successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error updating whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -231,9 +275,11 @@ def modify_whitelist(id):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Deleted whitelist entry: {id}")
             return {"message": "Whitelist entry deleted successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error deleting whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -243,17 +289,25 @@ def localhosts():
     db_name = CONST_LOCALHOSTS_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
 
     if request.method == 'GET':
-        # Fetch all local hosts
-        cursor.execute("SELECT * FROM localhosts")
-        rows = cursor.fetchall()
-        conn.close()
-        set_json_response()
-        return json.dumps([{"ip_address": row[0], "first_seen": row[1], "original_flow": row[2]} for row in rows])
+        try:
+            # Fetch all local hosts
+            cursor.execute("SELECT * FROM localhosts")
+            rows = cursor.fetchall()
+            conn.close()
+            set_json_response()
+            log_info(None, "Fetched all local hosts successfully.")
+            return json.dumps([{"ip_address": row[0], "first_seen": row[1], "original_flow": row[2]} for row in rows])
+        except sqlite3.Error as e:
+            conn.close()
+            log_error(None, f"Error fetching local hosts: {e}")
+            response.status = 500
+            return {"error": str(e)}
 
     elif request.method == 'POST':
         # Add a new local host
@@ -267,9 +321,11 @@ def localhosts():
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Added new local host: {ip_address}")
             return {"message": "Local host added successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error adding local host: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -278,6 +334,7 @@ def modify_localhost(ip_address):
     db_name = CONST_LOCALHOSTS_DB
     conn = connect_to_db(db_name)
     if not conn:
+        log_error(None, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -293,9 +350,11 @@ def modify_localhost(ip_address):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Updated local host: {ip_address}")
             return {"message": "Local host updated successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error updating local host: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -306,12 +365,15 @@ def modify_localhost(ip_address):
             conn.commit()
             conn.close()
             set_json_response()
+            log_info(None, f"Deleted local host: {ip_address}")
             return {"message": "Local host deleted successfully"}
         except sqlite3.Error as e:
             conn.close()
+            log_error(None, f"Error deleting local host: {e}")
             response.status = 500
             return {"error": str(e)}
 
 # Run the Bottle app
 if __name__ == '__main__':
+    log_info(None, "Starting API server...")
     app.run(host=API_LISTEN_ADDRESS, port=API_LISTEN_PORT, debug=True)
