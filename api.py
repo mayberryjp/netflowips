@@ -5,6 +5,7 @@ import os
 from database import connect_to_db
 from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LOCALHOSTS_DB, IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT
 from utils import log_info, log_warn, log_error  # Import logging functions
+import logging
 
 # Initialize the Bottle app
 app = Bottle()
@@ -20,10 +21,11 @@ def set_json_response():
 # API for CONST_CONFIG_DB
 @app.route('/api/configurations', method=['GET', 'POST'])
 def configurations():
+    logger = logging.getLogger(__name__)
     db_name = CONST_CONFIG_DB
     conn = connect_to_db(db_name)
     if not conn:
-        log_error(None, f"Unable to connect to the database: {db_name}")
+        log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -35,11 +37,11 @@ def configurations():
             rows = cursor.fetchall()
             conn.close()
             set_json_response()
-            log_info(None, "Fetched all configurations successfully.")
+            log_info(logger, "Fetched all configurations successfully.")
             return json.dumps([{"key": row[0], "value": row[1]} for row in rows])
         except sqlite3.Error as e:
             conn.close()
-            log_error(None, f"Error fetching configurations: {e}")
+            log_error(logger, f"Error fetching configurations: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -53,20 +55,21 @@ def configurations():
             conn.commit()
             conn.close()
             set_json_response()
-            log_info(None, f"Added new configuration: {key}")
+            log_info(logger, f"Added new configuration: {key}")
             return {"message": "Configuration added successfully"}
         except sqlite3.Error as e:
             conn.close()
-            log_error(None, f"Error adding configuration: {e}")
+            log_error(logger, f"Error adding configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
 @app.route('/api/configurations/<key>', method=['PUT', 'DELETE'])
 def modify_configuration(key):
+    logger = logging.getLogger(__name__)
     db_name = CONST_CONFIG_DB
     conn = connect_to_db(db_name)
     if not conn:
-        log_error(None, f"Unable to connect to the database: {db_name}")
+        log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -80,11 +83,11 @@ def modify_configuration(key):
             conn.commit()
             conn.close()
             set_json_response()
-            log_info(None, f"Updated configuration: {key}")
+            log_info(logger, f"Updated configuration: {key}")
             return {"message": "Configuration updated successfully"}
         except sqlite3.Error as e:
             conn.close()
-            log_error(None, f"Error updating configuration: {e}")
+            log_error(logger, f"Error updating configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -95,21 +98,22 @@ def modify_configuration(key):
             conn.commit()
             conn.close()
             set_json_response()
-            log_info(None, f"Deleted configuration: {key}")
+            log_info(logger, f"Deleted configuration: {key}")
             return {"message": "Configuration deleted successfully"}
         except sqlite3.Error as e:
             conn.close()
-            log_error(None, f"Error deleting configuration: {e}")
+            log_error(logger, f"Error deleting configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
 # API for CONST_ALERTS_DB
 @app.route('/api/alerts', method=['GET', 'POST'])
 def alerts():
+    logger = logging.getLogger(__name__)
     db_name = CONST_ALERTS_DB
     conn = connect_to_db(db_name)
     if not conn:
-        log_error(None, f"Unable to connect to the database: {db_name}")
+        log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
@@ -375,5 +379,6 @@ def modify_localhost(ip_address):
 
 # Run the Bottle app
 if __name__ == '__main__':
-    log_info(None, "Starting API server...")
-    app.run(host=API_LISTEN_ADDRESS, port=API_LISTEN_PORT, debug=True)
+    logger = logging.getLogger(__name__) 
+    log_info(logger, "Starting API server...")
+    app.run(host=API_LISTEN_ADDRESS, port=API_LISTEN_PORT, debug=False)
