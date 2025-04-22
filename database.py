@@ -60,8 +60,8 @@ def update_allflows(rows, config_dict):
                 now = datetime.utcnow().isoformat()
                 allflows_cursor.execute("""
                     INSERT INTO allflows (
-                        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, times_seen, last_seen
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+                        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, times_seen, last_seen, tags
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, "")
                     ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
                     DO UPDATE SET
                         packets = packets + excluded.packets,

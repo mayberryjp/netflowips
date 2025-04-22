@@ -68,6 +68,7 @@ CONST_CREATE_ALLFLOWS_SQL='''
         flow_end TEXT,
         times_seen INTEGER DEFAULT 1,
         last_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+        tags TEXT,
         PRIMARY KEY (src_ip, dst_ip, src_port, dst_port, protocol)
     )'''
 
