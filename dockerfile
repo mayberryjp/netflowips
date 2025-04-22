@@ -14,10 +14,11 @@ RUN git clone https://github.com/mayberryjp/homelabids.git /homelabids
 # Set the working directory
 WORKDIR /homelabids
 
-RUN pip install schedule requests
+RUN pip install schedule requests bottle
 
 # Expose the port
 EXPOSE 2055
+EXPOSE 8044
 
 ENV PYTHONUNBUFFERED=1
 

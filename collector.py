@@ -1,4 +1,4 @@
-from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL, IS_CONTAINER, CONST_SITE
+from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE
 from database import delete_database, create_database, get_config_settings, init_configurations
 from netflow import handle_netflow_v5
 from utils import log_info, log_error

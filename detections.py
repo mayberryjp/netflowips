@@ -332,9 +332,6 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
     # Sort ranges by start_ip for efficient lookup
     geo_ranges.sort(key=lambda x: x[0])
     
-    # Debug: Print number of ranges
-    log_info(logger, f"[DEBUG] Number of geo ranges: {len(geo_ranges)}")
-
     def find_matching_country(ip_int):
         """Find matching country for an IP using linear search with early exit"""
         if not ip_int:
