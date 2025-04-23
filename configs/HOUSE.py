@@ -29,5 +29,8 @@ CONST_DEFAULT_CONFIGS = [
     ('PiholeUrl', 'http://192.168.49.80/api'),
     ('PiholeApiKey','r/hovjWONTUkqIaY0whjcqECgDzDbQXnBe+u829U8Ds='),
     ('DiscoveryReverseDns', 1),
-    ('DiscoveryPiholeDhcp', 1)
+    ('DiscoveryPiholeDhcp', 1),
+    ('EnableLocalDiscoveryProcess', 1),
+    ('DiscoveryProcessRunInterval', 86400),
+    ('DiscoveryNmapOsFingerprint', 1)
 ]

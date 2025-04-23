@@ -27,4 +27,11 @@ CONST_DEFAULT_CONFIGS = [
     ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]'),
     ('DnsResolverTimeout', 3),
     ('DnsResolverRetries', 1),
+    ('PiholeUrl', 'http://192.168.230.236/api'),
+    ('PiholeApiKey','pL3mSjjX1ApPVpRfLa2DOQA3SsbuF7SaCZlpJwZOcRs='),
+    ('DiscoveryReverseDns', 1),
+    ('DiscoveryPiholeDhcp', 1),
+    ('EnableLocalDiscoveryProcess', 1),
+    ('DiscoveryProcessRunInterval', 86400),
+    ('DiscoveryNmapOsFingerprint', 1)
 ]

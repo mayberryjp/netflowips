@@ -10,7 +10,7 @@ CONST_DEFAULT_CONFIGS = [
     ('BypassLocalNtpDetection', 1),
     ('IncorrectNtpStratrumDetection', 1),
     ('ApprovedLocalNtpServersList','192.168.230.236,192.168.49.80'),
-    ('ApprovedLocalDnsServersList','192.168.49.80'),
+    ('ApprovedLocalDnsServersList','192.168.230.236,192.168.49.80'),
     ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1'),
     ('ApprovedNtpStratumServersList','162.159.200.123,162.159.200.123,216.239.35.0,216.239.35.4'),
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
@@ -23,7 +23,6 @@ CONST_DEFAULT_CONFIGS = [
     ('StartCollector','1'),
     ('CleanNewFlows','0'),
     ('DeadConnectionDetection','1'),
-    # Add more default configurations here as needed
     ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]'),
     ('DnsResolverTimeout', 3),
     ('DnsResolverRetries', 1),
