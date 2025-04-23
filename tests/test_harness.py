@@ -296,8 +296,12 @@ def main():
     detection_durations['discovery_pihole'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    nmap_return = os_fingerprint(localhosts, config_dict)
-    log_info(logger,f"[INFO] Nmap Results: {json.dumps(nmap_return)}")
+
+    # Limit the list of localhosts to the first 3 entries
+    sub_localhosts = list(localhosts)[:3]   # Slice the list to include only the first 3 hosts
+    nmap_return = os_fingerprint(sub_localhosts, config_dict)
+
+    log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_return)}")
     detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Processing finished.")

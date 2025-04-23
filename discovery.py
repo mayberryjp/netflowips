@@ -29,63 +29,47 @@ def do_discovery():
         return
 
     existing_localhosts = get_localhosts()
+    combined_results = {}
     
     DNS_SERVERS = config_dict['ApprovedLocalDnsServersList'].split(',')
 
     if DNS_SERVERS and config_dict.get('DiscoveryReverseDns', 0) > 0:
         dns_results = dns_lookup(existing_localhosts, DNS_SERVERS, config_dict)
+        for result in dns_results:
+            ip = result["ip"]
+            combined_results[ip] = {
+                "dns_hostname": result.get("dns_hostname", None),
+            }
     else:
         log_error(logger, "[ERROR] No DNS servers in configuration to perform DNS lookup or DnsDiscoveryNotEnabled")
 
     if config_dict.get('DiscoveryPiholeDhcp', 0) > 0:
         dhcp_results = get_pihole_dhcp_clients(existing_localhosts, config_dict)
+        # Process DHCP results
+        for result in dhcp_results:
+            ip = result["ip"]
+            if ip not in combined_results:
+                combined_results[ip] = {}
+            combined_results[ip].update({
+                "dhcp_hostname": result.get("dhcp_hostname", combined_results[ip].get("dhcp_hostname")),
+                "mac_address": result.get("mac_address", combined_results[ip].get("mac_address")),
+                "mac_vendor": result.get("mac_vendor", combined_results[ip].get("mac_vendor")),
+            })
 
     if config_dict.get('DiscoveryNmapOsFingerprint', 0) > 0:
         nmap_results = os_fingerprint(existing_localhosts, config_dict)
-
-    combined_results = {}
-
-    # Process DNS results
-    for result in dns_results:
-        ip = result["ip"]
-        combined_results[ip] = {
-            "dns_hostname": result.get("dns_hostname", None),
-            "mac_address": None,
-            "mac_vendor": None,
-            "last_seen": None,
-            "first_seen": None,
-            "original_flow": None,
-            "dhcp_hostname": None,
-            "os_fingerprint": None,
-        }
-
-    # Process DHCP results
-    for result in dhcp_results:
-        ip = result["ip"]
-        if ip not in combined_results:
-            combined_results[ip] = {}
-        combined_results[ip].update({
-            "dhcp_hostname": result.get("dhcp_hostname", combined_results[ip].get("dhcp_hostname")),
-            "mac_address": result.get("mac_address", combined_results[ip].get("mac_address")),
-            "mac_vendor": result.get("mac_vendor", combined_results[ip].get("mac_vendor")),
-            "last_seen": result.get("last_seen", combined_results[ip].get("last_seen")),
-        })
-
-    # Process Nmap results
-    for result in nmap_results:
-        ip = result["ip"]
-        if ip not in combined_results:
-            combined_results[ip] = {}
-        combined_results[ip].update({
-            "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
-        })
+        for result in nmap_results:
+            ip = result["ip"]
+            if ip not in combined_results:
+                combined_results[ip] = {}
+            combined_results[ip].update({
+                "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
+            })
 
     # Update the localhosts database
     for ip, data in combined_results.items():
         update_localhosts(
             ip_address=ip,
-            first_seen=data.get("first_seen"),
-            original_flow=data.get("original_flow"),
             mac_address=data.get("mac_address"),
             mac_vendor=data.get("mac_vendor"),
             dhcp_hostname=data.get("dhcp_hostname"),

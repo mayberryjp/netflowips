@@ -383,7 +383,7 @@ def get_localhosts():
     finally:
         conn.close()
 
-def update_localhosts(ip_address, first_seen=None, original_flow=None, mac_address=None, mac_vendor=None, dhcp_hostname=None, dns_hostname=None, os_fingerprint=None):
+def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostname=None, dns_hostname=None, os_fingerprint=None):
     """
     Update or insert a record in the localhosts database for a given IP address.
 
@@ -410,31 +410,16 @@ def update_localhosts(ip_address, first_seen=None, original_flow=None, mac_addre
     try:
         cursor = conn.cursor()
 
-        # Check if the IP address already exists in the database
-        cursor.execute("SELECT COUNT(*) FROM localhosts WHERE ip_address = ?", (ip_address,))
-        exists = cursor.fetchone()[0] > 0
-
-        if exists:
-            # Update the existing record
-            cursor.execute("""
-                UPDATE localhosts
-                SET first_seen = COALESCE(first_seen, ?),
-                    original_flow = COALESCE(?, original_flow),
-                    mac_address = COALESCE(?, mac_address),
-                    mac_vendor = COALESCE(?, mac_vendor),
-                    dhcp_hostname = COALESCE(?, dhcp_hostname),
-                    dns_hostname = COALESCE(?, dns_hostname),
-                    os_fingerprint = COALESCE(?, os_fingerprint)
-                WHERE ip_address = ?
-            """, (first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint, ip_address))
-            log_info(logger, f"[INFO] Updated record for IP: {ip_address}")
-        else:
-            # Insert a new record
-            cursor.execute("""
-                INSERT INTO localhosts (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint))
-            log_info(logger, f"[INFO] Inserted new record for IP: {ip_address}")
+        cursor.execute("""
+            UPDATE localhosts
+            SET mac_address = COALESCE(?, mac_address),
+                mac_vendor = COALESCE(?, mac_vendor),
+                dhcp_hostname = COALESCE(?, dhcp_hostname),
+                dns_hostname = COALESCE(?, dns_hostname),
+                os_fingerprint = COALESCE(?, os_fingerprint)
+            WHERE ip_address = ?
+        """, (mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint, ip_address))
+        log_info(logger, f"[INFO] Updated record for IP: {ip_address}")
 
         conn.commit()
         return True
