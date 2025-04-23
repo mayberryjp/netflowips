@@ -12,6 +12,8 @@ parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
+sys.path.insert(0, "/database")
+
 from utils import log_info, log_warn, log_error
 from integrations.maxmind import load_geolocation_data, create_geolocation_db
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
@@ -298,7 +300,7 @@ def main():
     start = datetime.now()
 
     # Limit the list of localhosts to the first 3 entries
-    sub_localhosts = list(localhosts)[:10]   # Slice the list to include only the first 3 hosts
+    sub_localhosts = list(localhosts)[:3]   # Slice the list to include only the first 3 hosts
     nmap_return = os_fingerprint(sub_localhosts, config_dict)
 
     log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_return)}")

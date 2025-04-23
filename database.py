@@ -104,8 +104,8 @@ def init_configurations():
         if (IS_CONTAINER):
             SITE = os.getenv("SITE", CONST_SITE)
 
-        config = importlib.import_module(f"configs.{SITE}")
-        log_info(logger, f"[INFO] Reading configuration from configs/{SITE}")
+        config = importlib.import_module(f"{SITE}")
+        log_info(logger, f"[INFO] Reading configuration from /database/{SITE}.py")
 
         cursor = conn.cursor()
         for key, value in config.CONST_DEFAULT_CONFIGS:
@@ -419,7 +419,7 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
                 os_fingerprint = COALESCE(?, os_fingerprint)
             WHERE ip_address = ?
         """, (mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint, ip_address))
-        log_info(logger, f"[INFO] Updated record for IP: {ip_address}")
+        log_info(logger, f"[INFO] Discovery updated record for IP: {ip_address}")
 
         conn.commit()
         return True

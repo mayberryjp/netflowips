@@ -4,7 +4,8 @@ from netflow import handle_netflow_v5
 from utils import log_info, log_error, dump_json
 import logging
 import os
-
+import sys
+sys.path.insert(0, "/database")
 
 if (IS_CONTAINER):
     SITE = os.getenv("SITE", CONST_SITE)
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__) 
 
     # Check if a site-specific configuration file exists
-    site_config_path = os.path.join("database", f"{SITE}.py")
+    site_config_path = os.path.join("/database", f"{SITE}.py")
     if os.path.exists(site_config_path):
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}")
         delete_database(CONST_CONFIG_DB)
