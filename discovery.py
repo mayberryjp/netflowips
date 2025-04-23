@@ -79,7 +79,7 @@ def do_discovery():
 
 if __name__ == "__main__":
     # wait a bit for startup so collector can init configurations
-    time.sleep(5)
+    time.sleep(60)
     logger = logging.getLogger(__name__)
 
     config_dict = get_config_settings()
