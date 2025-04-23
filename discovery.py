@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # wait a bit for startup so collector can init configurations
 
     logger = logging.getLogger(__name__)
-    log_info(logger,f"Pausing discovery process for 60 seconds at startup")
+    log_info(logger,f"[INFO] Pausing discovery process for 60 seconds at startup")
     time.sleep(60)
     config_dict = get_config_settings()
     if not config_dict:
