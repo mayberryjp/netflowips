@@ -109,7 +109,7 @@ def get_pihole_dhcp_clients(existing_localhosts, config_dict):
                 if host == client["ip"]:
                     return_hosts.append({
                         "ip": client["ip"],
-                        "hostname": client["hostname"],
+                        "dhcp_hostname": client["hostname"],
                         "mac_address": client["mac_address"],
                         "mac_vendor": client["mac_vendor"],
                     })

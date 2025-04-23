@@ -96,5 +96,6 @@ CONST_CREATE_LOCALHOSTS_SQL="""
                     mac_address TEXT,
                     mac_vendor TEXT,
                     dhcp_hostname TEXT,
-                    dns_hostname TEXT
+                    dns_hostname TEXT,
+                    os_fingerprint TEXT
                 )"""

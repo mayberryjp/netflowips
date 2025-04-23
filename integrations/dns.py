@@ -19,7 +19,7 @@ def dns_lookup(ip_addresses, dns_servers, config_dict):
     resolver_retries = config_dict['DnsResolverRetries'] if 'DnsResolverRetries' in config_dict else 1
     
     log_info(logger,f"[INFO] DNS discovery starting")
-    results = {}
+    results = []
     resolver = dns.resolver.Resolver()
     resolver.nameservers = dns_servers  # Set the specific DNS servers
     resolver.timeout = resolver_timeout
@@ -30,23 +30,35 @@ def dns_lookup(ip_addresses, dns_servers, config_dict):
 
     for ip in ip_addresses:
 
-        if count % 5 == 0:
-            print(f"\r[INFO] Processing dns lookups: {count}/{total}", end='', flush=True)
-            
         try:
             # Perform reverse DNS lookup
             query = resolver.resolve_address(ip)
             hostname = str(query[0])  # Extract the hostname
-            results[ip] = hostname
-        except dns.resolver.NXDOMAIN:
-            results[ip] = ""
-        except dns.resolver.Timeout:
-            results[ip] = ""
-        except dns.resolver.NoNameservers:
-            results[ip] = ""
-        except Exception as e:
-            results[ip] = ""
+            results.append({
+                "ip": ip,
+                "dns_hostname": hostname
+            })
 
-    print()
+        except dns.resolver.NXDOMAIN:
+            results.append({
+                "ip": ip,
+                "dns_hostname": "NXDOMAIN"
+            })
+        except dns.resolver.Timeout:
+            results.append({
+                "ip": ip,
+                "dns_hostname": "TIMEOUT"
+            })
+        except dns.resolver.NoNameservers:
+            results.append({
+                "ip": ip,
+                "dns_hostname": "NONAMESERVER"
+            })
+        except Exception as e:
+            results.append({
+                "ip": ip,
+                "dns_hostname": "ERROR"
+            })
+
     log_info(logger,f"[INFO] DNS discovery finished")
     return results

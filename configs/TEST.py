@@ -32,5 +32,6 @@ CONST_DEFAULT_CONFIGS = [
     ('DiscoveryReverseDns', 1),
     ('DiscoveryPiholeDhcp', 1),
     ('EnableLocalDiscoveryProcess', 1),
-    ('DiscoveryProcessRunInterval', 60)
+    ('DiscoveryProcessRunInterval', 60),
+    ('DiscoveryNmapOsFingerprint',1)
 ]
