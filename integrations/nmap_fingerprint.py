@@ -28,7 +28,14 @@ def os_fingerprint(ip_addresses, config_dict):
     nmap_dir = r'/usr/bin'
     os.environ['PATH'] = nmap_dir + os.pathsep + os.environ['PATH']
 
-    scanner = nmap.PortScanner()
+    try:
+        scanner = nmap.PortScanner()
+    except nmap.PortScannerError as e:
+        log_error(logger, f"[ERROR] Nmap executable not found or not accessible: {e}")
+        return [{"error": "Nmap executable not found or not accessible"}]
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error initializing Nmap scanner: {e}")
+        return [{"error": f"Unexpected error: {e}"}]
 
     results = []
 

@@ -6,6 +6,7 @@ RUN rm -rf /homelabids
 RUN apt-get update && apt-get install -y \
     git \
     supervisor \
+    nmap \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
