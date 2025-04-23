@@ -23,7 +23,7 @@ def os_fingerprint(ip_addresses, config_dict):
     """
     logger = logging.getLogger(__name__)
 
-    log_info(logger,f"[INFO] Nmap OS Fingerprinting starting")
+    log_info(logger, f"[INFO] Nmap OS Fingerprinting starting")
 
     nmap_dir = r'C:\Program Files (x86)\Nmap'
     os.environ['PATH'] = nmap_dir + os.pathsep + os.environ['PATH']
@@ -39,29 +39,28 @@ def os_fingerprint(ip_addresses, config_dict):
             os_matches = scan_result['scan'].get(ip, {}).get('osmatch', [])
             
             if os_matches:
-                # Combine OS fingerprint information from the first match
-                os_fingerprint = []
-                for match in os_matches:
-                    vendor = match.get('osclass', [{}])[0].get('vendor', 'Unknown')
-                    osfamily = match.get('osclass', [{}])[0].get('osfamily', 'Unknown')
-                    osgen = match.get('osclass', [{}])[0].get('osgen', 'Unknown')
-                    os_fingerprint.append(f"{vendor}_{osfamily}_{osgen}")
-                
+                # Use the highest match (first match in the list)
+                best_match = os_matches[0]
+                vendor = best_match.get('osclass', [{}])[0].get('vendor', 'Unknown')
+                osfamily = best_match.get('osclass', [{}])[0].get('osfamily', 'Unknown')
+                osgen = best_match.get('osclass', [{}])[0].get('osgen', 'Unknown')
+                accuracy = best_match.get('accuracy', 'Unknown')
+
                 results.append({
                     "ip": ip,
-                    "os_fingerprint": "; ".join(os_fingerprint)  # Combine multiple matches into a single string
+                    "os_fingerprint": f"{vendor}_{osfamily}_{osgen}_{accuracy}",
                 })
             else:
                 results.append({
                     "ip": ip,
-                    "os_fingerprint": "No OS fingerprint detected"
+                    "os_fingerprint": "No OS fingerprint detected",
                 })
         except Exception as e:
             results.append({
                 "ip": ip,
-                "os_fingerprint": f"ERROR: {e}"
+                "os_fingerprint": f"ERROR: {e}",
             })
 
-    log_info(logger,f"[INFO] Nmap OS fingerprinting finished")
+    log_info(logger, f"[INFO] Nmap OS fingerprinting finished")
 
     return results
