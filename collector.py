@@ -1,5 +1,5 @@
 from const import VERSION, CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE, CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL
-from database import delete_database, create_database, get_config_settings, init_configurations
+from database import import_whitelists, delete_database, create_database, get_config_settings, init_configurations
 from netflow import handle_netflow_v5
 from utils import log_info, log_error, dump_json
 import logging
@@ -21,7 +21,8 @@ if __name__ == "__main__":
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}")
         delete_database(CONST_CONFIG_DB)
         create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
-        init_configurations()
+        config_dict = init_configurations()
+        import_whitelists(config_dict)
     else:
         log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}")
 

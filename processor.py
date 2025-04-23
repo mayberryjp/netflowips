@@ -39,8 +39,6 @@ def process_data(geolocation_data):
 
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
-
-            #import_whitelists(config_dict)
             
             # process whitelisted entries and remove from detection rows
             whitelist_entries = get_whitelist()

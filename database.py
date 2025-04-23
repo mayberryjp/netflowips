@@ -93,31 +93,53 @@ def delete_all_records(db_name, table_name='flows'):
             conn.close()
 
 def init_configurations():
-    """Inserts default configurations into the CONST_CONFIG_DB database."""
+    """
+    Inserts default configurations into the CONST_CONFIG_DB database and returns a configuration dictionary.
+
+    Returns:
+        dict: A dictionary containing the configuration settings.
+    """
     logger = logging.getLogger(__name__)
+    config_dict = {}
+
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
             logger.error("[ERROR] Unable to connect to configuration database")
-            return
+            return config_dict
 
-        if (IS_CONTAINER):
+        if IS_CONTAINER:
             SITE = os.getenv("SITE", CONST_SITE)
 
+        # Dynamically import the site-specific configuration module
         config = importlib.import_module(f"{SITE}")
         log_info(logger, f"[INFO] Reading configuration from /database/{SITE}.py")
 
         cursor = conn.cursor()
+
+        # Insert default configurations into the database
         for key, value in config.CONST_DEFAULT_CONFIGS:
             cursor.execute("""
                 INSERT OR IGNORE INTO configuration (key, value)
                 VALUES (?, ?)
             """, (key, value))
         conn.commit()
+
+        # Fetch all configurations into a dictionary
+        cursor.execute("SELECT key, value FROM configuration")
+        config_dict = dict(cursor.fetchall())
+
         log_info(logger, f"[INFO] Default configurations initialized successfully.")
         conn.close()
     except sqlite3.Error as e:
         logger.error(f"[ERROR] Error initializing default configurations: {e}")
+    except Exception as e:
+        logger.error(f"[ERROR] Unexpected error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+    return config_dict
 
 def get_config_settings():
     """Read configuration settings from the configuration database into a dictionary."""
