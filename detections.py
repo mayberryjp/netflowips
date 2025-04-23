@@ -720,7 +720,7 @@ def detect_dead_connections(config_dict):
 
             # Check if the DeadConnectionDetection tag already exists
             if "DeadConnectionDetection" in row_tags:
-                log_info(logger, f"[INFO] Tag 'DeadConnectionDetection' already exists for flow: {src_ip} -> {dst_ip}:{dst_port}")
+                #log_info(logger, f"[INFO] Tag 'DeadConnectionDetection' already exists for flow: {src_ip} -> {dst_ip}:{dst_port}")
                 continue
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
