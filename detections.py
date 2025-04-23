@@ -699,7 +699,7 @@ def detect_dead_connections(config_dict):
                     sum(reverse_packets) as r_packets
                 FROM ConnectionPairs
                 WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
-                AND tags not like '%DeadConnectionDetection%'
+                AND row_tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
