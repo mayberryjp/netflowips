@@ -8,3 +8,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /docker/homelabids:/database
+    environment: 
+      - SITE=MYSITE
