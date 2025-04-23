@@ -79,7 +79,7 @@ def process_data(geolocation_data):
                 detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
             
             if config_dict.get("DeadConnectionDetection", 0) > 0:
-                detect_dead_connections(filtered_rows, config_dict)
+                detect_dead_connections(config_dict)
         
             log_info(logger,f"[INFO] Processing finished.")   
 
