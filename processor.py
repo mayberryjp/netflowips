@@ -88,10 +88,13 @@ def process_data(geolocation_data):
 
 if __name__ == "__main__":
 
-    # wait a bit for startup so collector can init configurations
-    time.sleep(5)
-
     logger = logging.getLogger(__name__)
+
+    log_info(logger,"[INFO] Processor process pausing 10 seconds before starting up")
+    # wait a bit for startup so collector can init configurations
+    time.sleep(10)
+
+
 
     log_info(logger, f"[INFO] Processor started.")
 

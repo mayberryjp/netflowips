@@ -699,6 +699,7 @@ def detect_dead_connections(config_dict):
                     sum(reverse_packets) as r_packets
                 FROM ConnectionPairs
                 WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
+                where tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
@@ -717,11 +718,6 @@ def detect_dead_connections(config_dict):
             dst_port = row[2]
             protocol = row[5]
             row_tags = row[6]  # Existing tags for the flow
-
-            # Check if the DeadConnectionDetection tag already exists
-            if "DeadConnectionDetection" in row_tags:
-                #log_info(logger, f"[INFO] Tag 'DeadConnectionDetection' already exists for flow: {src_ip} -> {dst_ip}:{dst_port}")
-                continue
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
             

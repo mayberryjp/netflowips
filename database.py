@@ -355,6 +355,7 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
         cursor.execute(f"""
             SELECT tags FROM {table_name}
             WHERE src_ip = ? AND dst_ip = ? AND dst_port = ?
+            AND tags not like '%DeadConnectionDetection%'
         """, (src_ip, dst_ip, dst_port))
         result = cursor.fetchone()
 
