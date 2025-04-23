@@ -2,7 +2,7 @@ from bottle import Bottle, request, response
 import sqlite3
 import json
 import os
-from database import connect_to_db
+from database import connect_to_db, collect_database_counts  # Import the function
 from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LOCALHOSTS_DB, IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
@@ -402,6 +402,41 @@ def modify_localhost(ip_address):
             log_error(logger, f"Error deleting local host: {e}")
             response.status = 500
             return {"error": str(e)}
+
+@app.route('/api/homeassistant', method=['GET'])
+def get_database_counts():
+    """
+    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Call the function to collect database counts
+        counts = collect_database_counts()
+        set_json_response()
+        log_info(logger, "[INFO] Fetched database counts successfully.")
+        return json.dumps(counts)
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to fetch database counts: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    
+
+@app.route('/api/homepage', method=['GET'])
+def get_database_counts():
+    """
+    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Call the function to collect database counts
+        counts = collect_database_counts()
+        set_json_response()
+        log_info(logger, "[INFO] Fetched database counts successfully.")
+        return json.dumps(counts)
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to fetch database counts: {e}")
+        response.status = 500
+        return {"error": str(e)}
 
 # Run the Bottle app
 if __name__ == '__main__':

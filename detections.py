@@ -674,7 +674,7 @@ def detect_dead_connections(config_dict):
                         a1.packets as forward_packets,
                         a1.bytes as forward_bytes,
                         a1.times_seen as forward_seen,
-						a1.tags as row_tags,
+                        a1.tags as row_tags,
                         COALESCE(a2.packets, 0) as reverse_packets,
                         COALESCE(a2.bytes, 0) as reverse_bytes,
                         COALESCE(a2.times_seen, 0) as reverse_seen
@@ -693,21 +693,20 @@ def detect_dead_connections(config_dict):
                     forward_packets,
                     reverse_packets,
                     connection_protocol,
-					row_tags,
+                    row_tags,
                     COUNT(*) as connection_count,
                     sum(forward_packets) as f_packets,
                     sum(reverse_packets) as r_packets
-                    from ConnectionPairs
+                FROM ConnectionPairs
                 WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
-				AND row_tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
                 GROUP BY initiator_ip, responder_ip, responder_port, connection_protocol
                 HAVING 
                     f_packets > 2
-                    AND r_packets < 1"""
-                       )
+                    AND r_packets < 1
+        """)
         
         dead_connections = cursor.fetchall()
         log_info(logger, f"[INFO] Found {len(dead_connections)} potential dead connections")
@@ -717,6 +716,12 @@ def detect_dead_connections(config_dict):
             dst_ip = row[1]
             dst_port = row[2]
             protocol = row[5]
+            row_tags = row[6]  # Existing tags for the flow
+
+            # Check if the DeadConnectionDetection tag already exists
+            if "DeadConnectionDetection" in row_tags:
+                log_info(logger, f"[INFO] Tag 'DeadConnectionDetection' already exists for flow: {src_ip} -> {dst_ip}:{dst_port}")
+                continue
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
             

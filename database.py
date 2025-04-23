@@ -167,8 +167,8 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
         conn = sqlite3.connect(CONST_ALERTS_DB)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen)
-            VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen, acknowledged)
+            VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0)
             ON CONFLICT(id)
             DO UPDATE SET
                 times_seen = times_seen + 1,
@@ -450,6 +450,76 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         return False
     finally:
         conn.close()
+
+
+def collect_database_counts():
+    """
+    Collects counts from the alerts, localhosts, and whitelist tables.
+
+    Returns:
+        dict: A dictionary containing the counts for acknowledged alerts, unacknowledged alerts,
+              total alerts, localhosts entries, and whitelist entries.
+    """
+    logger = logging.getLogger(__name__)
+    counts = {
+        "acknowledged_alerts": 0,
+        "unacknowledged_alerts": 0,
+        "total_alerts": 0,
+        "localhosts_count": 0,
+        "whitelist_count": 0
+    }
+
+    try:
+        # Connect to the alerts database
+        conn_alerts = connect_to_db(CONST_ALERTS_DB)
+        if conn_alerts:
+            cursor = conn_alerts.cursor()
+            # Count acknowledged alerts
+            cursor.execute("SELECT COUNT(*) FROM alerts WHERE acknowledged = 1")
+            counts["acknowledged_alerts"] = cursor.fetchone()[0]
+
+            # Count unacknowledged alerts
+            cursor.execute("SELECT COUNT(*) FROM alerts WHERE acknowledged = 0")
+            counts["unacknowledged_alerts"] = cursor.fetchone()[0]
+
+            # Count total alerts
+            cursor.execute("SELECT COUNT(*) FROM alerts")
+            counts["total_alerts"] = cursor.fetchone()[0]
+
+            conn_alerts.close()
+        else:
+            log_error(logger, "[ERROR] Unable to connect to alerts database")
+
+        # Connect to the localhosts database
+        conn_localhosts = connect_to_db(CONST_LOCALHOSTS_DB)
+        if conn_localhosts:
+            cursor = conn_localhosts.cursor()
+            # Count entries in localhosts
+            cursor.execute("SELECT COUNT(*) FROM localhosts")
+            counts["localhosts_count"] = cursor.fetchone()[0]
+
+            conn_localhosts.close()
+        else:
+            log_error(logger, "[ERROR] Unable to connect to localhosts database")
+
+        # Connect to the whitelist database
+        conn_whitelist = connect_to_db(CONST_WHITELIST_DB)
+        if conn_whitelist:
+            cursor = conn_whitelist.cursor()
+            # Count entries in whitelist
+            cursor.execute("SELECT COUNT(*) FROM whitelist")
+            counts["whitelist_count"] = cursor.fetchone()[0]
+
+            conn_whitelist.close()
+        else:
+            log_error(logger, "[ERROR] Unable to connect to whitelist database")
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error: {e}")
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error: {e}")
+
+    return counts
 
 
 
