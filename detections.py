@@ -725,7 +725,7 @@ def detect_dead_connections(config_dict):
                       f"Destination: {dst_ip}:{dst_port}\n"
                       f"Protocol: {protocol}\n")
             
-            log_info(logger, f"[INFO] {message}")
+            log_info(logger, f"[INFO] Dead connection detected: {src_ip}->{dst_ip}:{dst_port} {protocol}")
             
             # Add a Tag to the matching row using update_tag
             if not update_tag_to_allflows("allflows", "DeadConnectionDetection", src_ip, dst_ip, dst_port):

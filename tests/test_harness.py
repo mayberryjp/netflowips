@@ -35,7 +35,8 @@ from const import (
     CONST_CREATE_NEWFLOWS_SQL,
     CONST_CREATE_LOCALHOSTS_SQL,
     CONST_CREATE_GEOLOCATION_SQL,
-    CONST_GEOLOCATION_DB
+    CONST_GEOLOCATION_DB,
+    VERSION
 )
 from utils import log_info
 
@@ -149,6 +150,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
 
         # Prepare the test result data
         test_result = {
+            "version": VERSION,
             "execution_date": datetime.now().strftime("%Y-%m-%d"),
             "start_time": start_time.isoformat(),
             "end_time": end_time.isoformat(),
@@ -237,39 +239,39 @@ def main():
     detection_durations['update_local_hosts'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_new_outbound_connections(filtered_rows, config_dict)
+    detect_new_outbound_connections(filtered_rows, config_dict)
     detection_durations['detect_new_outbound_connections'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #router_flows_detection(filtered_rows, config_dict)
+    router_flows_detection(filtered_rows, config_dict)
     detection_durations['router_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #foreign_flows_detection(filtered_rows, config_dict)
+    foreign_flows_detection(filtered_rows, config_dict)
     detection_durations['foreign_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #local_flows_detection(filtered_rows, config_dict)
+    local_flows_detection(filtered_rows, config_dict)
     detection_durations['local_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_dead_connections(config_dict)
+    detect_dead_connections(config_dict)
     detection_durations['detect_dead_connections'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_unauthorized_dns(filtered_rows, config_dict)
+    detect_unauthorized_dns(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_unauthorized_ntp(filtered_rows, config_dict)
+    detect_unauthorized_ntp(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_ntp'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+    detect_incorrect_ntp_stratum(filtered_rows, config_dict)
     detection_durations['detect_incorrect_ntp_stratum'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_incorrect_authoritative_dns(filtered_rows, config_dict)
+    detect_incorrect_authoritative_dns(filtered_rows, config_dict)
     detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
 
     create_geolocation_db()
@@ -277,7 +279,7 @@ def main():
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     start = datetime.now()
-    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
     localhosts = get_localhosts()
@@ -297,8 +299,6 @@ def main():
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
     log_info(logger, f"[INFO] Total execution time: {duration:.2f} seconds")
-
-
 
     log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_durations)
 
