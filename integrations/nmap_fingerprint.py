@@ -63,10 +63,8 @@ def os_fingerprint(ip_addresses, config_dict):
                     "os_fingerprint": "No OS fingerprint detected",
                 })
         except Exception as e:
-            results.append({
-                "ip": ip,
-                "os_fingerprint": f"ERROR: {e}",
-            })
+            log_error(logger,f"[ERROR] {e}")
+            pass
 
     log_info(logger, f"[INFO] Nmap OS fingerprinting finished")
 
