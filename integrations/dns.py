@@ -1,0 +1,52 @@
+import dns.resolver
+from utils import log_info
+import logging
+
+def dns_lookup(ip_addresses, dns_servers, config_dict):
+    """
+    Perform DNS lookup for a list of IP addresses using specific DNS servers.
+
+    Args:
+        ip_addresses (list): A list of IP addresses to perform DNS lookups on.
+        dns_servers (list): A list of DNS servers to use for lookups (default is ['8.8.8.8']).
+
+    Returns:
+        dict: A dictionary where the keys are IP addresses and the values are the resolved hostnames or an error message.
+    """
+    logger = logging.getLogger(__name__)
+
+    resolver_timeout = config_dict['DnsResolverTimeout'] if 'DnsResolverTimeout' in config_dict else 3
+    resolver_retries = config_dict['DnsResolverRetries'] if 'DnsResolverRetries' in config_dict else 1
+    
+    log_info(logger,f"[INFO] DNS discovery starting")
+    results = {}
+    resolver = dns.resolver.Resolver()
+    resolver.nameservers = dns_servers  # Set the specific DNS servers
+    resolver.timeout = resolver_timeout
+    resolver.lifetime = resolver_retries
+
+    count = 0
+    total = len(ip_addresses)
+
+    for ip in ip_addresses:
+
+        if count % 5 == 0:
+            print(f"\r[INFO] Processing dns lookups: {count}/{total}", end='', flush=True)
+            
+        try:
+            # Perform reverse DNS lookup
+            query = resolver.resolve_address(ip)
+            hostname = str(query[0])  # Extract the hostname
+            results[ip] = hostname
+        except dns.resolver.NXDOMAIN:
+            results[ip] = ""
+        except dns.resolver.Timeout:
+            results[ip] = ""
+        except dns.resolver.NoNameservers:
+            results[ip] = ""
+        except Exception as e:
+            results[ip] = ""
+
+    print()
+    log_info(logger,f"[INFO] DNS discovery finished")
+    return results

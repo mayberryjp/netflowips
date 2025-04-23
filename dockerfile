@@ -14,7 +14,7 @@ RUN git clone https://github.com/mayberryjp/homelabids.git /homelabids
 # Set the working directory
 WORKDIR /homelabids
 
-RUN pip install schedule requests bottle
+RUN pip install schedule requests bottle dnspython
 
 # Expose the port
 EXPOSE 2055

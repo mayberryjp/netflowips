@@ -86,3 +86,31 @@ def ip_to_int(ip_addr):
         return struct.unpack('!L', socket.inet_aton(ip_addr))[0]
     except:
         return None
+
+def get_usable_ips(networks):
+    """
+    Get a list of all usable IP addresses for multiple network ranges.
+
+    Args:
+        networks (list): A list of networks in CIDR notation (e.g., ['192.168.1.0/24', '10.0.0.0/8']).
+
+    Returns:
+        dict: A dictionary where the keys are the networks and the values are lists of usable IP addresses.
+    """
+    logger = logging.getLogger(__name__)
+    results = {}
+
+    for network in networks:
+        try:
+            net = IPv4Network(network, strict=False)
+            # Exclude the network address and broadcast address
+            usable_ips = [str(ip) for ip in net.hosts()]
+            results[network] = usable_ips
+            log_info(logger, f"[INFO] Found {len(usable_ips)} usable IPs in network {network}")
+        except ValueError as e:
+            log_error(logger, f"[ERROR] Invalid network format {network}: {e}")
+            results[network] = []
+
+    return results
+
+

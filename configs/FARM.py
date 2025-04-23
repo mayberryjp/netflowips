@@ -24,5 +24,7 @@ CONST_DEFAULT_CONFIGS = [
     ('CleanNewFlows','1'),
     ('DeadConnectionDetection','1'),
     # Add more default configurations here as needed
-   ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
+    ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
+    ('DnsResolverTimeout', 3),
+    ('DnsResolverRetries', 3),
 ]
