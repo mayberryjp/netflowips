@@ -119,8 +119,11 @@ def get_pihole_dhcp_clients(existing_localhosts, config_dict):
         return return_hosts
 
     except requests.exceptions.RequestException as e:
-        return {"error": f"Failed to fetch DHCP client list: {e}"}
+        log_error(logger,f"Failed to fetch DHCP client list: {e}")
+        return []
     except ValueError:
-        return {"error": "Failed to parse JSON response from Pi-hole"}
+        log_error(logger,f"Failed to parse JSON response from Pi-hole")
+        return []
     except Exception as e:
-        return {"error": f"An unexpected error occurred: {e}"}
+        log_error(logger,f"An unexpected error occurred: {e}")
+        return []
