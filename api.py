@@ -306,7 +306,18 @@ def localhosts():
             conn.close()
             set_json_response()
             log_info(logger, "Fetched all local hosts successfully.")
-            return json.dumps([{"ip_address": row[0], "first_seen": row[1], "original_flow": row[2]} for row in rows])
+            return json.dumps([
+                {
+                    "ip_address": row[0],
+                    "first_seen": row[1],
+                    "original_flow": row[2],
+                    "mac_address": row[3],
+                    "mac_vendor": row[4],
+                    "dhcp_hostname": row[5],
+                    "dns_hostname": row[6],
+                    "os_fingerprint": row[7]
+                } for row in rows
+            ])
         except sqlite3.Error as e:
             conn.close()
             log_error(logger, f"Error fetching local hosts: {e}")
@@ -319,9 +330,16 @@ def localhosts():
         ip_address = data.get('ip_address')
         first_seen = data.get('first_seen')
         original_flow = data.get('original_flow')
+        mac_address = data.get('mac_address')
+        mac_vendor = data.get('mac_vendor')
+        dhcp_hostname = data.get('dhcp_hostname')
+        dns_hostname = data.get('dns_hostname')
+        os_fingerprint = data.get('os_fingerprint')
         try:
-            cursor.execute("INSERT INTO localhosts (ip_address, first_seen, original_flow) VALUES (?, ?, ?)", 
-                           (ip_address, first_seen, original_flow))
+            cursor.execute("""
+                INSERT INTO localhosts (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint))
             conn.commit()
             conn.close()
             set_json_response()
@@ -348,9 +366,17 @@ def modify_localhost(ip_address):
         data = request.json
         first_seen = data.get('first_seen')
         original_flow = data.get('original_flow')
+        mac_address = data.get('mac_address')
+        mac_vendor = data.get('mac_vendor')
+        dhcp_hostname = data.get('dhcp_hostname')
+        dns_hostname = data.get('dns_hostname')
+        os_fingerprint = data.get('os_fingerprint')
         try:
-            cursor.execute("UPDATE localhosts SET first_seen = ?, original_flow = ? WHERE ip_address = ?", 
-                           (first_seen, original_flow, ip_address))
+            cursor.execute("""
+                UPDATE localhosts
+                SET first_seen = ?, original_flow = ?, mac_address = ?, mac_vendor = ?, dhcp_hostname = ?, dns_hostname = ?, os_fingerprint = ?
+                WHERE ip_address = ?
+            """, (first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint, ip_address))
             conn.commit()
             conn.close()
             set_json_response()
