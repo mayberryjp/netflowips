@@ -14,7 +14,7 @@ CONST_DEFAULT_CONFIGS = [
     ('ApprovedAuthoritativeDnsServersList','8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1'),
     ('ApprovedNtpStratumServersList','162.159.200.123,162.159.200.123,216.239.35.0,216.239.35.4'),
     ('BannedCountryList','China,North Korea,Iran,Russia,Ukraine,Georgia,Armenia,Azerbaijan,Belarus,Syria,Venezuela,Cuba,Myanmar,Afghanistan'),
-    ('LocalNetworks','192.168.230.0/24,192.168.8.1/32'),
+    ('LocalNetworks','192.168.230.0/24'),
     ('RouterIpAddresses','192.168.230.1'),
     ('ProcessingInterval','60'),
     ('TelegramBotToken',''),
@@ -32,6 +32,6 @@ CONST_DEFAULT_CONFIGS = [
     ('DiscoveryReverseDns', 1),
     ('DiscoveryPiholeDhcp', 1),
     ('EnableLocalDiscoveryProcess', 1),
-    ('DiscoveryProcessRunInterval', 86400),
+    ('DiscoveryProcessRunInterval', 22800),
     ('DiscoveryNmapOsFingerprint', 1)
 ]
