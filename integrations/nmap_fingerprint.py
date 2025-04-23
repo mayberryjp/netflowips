@@ -25,7 +25,7 @@ def os_fingerprint(ip_addresses, config_dict):
 
     log_info(logger, f"[INFO] Nmap OS Fingerprinting starting")
 
-    nmap_dir = r'C:\Program Files (x86)\Nmap'
+    nmap_dir = r'/usr/bin'
     os.environ['PATH'] = nmap_dir + os.pathsep + os.environ['PATH']
 
     scanner = nmap.PortScanner()
