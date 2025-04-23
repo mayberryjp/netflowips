@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 from utils import log_info, log_error  # Assuming log_info is defined in utils
-from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER
+from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER, CONST_LOCALHOSTS_DB
 import ipaddress
 import os
 from datetime import datetime
@@ -354,6 +354,32 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Failed to add tag to flow: {e}")
         return False
+    finally:
+        conn.close()
+
+def get_localhosts():
+    """
+    Retrieve all local hosts from the localhosts database.
+
+    Returns:
+        set: A set of IP addresses from the localhosts database, or an empty set if an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    conn = connect_to_db(CONST_LOCALHOSTS_DB)
+
+    if not conn:
+        log_error(logger, "[ERROR] Unable to connect to localhosts database")
+        return set()
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT ip_address FROM localhosts")
+        localhosts = set(row[0] for row in cursor.fetchall())
+        log_info(logger, f"[INFO] Retrieved {len(localhosts)} local hosts from the database")
+        return localhosts
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Failed to retrieve local hosts: {e}")
+        return set()
     finally:
         conn.close()
 

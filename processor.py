@@ -117,5 +117,14 @@ if __name__ == "__main__":
     geolocation_data = load_geolocation_data()
 
     while True:
+
+        config_dict = get_config_settings()
+        if not config_dict:
+            log_error(logger, "[ERROR] Failed to load configuration settings")
+            exit(1)
+    
+        PROCESS_RUN_INTERVAL = config_dict.get('ProcessRunInterval', 60)
+        log_info(logger, f"[INFO] Process run interval set to {PROCESS_RUN_INTERVAL} seconds.")
+
         process_data(geolocation_data)
-        time.sleep(60)
+        time.sleep(PROCESS_RUN_INTERVAL)

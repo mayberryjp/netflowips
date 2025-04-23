@@ -24,5 +24,13 @@ CONST_DEFAULT_CONFIGS = [
     ('CleanNewFlows','0'),
     ('DeadConnectionDetection','1'),
     # Add more default configurations here as needed
-   ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]')
+    ('WhitelistEntries', '[["192.168.230.1", "192.168.230.236", 53, 17]]'),
+    ('DnsResolverTimeout', 3),
+    ('DnsResolverRetries', 1),
+    ('PiholeUrl', 'http://192.168.49.80/api'),
+    ('PiholeApiKey','r/hovjWONTUkqIaY0whjcqECgDzDbQXnBe+u829U8Ds='),
+    ('DiscoveryReverseDns', 1),
+    ('DiscoveryPiholeDhcp', 1),
+    ('EnableLocalDiscoveryProcess', 1),
+    ('DiscoveryProcessRunInterval', 60)
 ]

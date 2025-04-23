@@ -92,5 +92,9 @@ CONST_CREATE_LOCALHOSTS_SQL="""
                 CREATE TABLE IF NOT EXISTS localhosts (
                     ip_address TEXT PRIMARY KEY,
                     first_seen TEXT,
-                    original_flow TEXT
+                    original_flow TEXT,
+                    mac_address TEXT,
+                    mac_vendor TEXT,
+                    dhcp_hostname TEXT,
+                    dns_hostname TEXT
                 )"""

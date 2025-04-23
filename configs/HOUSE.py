@@ -23,5 +23,11 @@ CONST_DEFAULT_CONFIGS = [
     ('StartCollector','1'),
     ('CleanNewFlows','1'),
     ('DeadConnectionDetection','1')
+    ('DnsResolverTimeout', 3),
+    ('DnsResolverRetries', 1),
     # Add more default configurations here as needed
+    ('PiholeUrl', 'http://192.168.49.80/api'),
+    ('PiholeApiKey','r/hovjWONTUkqIaY0whjcqECgDzDbQXnBe+u829U8Ds='),
+    ('DiscoveryReverseDns', 1),
+    ('DiscoveryPiholeDhcp', 1)
 ]
