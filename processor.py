@@ -90,11 +90,10 @@ if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
 
-    log_info(logger,"[INFO] Processor process pausing 10 seconds before starting up")
+    STARTUP_DELAY = 30
+    log_info(logger,f"[INFO] Processor process pausing {STARTUP_DELAY} seconds before starting up")
     # wait a bit for startup so collector can init configurations
-    time.sleep(10)
-
-
+    time.sleep(STARTUP_DELAY)
 
     log_info(logger, f"[INFO] Processor started.")
 

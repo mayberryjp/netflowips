@@ -95,9 +95,10 @@ def do_discovery():
 if __name__ == "__main__":
     # wait a bit for startup so collector can init configurations
 
+    STARTUP_DELAY = 180
     logger = logging.getLogger(__name__)
-    log_info(logger,f"[INFO] Pausing discovery process for 60 seconds at startup")
-    time.sleep(60)
+    log_info(logger,f"[INFO] Pausing discovery process for {STARTUP_DELAY} seconds at startup")
+    time.sleep(STARTUP_DELAY)
     config_dict = get_config_settings()
     if not config_dict:
         log_error(logger, "[ERROR] Failed to load configuration settings")
