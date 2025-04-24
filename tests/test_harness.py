@@ -17,7 +17,7 @@ sys.path.insert(0, "/database")
 from utils import log_info, log_warn, log_error
 from integrations.maxmind import load_geolocation_data, create_geolocation_db
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
-from integrations.piholedhcp import get_pihole_dhcp_clients
+from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
 from database import get_localhosts
 
@@ -53,7 +53,7 @@ from database import (
     init_configurations,
     get_row_count,
     get_alerts_summary,
-    import_whitelists
+    import_whitelists,
 )
 from detections import (
     update_local_hosts,
@@ -293,9 +293,14 @@ def main():
     detection_durations['discovery_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    dhcp_return = get_pihole_dhcp_clients(localhosts, config_dict)
-    log_info(logger,f"[INFO] Pihole Results: {json.dumps(dhcp_return)}")
-    detection_durations['discovery_pihole'] = (datetime.now() - start).total_seconds()
+    dhcp_return = get_pihole_dhcp_leases(localhosts, config_dict)
+    log_info(logger,f"[INFO] Pihole DHCP Lease Results: {json.dumps(dhcp_return)}")
+    detection_durations['discovery_pihole_dhcp_leases'] = (datetime.now() - start).total_seconds()
+
+    start = datetime.now()
+    dhcp_return = get_pihole_network_devices(localhosts, config_dict)
+    log_info(logger,f"[INFO] Pihole Network Device Results: {json.dumps(dhcp_return)}")
+    detection_durations['discovery_pihole_network_devices'] = (datetime.now() - start).total_seconds()   
 
     start = datetime.now()
 

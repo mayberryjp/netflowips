@@ -100,5 +100,8 @@ CONST_CREATE_LOCALHOSTS_SQL="""
                     dhcp_hostname TEXT,
                     dns_hostname TEXT,
                     os_fingerprint TEXT,
-                    local_description TEXT
+                    local_description TEXT,
+                    lease_hostname TEXT,
+                    lease_hwaddr TEXT,
+                    lease_clientid TEXT
                 )"""

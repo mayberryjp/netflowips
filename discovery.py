@@ -10,7 +10,7 @@ import time
 import logging
 import os
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
-from integrations.piholedhcp import get_pihole_dhcp_clients
+from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
 from utils import get_usable_ips
 
@@ -44,9 +44,9 @@ def do_discovery():
         log_error(logger, "[ERROR] No DNS servers in configuration to perform DNS lookup or DnsDiscoveryNotEnabled")
 
     if config_dict.get('DiscoveryPiholeDhcp', 0) > 0:
-        dhcp_results = get_pihole_dhcp_clients(existing_localhosts, config_dict)
+        nd_results = get_pihole_network_devices(existing_localhosts, config_dict)
         # Process DHCP results
-        for result in dhcp_results:
+        for result in nd_results:
             ip = result["ip"]
             if ip not in combined_results:
                 combined_results[ip] = {}
@@ -54,6 +54,18 @@ def do_discovery():
                 "dhcp_hostname": result.get("dhcp_hostname", combined_results[ip].get("dhcp_hostname")),
                 "mac_address": result.get("mac_address", combined_results[ip].get("mac_address")),
                 "mac_vendor": result.get("mac_vendor", combined_results[ip].get("mac_vendor")),
+            })
+
+        dl_results = get_pihole_dhcp_leases(existing_localhosts, config_dict)
+        # Process DHCP results
+        for result in dl_results:
+            ip = result["ip"]
+            if ip not in combined_results:
+                combined_results[ip] = {}
+            combined_results[ip].update({
+                "lease_hostname": result.get("lease_hostname", combined_results[ip].get("lease_hostname")),
+                "lease_hwaddr": result.get("lease_hwaddr", combined_results[ip].get("lease_hwaddress")),
+                "lease_clientid": result.get("lease_clientid", combined_results[ip].get("lease_clientid")),
             })
 
     if config_dict.get('DiscoveryNmapOsFingerprint', 0) > 0:
@@ -75,6 +87,9 @@ def do_discovery():
             dhcp_hostname=data.get("dhcp_hostname"),
             dns_hostname=data.get("dns_hostname"),
             os_fingerprint=data.get("os_fingerprint"),
+            lease_hostname=data.get("lease_hostname"),
+            lease_hwaddr=data.get('lease_hwaddr'),
+            lease_clientid=data.get('lease_clientid')
         )
 
 if __name__ == "__main__":
@@ -90,7 +105,7 @@ if __name__ == "__main__":
 
     log_info(logger, f"[INFO] Discovery process started.")
 
-    DISCOVERY_RUN_INTERVAL = config_dict.get("DiscoveryProcessRunInterval", 86400)  # Default to 60 seconds if not set
+    DISCOVERY_RUN_INTERVAL = config_dict.get("DiscoveryProcessRunInterval", 22800)  # Default to 60 seconds if not set
 
     while True:
         do_discovery()
