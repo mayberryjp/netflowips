@@ -310,11 +310,24 @@ def import_whitelists(config_dict):
     try:
         cursor = conn.cursor()
 
-        # Insert whitelist entries into the database
+        # Insert whitelist entries into the database if they don't already exist
         for entry in whitelist_entries:
             src_ip, dst_ip, dst_port, protocol = entry
+
+            # Check if the whitelist entry already exists
             cursor.execute("""
-                INSERT OR IGNORE INTO whitelist (
+                SELECT COUNT(*) FROM whitelist
+                WHERE whitelist_src_ip = ? AND whitelist_dst_ip = ? AND whitelist_dst_port = ? AND whitelist_protocol = ?
+            """, (src_ip, dst_ip, dst_port, protocol))
+            exists = cursor.fetchone()[0]
+
+            if exists:
+                log_info(logger, f"[INFO] Whitelist entry already exists: {entry}")
+                continue
+
+            # Insert the new whitelist entry
+            cursor.execute("""
+                INSERT INTO whitelist (
                     whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
                 ) VALUES (?, ?, ?, ?, 1)
             """, (src_ip, dst_ip, dst_port, protocol))
