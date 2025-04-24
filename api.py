@@ -107,7 +107,7 @@ def modify_configuration(key):
             return {"error": str(e)}
 
 # API for CONST_ALERTS_DB
-@app.route('/api/alerts', method=['GET', 'POST'])
+@app.route('/api/alerts', method=['GET'])
 def alerts():
     logger = logging.getLogger(__name__)
     db_name = CONST_ALERTS_DB
@@ -133,25 +133,8 @@ def alerts():
             response.status = 500
             return {"error": str(e)}
 
-    elif request.method == 'POST':
-        # Add a new alert
-        data = request.json
-        message = data.get('message')
-        timestamp = data.get('timestamp')
-        try:
-            cursor.execute("INSERT INTO alerts (message, timestamp) VALUES (?, ?)", (message, timestamp))
-            conn.commit()
-            conn.close()
-            set_json_response()
-            log_info(logger, f"Added new alert: {message}")
-            return {"message": "Alert added successfully"}
-        except sqlite3.Error as e:
-            conn.close()
-            log_error(logger, f"Error adding alert: {e}")
-            response.status = 500
-            return {"error": str(e)}
 
-@app.route('/api/alerts/<id>', method=['PUT', 'DELETE'])
+@app.route('/api/alerts/<id>', method=['PUT'])
 def modify_alert(id):
     db_name = CONST_ALERTS_DB
     conn = connect_to_db(db_name)
@@ -164,10 +147,10 @@ def modify_alert(id):
     if request.method == 'PUT':
         # Update an alert
         data = request.json
-        message = data.get('message')
-        timestamp = data.get('timestamp')
+        acknowledged = data.get('acknowledged')
+ 
         try:
-            cursor.execute("UPDATE alerts SET message = ?, timestamp = ? WHERE id = ?", (message, timestamp, id))
+            cursor.execute("UPDATE alerts SET acknowledged = ? WHERE id = ?", (acknowledged, id))
             conn.commit()
             conn.close()
             set_json_response()
@@ -179,20 +162,6 @@ def modify_alert(id):
             response.status = 500
             return {"error": str(e)}
 
-    elif request.method == 'DELETE':
-        # Delete an alert
-        try:
-            cursor.execute("DELETE FROM alerts WHERE id = ?", (id,))
-            conn.commit()
-            conn.close()
-            set_json_response()
-            log_info(logger, f"Deleted alert: {id}")
-            return {"message": "Alert deleted successfully"}
-        except sqlite3.Error as e:
-            conn.close()
-            log_error(logger, f"Error deleting alert: {e}")
-            response.status = 500
-            return {"error": str(e)}
 
 # API for CONST_WHITELIST_DB
 @app.route('/api/whitelist', method=['GET', 'POST'])
@@ -213,7 +182,7 @@ def whitelist():
             conn.close()
             set_json_response()
             log_info(logger, "Fetched all whitelist entries successfully.")
-            return json.dumps([{"id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4]} for row in rows])
+            return json.dumps([{"id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
         except sqlite3.Error as e:
             conn.close()
             log_error(logger, f"Error fetching whitelist entries: {e}")
@@ -288,7 +257,7 @@ def modify_whitelist(id):
             return {"error": str(e)}
 
 # API for CONST_LOCALHOSTS_DB
-@app.route('/api/localhosts', method=['GET', 'POST'])
+@app.route('/api/localhosts', method=['GET'])
 def localhosts():
     db_name = CONST_LOCALHOSTS_DB
     conn = connect_to_db(db_name)
@@ -315,7 +284,11 @@ def localhosts():
                     "mac_vendor": row[4],
                     "dhcp_hostname": row[5],
                     "dns_hostname": row[6],
-                    "os_fingerprint": row[7]
+                    "os_fingerprint": row[7],
+                    "local_description": row[8],
+                    "lease_hostname": row[9],
+                    "lease_hwaddr": row[10],
+                    "lease_clientid": row[11]
                 } for row in rows
             ])
         except sqlite3.Error as e:
@@ -324,34 +297,7 @@ def localhosts():
             response.status = 500
             return {"error": str(e)}
 
-    elif request.method == 'POST':
-        # Add a new local host
-        data = request.json
-        ip_address = data.get('ip_address')
-        first_seen = data.get('first_seen')
-        original_flow = data.get('original_flow')
-        mac_address = data.get('mac_address')
-        mac_vendor = data.get('mac_vendor')
-        dhcp_hostname = data.get('dhcp_hostname')
-        dns_hostname = data.get('dns_hostname')
-        os_fingerprint = data.get('os_fingerprint')
-        try:
-            cursor.execute("""
-                INSERT INTO localhosts (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (ip_address, first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint))
-            conn.commit()
-            conn.close()
-            set_json_response()
-            log_info(logger, f"Added new local host: {ip_address}")
-            return {"message": "Local host added successfully"}
-        except sqlite3.Error as e:
-            conn.close()
-            log_error(logger, f"Error adding local host: {e}")
-            response.status = 500
-            return {"error": str(e)}
-
-@app.route('/api/localhosts/<ip_address>', method=['PUT', 'DELETE'])
+@app.route('/api/localhosts/<ip_address>', method=['PUT'])
 def modify_localhost(ip_address):
     db_name = CONST_LOCALHOSTS_DB
     conn = connect_to_db(db_name)
@@ -364,19 +310,14 @@ def modify_localhost(ip_address):
     if request.method == 'PUT':
         # Update a local host
         data = request.json
-        first_seen = data.get('first_seen')
-        original_flow = data.get('original_flow')
-        mac_address = data.get('mac_address')
-        mac_vendor = data.get('mac_vendor')
-        dhcp_hostname = data.get('dhcp_hostname')
-        dns_hostname = data.get('dns_hostname')
-        os_fingerprint = data.get('os_fingerprint')
+        local_description = data.get('local_description')
+
         try:
             cursor.execute("""
                 UPDATE localhosts
-                SET first_seen = ?, original_flow = ?, mac_address = ?, mac_vendor = ?, dhcp_hostname = ?, dns_hostname = ?, os_fingerprint = ?
+                SET local_description = ?
                 WHERE ip_address = ?
-            """, (first_seen, original_flow, mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint, ip_address))
+            """, (local_description, ip_address))
             conn.commit()
             conn.close()
             set_json_response()
@@ -388,20 +329,6 @@ def modify_localhost(ip_address):
             response.status = 500
             return {"error": str(e)}
 
-    elif request.method == 'DELETE':
-        # Delete a local host
-        try:
-            cursor.execute("DELETE FROM localhosts WHERE ip_address = ?", (ip_address,))
-            conn.commit()
-            conn.close()
-            set_json_response()
-            log_info(logger, f"Deleted local host: {ip_address}")
-            return {"message": "Local host deleted successfully"}
-        except sqlite3.Error as e:
-            conn.close()
-            log_error(logger, f"Error deleting local host: {e}")
-            response.status = 500
-            return {"error": str(e)}
 
 @app.route('/api/homeassistant', method=['GET'])
 def get_database_counts():

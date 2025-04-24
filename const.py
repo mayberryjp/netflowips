@@ -72,7 +72,8 @@ CONST_CREATE_WHITELIST_SQL='''
         whitelist_protocol INTEGER,
         whitelist_insert_date TEXT DEFAULT CURRENT_TIMESTAMP,
         whitelist_enabled INTEGER DEFAULT 1,
-        whitelist_description TEXT
+        whitelist_description TEXT,
+        whitelist_added TEXT DEFAULT CURRENT_TIMESTAMP
     )'''
 
 CONST_CREATE_CONFIG_SQL='''

@@ -19,7 +19,7 @@ from integrations.maxmind import load_geolocation_data, create_geolocation_db
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
 from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
-from database import get_localhosts
+from database import get_localhosts, update_localhosts
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -285,21 +285,45 @@ def main():
     detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
+    combined_results = {}
     localhosts = get_localhosts()
 
     start = datetime.now()
-    dns_return = dns_lookup(localhosts, config_dict['ApprovedLocalDnsServersList'].split(','), config_dict)
-    log_info(logger,f"[INFO] DNS Results: {json.dumps(dns_return)}")
+    dns_results = dns_lookup(localhosts, config_dict['ApprovedLocalDnsServersList'].split(','), config_dict)
+    log_info(logger,f"[INFO] DNS Results: {json.dumps(dns_results)}")
+    for result in dns_results:
+        ip = result["ip"]
+        combined_results[ip] = {
+            "dns_hostname": result.get("dns_hostname", None),
+        }
     detection_durations['discovery_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    dhcp_return = get_pihole_dhcp_leases(localhosts, config_dict)
-    log_info(logger,f"[INFO] Pihole DHCP Lease Results: {json.dumps(dhcp_return)}")
+    dl_results = get_pihole_dhcp_leases(localhosts, config_dict)
+    log_info(logger,f"[INFO] Pihole DHCP Lease Results: {json.dumps(dl_results)}")
+    for result in dl_results:
+        ip = result["ip"]
+        if ip not in combined_results:
+            combined_results[ip] = {}
+        combined_results[ip].update({
+            "lease_hostname": result.get("lease_hostname", combined_results[ip].get("lease_hostname")),
+            "lease_hwaddr": result.get("lease_hwaddr", combined_results[ip].get("lease_hwaddress")),
+            "lease_clientid": result.get("lease_clientid", combined_results[ip].get("lease_clientid")),
+        })
     detection_durations['discovery_pihole_dhcp_leases'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    dhcp_return = get_pihole_network_devices(localhosts, config_dict)
-    log_info(logger,f"[INFO] Pihole Network Device Results: {json.dumps(dhcp_return)}")
+    nd_results = get_pihole_network_devices(localhosts, config_dict)
+    log_info(logger,f"[INFO] Pihole Network Device Results: {json.dumps(nd_results)}")
+    for result in nd_results:
+        ip = result["ip"]
+        if ip not in combined_results:
+            combined_results[ip] = {}
+        combined_results[ip].update({
+            "dhcp_hostname": result.get("dhcp_hostname", combined_results[ip].get("dhcp_hostname")),
+            "mac_address": result.get("mac_address", combined_results[ip].get("mac_address")),
+            "mac_vendor": result.get("mac_vendor", combined_results[ip].get("mac_vendor")),
+        })
     detection_durations['discovery_pihole_network_devices'] = (datetime.now() - start).total_seconds()   
 
     start = datetime.now()
@@ -309,7 +333,28 @@ def main():
     nmap_return = os_fingerprint(sub_localhosts, config_dict)
 
     log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_return)}")
+    nmap_results = os_fingerprint(sub_localhosts, config_dict)
+    for result in nmap_results:
+        ip = result["ip"]
+        if ip not in combined_results:
+            combined_results[ip] = {}
+        combined_results[ip].update({
+            "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
+        })
     detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
+
+    for ip, data in combined_results.items():
+        update_localhosts(
+            ip_address=ip,
+            mac_address=data.get("mac_address"),
+            mac_vendor=data.get("mac_vendor"),
+            dhcp_hostname=data.get("dhcp_hostname"),
+            dns_hostname=data.get("dns_hostname"),
+            os_fingerprint=data.get("os_fingerprint"),
+            lease_hostname=data.get("lease_hostname"),
+            lease_hwaddr=data.get('lease_hwaddr'),
+            lease_clientid=data.get('lease_clientid')
+        )
 
     log_info(logger, "[INFO] Processing finished.")
     end_time = datetime.now()
