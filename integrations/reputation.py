@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
 
 from utils import log_info, log_error
 from const import CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL
-from database import connect_to_db
+from database import connect_to_db, create_database
 
 def import_reputation_list(config_dict):
     """
@@ -23,6 +23,7 @@ def import_reputation_list(config_dict):
         config_dict (dict): Configuration dictionary.
         excluded_networks (list): A list of networks (in CIDR format) to exclude from the import.
     """
+
     logger = logging.getLogger(__name__)
     reputation_url = config_dict.get("ReputationUrl", "https://iplists.firehol.org/files/firehol_level1.netset")
 
@@ -62,6 +63,8 @@ def import_reputation_list(config_dict):
                 log_error(logger, f"[ERROR] Invalid network entry in reputation list: {line}")
 
         log_info(logger, f"[INFO] Processed {len(processed_networks)} networks from reputation list.")
+
+        create_database(CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL)
 
         # Connect to the geolocations.db database
         conn = sqlite3.connect(CONST_GEOLOCATION_DB)

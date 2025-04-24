@@ -803,8 +803,6 @@ def detect_reputation_flows(rows, config_dict, reputation_data):
     total = len(rows)
     matches = 0
     for index, row in enumerate(rows, 1):
-        if index % 1000 == 0:
-            print(f"\rProcessing reputation flows: {index}/{total} (matches: {matches})", end='', flush=True)
 
         src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
 
@@ -854,5 +852,4 @@ def detect_reputation_flows(rows, config_dict, reputation_data):
                     False
                 )
 
-    print()  # Final newline
     log_info(logger, f"[INFO] Completed reputation flow processing. Found {matches} matches in {total} flows.")
