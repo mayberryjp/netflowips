@@ -762,3 +762,97 @@ def detect_dead_connections(config_dict):
             conn.close()
 
 
+def detect_reputation_flows(rows, config_dict, reputation_data):
+    """
+    Detect flows where a local IP communicates with an IP on the reputation list.
+
+    Args:
+        rows: List of flow records.
+        config_dict: Dictionary containing configuration settings.
+        reputation_data: Preprocessed reputation list data.
+    """
+    logger = logging.getLogger(__name__)
+
+    # Pre-process reputation data into ranges
+    reputation_ranges = []
+    for entry in reputation_data:
+        if len(entry) >= 4:  # Ensure entry has at least 4 elements
+            network, start_ip, end_ip, netmask = entry[:4]
+            reputation_ranges.append((network, start_ip, end_ip, netmask))
+
+    # Sort ranges by start_ip for efficient lookup
+    reputation_ranges.sort(key=lambda x: x[0])
+
+    def find_match(ip_int):
+        """Find if an IP is in the reputation list."""
+        if not ip_int:
+            return None
+
+        for network, start_ip, end_ip, netmask in reputation_ranges:
+            if start_ip <= ip_int <= end_ip:
+                return (True, network)
+            elif start_ip > ip_int:
+                break  # Early exit if we've passed possible matches
+
+        return (False,None)
+
+    # Get local networks from the configuration
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+
+    # Process rows
+    total = len(rows)
+    matches = 0
+    for index, row in enumerate(rows, 1):
+        if index % 1000 == 0:
+            print(f"\rProcessing reputation flows: {index}/{total} (matches: {matches})", end='', flush=True)
+
+        src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
+
+        # Convert IPs to integers
+        src_ip_int = ip_to_int(src_ip)
+        dst_ip_int = ip_to_int(dst_ip)
+
+        if not src_ip_int or not dst_ip_int:
+            continue
+
+        # Check if src_ip or dst_ip is in LOCAL_NETWORKS
+        is_src_local = is_ip_in_range(src_ip, LOCAL_NETWORKS)
+
+        (reputation_match, match_network) = find_match(dst_ip_int)
+
+        # If src_ip is local, check dst_ip against the reputation list
+        if is_src_local and reputation_match:
+            matches += 1
+            log_info(logger, f"[INFO] Flow involves an IP on the reputation list: {src_ip} -> {dst_ip} ({match_network})")
+
+            message = (f"Flow involves an IP on the reputation list:\n"
+                       f"Source IP: {src_ip}\n"
+                       f"Destination IP: {dst_ip}\n"
+                       f"Match Network: {match_network}")
+
+            alert_id = f"{src_ip}_{dst_ip}_{protocol}_ReputationListDetection"
+
+            if config_dict.get("ReputationListDetection") == 2:
+                send_telegram_message(message, row[0:5])
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Flow involves an IP on the reputation list",
+                    dst_ip,
+                    match_network,
+                    alert_id,
+                    False
+                )
+            elif config_dict.get("ReputationListDetection") == 1:
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Flow involves an IP on the reputation list",
+                    dst_ip,
+                    match_network,
+                    alert_id,
+                    False
+                )
+
+    print()  # Final newline
+    log_info(logger, f"[INFO] Completed reputation flow processing. Found {matches} matches in {total} flows.")

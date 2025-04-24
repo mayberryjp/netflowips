@@ -106,3 +106,12 @@ CONST_CREATE_LOCALHOSTS_SQL="""
                     lease_hwaddr TEXT,
                     lease_clientid TEXT
                 )"""
+
+CONST_CREATE_REPUTATIONLIST_SQL="""
+            CREATE TABLE IF NOT EXISTS reputationlist (
+                network TEXT PRIMARY KEY,
+                start_ip INTEGER,
+                end_ip INTEGER,
+                netmask INTEGER
+            )
+        """
