@@ -15,7 +15,7 @@ RUN git clone https://github.com/mayberryjp/homelabids.git /homelabids
 # Set the working directory
 WORKDIR /homelabids
 
-RUN pip install schedule requests bottle dnspython python-nmap
+RUN pip install schedule requests bottle dnspython python-nmap psutil
 
 # Expose the port
 EXPOSE 2055
