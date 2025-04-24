@@ -330,10 +330,10 @@ def main():
 
     # Limit the list of localhosts to the first 3 entries
     sub_localhosts = list(localhosts)[:3]   # Slice the list to include only the first 3 hosts
-    nmap_return = os_fingerprint(sub_localhosts, config_dict)
+    nmap_results = os_fingerprint(sub_localhosts, config_dict)
 
     log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_return)}")
-    nmap_results = os_fingerprint(sub_localhosts, config_dict)
+
     for result in nmap_results:
         ip = result["ip"]
         if ip not in combined_results:
