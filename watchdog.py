@@ -6,7 +6,7 @@ from utils import log_error, log_info
 import logging
 
 # List of required Python script names
-required_scripts = ["processor.py", "detections.py", "api.py", "collector.py"]
+required_scripts = ["processor.py", "discovery.py", "api.py", "collector.py"]
 
 def is_script_running(script_name):
     for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
