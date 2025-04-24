@@ -15,7 +15,7 @@ if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
 
 # Function to process data
-def process_data(geolocation_data):
+def process_data(geolocation_data, reputation_data):
     logger = logging.getLogger(__name__)
 
     log_info(logger,f"[INFO] Processing started.") 
@@ -81,7 +81,7 @@ def process_data(geolocation_data):
                 detect_dead_connections(config_dict)
 
             if config_dict.get("ReputationListDetection", 0) > 0:
-                detect_reputation_flows(config_dict)
+                detect_reputation_flows(filtered_rows, config_dict, reputation_data)
         
             log_info(logger,f"[INFO] Processing finished.")   
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     if config_dict.get('ReputationListDetection', 0) > 0:
         import_reputation_list(config_dict)
-        reputation_date = load_reputation_data(config_dict)
+        reputation_data = load_reputation_data(config_dict)
 
     while True:
 
@@ -137,5 +137,5 @@ if __name__ == "__main__":
         PROCESS_RUN_INTERVAL = config_dict.get('ProcessRunInterval', 60)
         log_info(logger, f"[INFO] Process run interval set to {PROCESS_RUN_INTERVAL} seconds.")
 
-        process_data(geolocation_data)
+        process_data(geolocation_data, reputation_data)
         time.sleep(PROCESS_RUN_INTERVAL)
