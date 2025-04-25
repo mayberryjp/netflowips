@@ -1,4 +1,3 @@
-
 VERSION="v0.1.3"
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
@@ -91,21 +90,25 @@ CONST_CREATE_GEOLOCATION_SQL="""
                 country_name TEXT
             )"""
 
-CONST_CREATE_LOCALHOSTS_SQL="""
-                CREATE TABLE IF NOT EXISTS localhosts (
-                    ip_address TEXT PRIMARY KEY,
-                    first_seen TEXT,
-                    original_flow TEXT,
-                    mac_address TEXT,
-                    mac_vendor TEXT,
-                    dhcp_hostname TEXT,
-                    dns_hostname TEXT,
-                    os_fingerprint TEXT,
-                    local_description TEXT,
-                    lease_hostname TEXT,
-                    lease_hwaddr TEXT,
-                    lease_clientid TEXT
-                )"""
+CONST_CREATE_LOCALHOSTS_SQL = """
+    CREATE TABLE IF NOT EXISTS localhosts (
+        ip_address TEXT PRIMARY KEY,
+        first_seen TEXT,
+        original_flow TEXT,
+        mac_address TEXT,
+        mac_vendor TEXT,
+        dhcp_hostname TEXT,
+        dns_hostname TEXT,
+        os_fingerprint TEXT,
+        local_description TEXT,
+        lease_hostname TEXT,
+        lease_hwaddr TEXT,
+        lease_clientid TEXT,
+        icon TEXT,                -- New column for icon
+        tags TEXT,                -- New column for tags
+        acknowledged INTEGER DEFAULT 0 -- New column for acknowledged
+    )
+"""
 
 CONST_CREATE_REPUTATIONLIST_SQL="""
             CREATE TABLE IF NOT EXISTS reputationlist (

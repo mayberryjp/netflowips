@@ -288,7 +288,10 @@ def localhosts():
                     "local_description": row[8],
                     "lease_hostname": row[9],
                     "lease_hwaddr": row[10],
-                    "lease_clientid": row[11]
+                    "lease_clientid": row[11],
+                    "icon": row[12],                # New column
+                    "tags": row[13],                # New column
+                    "acknowledged": row[14]         # New column
                 } for row in rows
             ])
         except sqlite3.Error as e:
