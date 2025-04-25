@@ -12,7 +12,7 @@
             label: Alerts Unacked
           - field: total_alerts
             label: Total Alerts
-          - field: localhosts_count
+          - field: total_localhosts_count
             label: Localhosts Detected
           - field: whitelist_count
             label: Whitelist Entries
