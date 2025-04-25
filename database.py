@@ -482,8 +482,11 @@ def collect_database_counts():
         "acknowledged_alerts": 0,
         "unacknowledged_alerts": 0,
         "total_alerts": 0,
-        "localhosts_count": 0,
-        "whitelist_count": 0
+        "unacknowledged_localhosts_count": 0,
+        "acknowledged_localhosts_count": 0,
+        "total_localhosts_count": 0,
+        "whitelist_count": 0,
+
     }
 
     try:
@@ -513,7 +516,13 @@ def collect_database_counts():
             cursor = conn_localhosts.cursor()
             # Count entries in localhosts
             cursor.execute("SELECT COUNT(*) FROM localhosts")
-            counts["localhosts_count"] = cursor.fetchone()[0]
+            counts["total_localhosts_count"] = cursor.fetchone()[0]
+
+            cursor.execute("SELECT COUNT(*) FROM localhosts where acknowledged = 1")
+            counts["acknowledged_localhosts_count"] = cursor.fetchone()[0]
+
+            cursor.execute("SELECT COUNT(*) FROM localhosts WHERE acknowledged = 0")
+            counts["unacknowledged_localhosts_count"] = cursor.fetchone()[0]
 
             conn_localhosts.close()
         else:
