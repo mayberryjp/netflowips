@@ -1,0 +1,18 @@
+ - Site Network Security:
+      icon: mdi-security-network-#FFFFFF
+      widget:
+        type: customapi
+        url: http://192.168.230.236:8044/api/homepage
+        refreshInterval: 10000
+        method: GET
+        mappings:
+          - field: acknowledged_alerts
+            label: Alerts Acked
+          - field: unacknowledged_alerts
+            label: Alerts Unacked
+          - field: total_alerts
+            label: Total Alerts
+          - field: localhosts_count
+            label: Localhosts Detected
+          - field: whitelist_count
+            label: Whitelist Entries
