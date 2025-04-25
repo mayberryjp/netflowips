@@ -3,7 +3,7 @@
       widget:
         type: customapi
         url: http://192.168.230.236:8044/api/homepage
-        refreshInterval: 10000
+        refreshInterval: 60000
         method: GET
         mappings:
           - field: acknowledged_alerts
