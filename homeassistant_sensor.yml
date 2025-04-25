@@ -6,19 +6,21 @@ rest:
       - name: HomelabIDS Acknowledged Alerts
         value_template: "{{ value_json.acknowledged_alerts }}"
         icon: mdi:check-circle-outline
-
       - name: HomelabIDS Unacknowledged Alerts
         value_template: "{{ value_json.unacknowledged_alerts }}"
         icon: mdi:alert-circle-outline
-
       - name: HomelabIDS Total Alerts
         value_template: "{{ value_json.total_alerts }}"
         icon: mdi:counter
-
       - name: HomelabIDS Localhosts Count
-        value_template: "{{ value_json.localhosts_count }}"
+        value_template: "{{ value_json.total_localhosts_count }}"
         icon: mdi:server
-
       - name: HomelabIDS Whitelist Count
         value_template: "{{ value_json.whitelist_count }}"
+        icon: mdi:shield-check-outline
+      - name: HomelabIDS Acknowledged Localhosts Count
+        value_template: "{{ value_json.acknowledged_localhosts_count }}"
+        icon: mdi:shield-check-outline
+      - name: HomelabIDS Unacknowledged Localhosts Count
+        value_template: "{{ value_json.unacknowledged_localhosts_count }}"
         icon: mdi:shield-check-outline

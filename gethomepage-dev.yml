@@ -6,13 +6,11 @@
         refreshInterval: 60000
         method: GET
         mappings:
-          - field: acknowledged_alerts
-            label: Alerts Acked
           - field: unacknowledged_alerts
             label: Alerts Unacked
           - field: total_alerts
             label: Total Alerts
+          - field: unacknowledged_localhosts_count
+            label: Localhosts Unacked
           - field: total_localhosts_count
             label: Localhosts Detected
-          - field: whitelist_count
-            label: Whitelist Entries
