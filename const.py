@@ -118,3 +118,13 @@ CONST_CREATE_REPUTATIONLIST_SQL="""
                 netmask INTEGER
             )
         """
+
+CONST_CREATE_TORNODES_SQL = '''
+    CREATE TABLE IF NOT EXISTS tornodes (
+        ip_address TEXT PRIMARY KEY,
+        last_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+        first_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+        times_seen INTEGER DEFAULT 1
+    )
+'''
+

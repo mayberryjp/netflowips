@@ -70,7 +70,8 @@ from detections import (
     detect_unauthorized_dns,
     detect_incorrect_authoritative_dns,
     detect_incorrect_ntp_stratum,
-    detect_reputation_flows
+    detect_reputation_flows,
+    detect_vpn_traffic
 )
 
 
@@ -280,6 +281,10 @@ def main():
     start = datetime.now()
     detect_incorrect_authoritative_dns(filtered_rows, config_dict)
     detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
+
+    start = datetime.now()
+    detect_vpn_traffic(filtered_rows, config_dict)
+    detection_durations['detect_vpn_traffic'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     create_geolocation_db()

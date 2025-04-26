@@ -1,11 +1,12 @@
 import sqlite3
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int  # Assuming log_info and is_ip_in_range are defined in utils
-from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB # Assuming constants are defined in const
+from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB, CONST_GEOLOCATION_DB # Assuming constants are defined in const
 from database import connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
 from notifications import send_telegram_message  # Import notification functions
 import logging
+import requests
 
 def update_local_hosts(rows, config_dict):
     """
@@ -852,4 +853,544 @@ def detect_reputation_flows(rows, config_dict, reputation_data):
                     False
                 )
 
-    log_info(logger, f"[INFO] Completed reputation flow processing. Found {matches} matches in {total} flows.")
+    log_info(logger, f"[INFO] Completed reputation flow processing. Found {matches} matches in {total} flows")
+
+
+def detect_vpn_traffic(rows, config_dict):
+    """
+    Detect VPN traffic from local hosts by checking for common VPN protocols and ports.
+    
+    Common VPN protocols and ports:
+    - OpenVPN: UDP 1194, TCP 443/1194
+    - IPsec/IKE: UDP 500 (IKE), UDP 4500 (NAT-T)
+    - L2TP: UDP 1701
+    - PPTP: TCP 1723
+    - WireGuard: UDP 51820
+    - SoftEther: TCP 443, TCP 992, TCP 5555
+    - Cisco AnyConnect: TCP/UDP 443
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Define VPN-related ports and protocols
+    VPN_PORTS = {
+        'TCP': {1194, 1723, 992, 5555},  # TCP ports (protocol 6)
+        'UDP': {500, 4500, 1194, 1701, 51820}  # UDP ports (protocol 17)
+    }
+
+    VPN_PROTOCOLS = {
+        47: 'GRE/PPTP',        # Generic Routing Encapsulation (PPTP)
+        50: 'ESP',             # IPsec Encapsulating Security Payload
+        51: 'AH',              # IPsec Authentication Header
+        41: 'IPv6 Tunnel',     # IPv6 encapsulation
+        97: 'ETHERIP',         # Ethernet-within-IP encapsulation
+        115: 'L2TP'           # Layer 2 Tunneling Protocol
+    }
+    
+    # Get local networks
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    
+    # Get whitelisted VPN servers if configured
+    approved_vpn_servers = set(config_dict.get("ApprovedVpnServersList", "").split(","))
+    
+    vpn_flows = {}  # Track potential VPN flows by source IP
+    
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, *_ = row
+        
+        # Only check outbound connections from local networks
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
+            
+        # Skip if destination is an approved VPN server
+        if dst_ip in approved_vpn_servers:
+            continue
+        
+        is_vpn = False
+        proto_name = None
+
+        # Check TCP/UDP ports
+        if protocol == 6 and dst_port in VPN_PORTS['TCP']:
+            is_vpn = True
+            proto_name = f'TCP/{dst_port}'
+        elif protocol == 17 and dst_port in VPN_PORTS['UDP']:
+            is_vpn = True
+            proto_name = f'UDP/{dst_port}'
+        # Check VPN protocols
+        elif protocol in VPN_PROTOCOLS:
+            is_vpn = True
+            proto_name = VPN_PROTOCOLS[protocol]
+
+        if not is_vpn:
+            continue
+        
+        # Create flow identifier
+        alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}"
+        
+        # Alert if this is first time seeing this flow
+        alert_id = f"{alert_id}_VPNDetection"
+        
+        message = (f"Potential VPN Traffic Detected:\n"
+                  f"Source: {src_ip}\n"
+                  f"Destination: {dst_ip}:{dst_port}\n"
+                  f"Protocol: {proto_name}\n")
+
+        
+        log_info(logger, f"[INFO] Potential VPN traffic detected: {src_ip} -> {dst_ip}:{dst_port} ({proto_name})")
+        
+        if config_dict.get("VpnTrafficDetection") == 2:
+            send_telegram_message(message, row)
+            log_alert_to_db(
+                src_ip,
+                row,
+                "Potential VPN Traffic Detected",
+                dst_ip,
+                f"Port:{dst_port} Proto:{proto_name}",
+                alert_id,
+                False
+            )
+        elif config_dict.get("VpnTrafficDetection") == 1:
+            log_alert_to_db(
+                src_ip,
+                row,
+                "Potential VPN Traffic Detected",
+                dst_ip,
+                f"Port:{dst_port} Proto:{proto_name}",
+                alert_id,
+                False
+            )
+
+
+def update_tor_nodes():
+    """
+    Download and update Tor node list from dan.me.uk.
+    Only updates if the last update was more than 1 hour ago.
+    """
+    logger = logging.getLogger(__name__)
+    conn = connect_to_db(CONST_GEOLOCATION_DB)
+    
+    try:
+        cursor = conn.cursor()
+        
+        # Check last update time
+        cursor.execute("""
+            SELECT MAX(last_seen) FROM tornodes
+        """)
+        last_update = cursor.fetchone()[0]
+        
+        if last_update:
+            last_update = datetime.fromisoformat(last_update.replace('Z', '+00:00'))
+            if datetime.now() - last_update < timedelta(hours=1):
+                return  # Skip update if less than 1 hour has passed
+        
+        # Download new list
+        response = requests.get('https://www.dan.me.uk/torlist/?full', 
+                              headers={'User-Agent': 'NetFlowIPS TorNode Checker'})
+        if response.status_code != 200:
+            log_error(logger, f"[ERROR] Failed to download Tor node list: {response.status_code}")
+            return
+            
+        # Parse IPs (one per line)
+        tor_nodes = set(ip.strip() for ip in response.text.split('\n') if ip.strip())
+        
+        # Update database
+        cursor.executemany("""
+            INSERT INTO tornodes (ip_address) 
+            VALUES (?) 
+            ON CONFLICT(ip_address) 
+            DO UPDATE SET 
+                last_seen=CURRENT_TIMESTAMP,
+                times_seen=times_seen + 1
+        """, [(ip,) for ip in tor_nodes])
+        
+        conn.commit()
+        log_info(logger, f"[INFO] Updated Tor node list with {len(tor_nodes)} nodes")
+        
+    except Exception as e:
+        log_error(logger, f"[ERROR] Error updating Tor nodes: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+def detect_tor_traffic(rows, config_dict):
+    """
+    Detect traffic to/from known Tor nodes.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Update Tor node list if needed
+    update_tor_nodes()
+    
+    # Get local networks
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    
+    try:
+        # Get current Tor nodes
+        conn = connect_to_db(CONST_GEOLOCATION_DB)
+        cursor = conn.cursor()
+        cursor.execute("SELECT ip_address FROM tornodes")
+        tor_nodes = set(row[0] for row in cursor.fetchall())
+        
+        for row in rows:
+            src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
+            
+            # Check if source is local and destination is Tor node
+            is_src_local = is_ip_in_range(src_ip, LOCAL_NETWORKS)
+            
+            if is_src_local and dst_ip in tor_nodes:
+                alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_TorTraffic"
+                message = (f"Tor Traffic Detected:\n"
+                          f"Local IP: {src_ip}\n"
+                          f"Tor Node: {dst_ip}:{dst_port}\n"
+                          f"Protocol: {protocol}")
+                
+                log_info(logger, f"[INFO] Tor traffic detected: {src_ip} -> {dst_ip}:{dst_port}")
+                
+                if config_dict.get("TorTrafficDetection") == 2:
+                    send_telegram_message(message, row)
+                    log_alert_to_db(
+                        src_ip,
+                        row,
+                        "Tor Traffic Detected",
+                        dst_ip,
+                        "Tor Exit Node",
+                        alert_id,
+                        False
+                    )
+                elif config_dict.get("TorTrafficDetection") == 1:
+                    log_alert_to_db(
+                        src_ip,
+                        row,
+                        "Tor Traffic Detected",
+                        dst_ip,
+                        "Tor Exit Node",
+                        alert_id,
+                        False
+                    )
+                    
+    except Exception as e:
+        log_error(logger, f"[ERROR] Error in detect_tor_traffic: {e}")
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
+
+def detect_high_risk_ports(rows, config_dict):
+    """
+    Detect traffic from local networks to high-risk destination ports.
+    Common high-risk ports include:
+    - 135: MSRPC
+    - 137-139: NetBIOS
+    - 445: SMB
+    - 25/587: SMTP
+    - 22: SSH
+    - 23: Telnet
+    - 3389: RDP
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Get high-risk ports from config
+    high_risk_ports = set(
+        int(port.strip()) 
+        for port in config_dict.get("HighRiskPorts", "135,137,138,139,445,25,587,22,23,3389").split(",")
+        if port.strip()
+    )
+    
+    # Get local networks
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    
+    # Get whitelisted destinations if configured
+    approved_destinations = set(config_dict.get("ApprovedHighRiskDestinations", "").split(","))
+    
+    total = len(rows)
+    matches = 0
+    
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, *_ = row
+        
+        # Only check outbound connections from local networks
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
+            
+        # Skip if destination is approved
+        if dst_ip in approved_destinations:
+            continue
+        
+        # Check if destination port is in high-risk list
+        if dst_port in high_risk_ports:
+            matches += 1
+            
+            service_name = {
+                135: "MSRPC",
+                137: "NetBIOS",
+                138: "NetBIOS",
+                139: "NetBIOS",
+                445: "SMB",
+                25: "SMTP",
+                587: "SMTP",
+                22: "SSH",
+                23: "Telnet",
+                3389: "RDP"
+            }.get(dst_port, "Unknown")
+            
+            alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_HighRiskPort"
+            
+            message = (f"High-Risk Port Traffic Detected:\n"
+                      f"Source: {src_ip}\n"
+                      f"Destination: {dst_ip}:{dst_port}\n"
+                      f"Service: {service_name}\n"
+                      f"Protocol: {protocol}\n"
+                      f"Packets: {packets}")
+            
+            log_info(logger, f"[INFO] High-risk port traffic detected: {src_ip} -> {dst_ip}:{dst_port} ({service_name})")
+            
+            if config_dict.get("HighRiskPortDetection") == 2:
+                send_telegram_message(message, row)
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "High-Risk Port Traffic Detected",
+                    dst_ip,
+                    f"Port:{dst_port} ({service_name})",
+                    alert_id,
+                    False
+                )
+            elif config_dict.get("HighRiskPortDetection") == 1:
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "High-Risk Port Traffic Detected",
+                    dst_ip,
+                    f"Port:{dst_port} ({service_name})",
+                    alert_id,
+                    False
+                )
+    
+    log_info(logger, f"[INFO] Completed high-risk port detection. Found {matches} matches in {total} flows")
+
+
+def detect_many_destinations(rows, config_dict):
+    """
+    Detect hosts from local networks that are communicating with an unusually high
+    number of different destination IPs, which could indicate scanning or malware.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Get configuration parameters
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    dest_threshold = int(config_dict.get("MaxUniqueDestinations", "100"))
+    time_window = int(config_dict.get("DestinationTimeWindowMinutes", "5"))
+    
+    # Track destinations per source IP
+    source_stats = {}
+    
+    # Current time for time window calculations
+    current_time = datetime.now()
+    
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol, *_, flow_start = row
+        
+        # Only check sources from local networks
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
+            
+        # Convert flow_start to datetime
+        try:
+            flow_time = datetime.fromisoformat(flow_start.replace('Z', '+00:00'))
+            if (current_time - flow_time).total_seconds() > time_window * 60:
+                continue
+        except (ValueError, AttributeError):
+            continue
+        
+        # Initialize source IP tracking
+        if src_ip not in source_stats:
+            source_stats[src_ip] = {
+                'destinations': set(),
+                'ports': set(),
+                'first_seen': flow_start
+            }
+        
+        # Track unique destinations and ports
+        source_stats[src_ip]['destinations'].add(dst_ip)
+        source_stats[src_ip]['ports'].add(dst_port)
+        
+        # Check if threshold is exceeded
+        if len(source_stats[src_ip]['destinations']) > dest_threshold:
+            unique_dests = len(source_stats[src_ip]['destinations'])
+            unique_ports = len(source_stats[src_ip]['ports'])
+            
+            alert_id = f"{src_ip}_ManyDestinations_{int(time.time())}"
+            
+            message = (f"Host Connecting to Many Destinations:\n"
+                      f"Source IP: {src_ip}\n"
+                      f"Unique Destinations: {unique_dests}\n"
+                      f"Unique Ports: {unique_ports}\n"
+                      f"Time Window: {time_window} minutes\n"
+                      f"First Seen: {source_stats[src_ip]['first_seen']}")
+            
+            log_info(logger, f"[INFO] Excessive destinations detected from {src_ip}: "
+                            f"{unique_dests} destinations, {unique_ports} ports")
+            
+            if config_dict.get("ManyDestinationsDetection") == 2:
+                send_telegram_message(message, row)
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Excessive Unique Destinations",
+                    f"{unique_dests} destinations",
+                    f"{unique_ports} ports",
+                    alert_id,
+                    False
+                )
+            elif config_dict.get("ManyDestinationsDetection") == 1:
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Excessive Unique Destinations",
+                    f"{unique_dests} destinations",
+                    f"{unique_ports} ports",
+                    alert_id,
+                    False
+                )
+            
+            # Remove this source from tracking to prevent repeated alerts
+            del source_stats[src_ip]
+    
+    # Log summary
+    if source_stats:
+        top_sources = sorted(
+            source_stats.items(),
+            key=lambda x: len(x[1]['destinations']),
+            reverse=True
+        )[:5]
+        
+        log_info(logger, "[INFO] Top sources by unique destinations:")
+        for src_ip, stats in top_sources:
+            log_info(logger, f"  {src_ip}: {len(stats['destinations'])} destinations, "
+                            f"{len(stats['ports'])} ports")
+
+
+def detect_port_scanning(rows, config_dict):
+    """
+    Detect local hosts that are connecting to many different ports on the same destination IP,
+    which could indicate port scanning activity.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Get configuration parameters
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    port_threshold = int(config_dict.get("MaxPortsPerDestination", "15"))
+    time_window = int(config_dict.get("PortScanTimeWindowMinutes", "5"))
+    
+    # Dictionary to track {(src_ip, dst_ip): {ports, first_seen}}
+    scan_tracking = {}
+    
+    # Current time for time window calculations
+    current_time = datetime.now()
+    
+    for row in rows:
+        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, *_, flow_start = row
+        
+        # Only check sources from local networks
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
+            
+        # Convert flow_start to datetime
+        try:
+            flow_time = datetime.fromisoformat(flow_start.replace('Z', '+00:00'))
+            if (current_time - flow_time).total_seconds() > time_window * 60:
+                continue
+        except (ValueError, AttributeError):
+            continue
+        
+        # Create key for tracking
+        flow_key = (src_ip, dst_ip)
+        
+        # Initialize tracking for new source-destination pair
+        if flow_key not in scan_tracking:
+            scan_tracking[flow_key] = {
+                'ports': set(),
+                'first_seen': flow_start,
+                'protocols': set()
+            }
+        
+        # Track unique destination ports and protocols
+        scan_tracking[flow_key]['ports'].add(dst_port)
+        scan_tracking[flow_key]['protocols'].add(protocol)
+        
+        # Check if port threshold is exceeded
+        if len(scan_tracking[flow_key]['ports']) > port_threshold:
+            unique_ports = len(scan_tracking[flow_key]['ports'])
+            protocols = len(scan_tracking[flow_key]['protocols'])
+            
+            alert_id = f"{src_ip}_{dst_ip}_PortScan_{int(time.time())}"
+            
+            message = (f"Potential Port Scan Detected:\n"
+                      f"Source IP: {src_ip}\n"
+                      f"Target IP: {dst_ip}\n"
+                      f"Unique Ports: {unique_ports}\n"
+                      f"Protocols: {sorted(scan_tracking[flow_key]['protocols'])}\n"
+                      f"Time Window: {time_window} minutes\n"
+                      f"First Seen: {scan_tracking[flow_key]['first_seen']}")
+            
+            log_info(logger, f"[INFO] Port scan detected from {src_ip} to {dst_ip}: "
+                            f"{unique_ports} ports across {protocols} protocols")
+            
+            if config_dict.get("PortScanDetection") == 2:
+                send_telegram_message(message, row)
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Port Scan Detected",
+                    dst_ip,
+                    f"Ports:{unique_ports} Protocols:{protocols}",
+                    alert_id,
+                    False
+                )
+            elif config_dict.get("PortScanDetection") == 1:
+                log_alert_to_db(
+                    src_ip,
+                    row,
+                    "Port Scan Detected",
+                    dst_ip,
+                    f"Ports:{unique_ports} Protocols:{protocols}",
+                    alert_id,
+                    False
+                )
+            
+            # Remove this pair from tracking to prevent repeated alerts
+            del scan_tracking[flow_key]
+    
+    # Log summary of top scanners
+    if scan_tracking:
+        top_scanners = sorted(
+            scan_tracking.items(),
+            key=lambda x: len(x[1]['ports']),
+            reverse=True
+        )[:5]
+        
+        log_info(logger, "[INFO] Top potential port scanners:")
+        for (src_ip, dst_ip), stats in top_scanners:
+            log_info(logger, f"  {src_ip} -> {dst_ip}: {len(stats['ports'])} ports, "
+                            f"{len(stats['protocols'])} protocols")
+
+
