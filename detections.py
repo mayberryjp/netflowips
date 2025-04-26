@@ -1,7 +1,7 @@
 import sqlite3
 import json
 from datetime import datetime, timedelta
-from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int  # Assuming log_info and is_ip_in_range are defined in utils
+from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int, calculate_broadcast  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB, CONST_GEOLOCATION_DB # Assuming constants are defined in const
 from database import connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
 from notifications import send_telegram_message  # Import notification functions
@@ -639,6 +639,51 @@ def remove_whitelist(rows, whitelist_entries):
             filtered_rows.append(row)
     
     log_info(logger, f"[INFO] Removed {len(rows) - len(filtered_rows)} whitelisted flows")
+    return filtered_rows
+
+
+def remove_broadcast_flows(rows, config_dict):
+    """
+    Remove flows where the destination IP matches broadcast addresses of LOCAL_NETWORKS.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+        
+    Returns:
+        list: Filtered rows with broadcast destination addresses removed
+    """
+    logger = logging.getLogger(__name__)
+    
+    # Get local networks
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    
+    # Calculate broadcast addresses for all local networks
+    broadcast_addresses = set()
+    for network in LOCAL_NETWORKS:
+        broadcast_ip = calculate_broadcast(network)
+        if broadcast_ip:
+            broadcast_addresses.add(broadcast_ip)
+            log_info(logger, f"[INFO] Found broadcast address {broadcast_ip} for network {network}")
+    
+    if not broadcast_addresses:
+        log_warn(logger, "[WARN] No broadcast addresses found for LOCAL_NETWORKS")
+        return rows
+    
+    # Filter out flows with broadcast destinations
+    filtered_rows = []
+    broadcast_count = 0
+    
+    for row in rows:
+        dst_ip = row[1]  # Destination IP is second field
+        if dst_ip not in broadcast_addresses:
+            filtered_rows.append(row)
+        else:
+            broadcast_count += 1
+    
+    if broadcast_count > 0:
+        log_info(logger, f"[INFO] Removed {broadcast_count} broadcast flows")
+    
     return filtered_rows
 
 

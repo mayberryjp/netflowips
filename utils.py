@@ -113,4 +113,36 @@ def get_usable_ips(networks):
 
     return results
 
+def calculate_broadcast(network_cidr):
+    """
+    Calculate broadcast address from CIDR notation.
+    
+    Args:
+        network_cidr (str): Network in CIDR notation (e.g., '192.168.1.0/24')
+    
+    Returns:
+        str: Broadcast address or None if invalid input
+        
+    Example:
+        >>> calculate_broadcast('192.168.1.0/24')
+        '192.168.1.255'
+        >>> calculate_broadcast('10.0.0.0/8')
+        '10.255.255.255'
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Parse CIDR notation
+        network = ipaddress.IPv4Network(network_cidr, strict=False)
+        broadcast = str(network.broadcast_address)
+        
+        log_info(logger, f"[INFO] Calculated broadcast {broadcast} for network {network_cidr}")
+        return broadcast
+        
+    except ValueError as e:
+        log_error(logger, f"[ERROR] Invalid CIDR format {network_cidr}: {e}")
+        return None
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to calculate broadcast address: {e}")
+        return None
+
 
