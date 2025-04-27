@@ -108,7 +108,7 @@ def process_data():
                 detect_tor_traffic(filtered_rows, config_dict)     
 
             if config_dict.get("HighBandwidthFlowDetection", 0) > 0:
-                detect_tor_traffic(rows, config_dict)     
+                detect_high_bandwidth_flows(rows, config_dict)     
         
         
             log_info(logger,f"[INFO] Processing finished.")   
