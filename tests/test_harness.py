@@ -43,7 +43,8 @@ from const import (
     CONST_CREATE_GEOLOCATION_SQL,
     CONST_GEOLOCATION_DB,
     CONST_CREATE_REPUTATIONLIST_SQL,
-    VERSION
+    VERSION,
+    CONST_DNSQUERIES_DB
 )
 from utils import log_info
 
@@ -178,7 +179,10 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "whitelist": get_row_count(CONST_WHITELIST_DB, 'whitelist'),
                 "localhosts": get_row_count(CONST_LOCALHOSTS_DB, 'localhosts'),
                 "configuration": get_row_count(CONST_CONFIG_DB, 'configuration'),
-                "geolocation": get_row_count(CONST_GEOLOCATION_DB, 'geolocation')
+                "geolocation": get_row_count(CONST_GEOLOCATION_DB, 'geolocation'),
+                "dnsqueries": get_row_count(CONST_DNSQUERIES_DB, "pihole"),
+                "reputationlist": get_row_count(CONST_GEOLOCATION_DB, "reputationlist"),
+                "tornodes": get_row_count(CONST_GEOLOCATION_DB, "tornodes")
             },
             "alert_categories": categories,
             "detection_durations": detection_durations
@@ -258,74 +262,74 @@ def main():
     detection_durations['update_local_hosts'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_new_outbound_connections(filtered_rows, config_dict)
+    detect_new_outbound_connections(filtered_rows, config_dict)
     detection_durations['detect_new_outbound_connections'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #router_flows_detection(filtered_rows, config_dict)
+    router_flows_detection(filtered_rows, config_dict)
     detection_durations['router_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #foreign_flows_detection(filtered_rows, config_dict)
+    foreign_flows_detection(filtered_rows, config_dict)
     detection_durations['foreign_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #local_flows_detection(filtered_rows, config_dict)
+    local_flows_detection(filtered_rows, config_dict)
     detection_durations['local_flows_detection'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_dead_connections(config_dict)
+    detect_dead_connections(config_dict)
     detection_durations['detect_dead_connections'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_unauthorized_dns(filtered_rows, config_dict)
+    detect_unauthorized_dns(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_unauthorized_ntp(filtered_rows, config_dict)
+    detect_unauthorized_ntp(filtered_rows, config_dict)
     detection_durations['detect_unauthorized_ntp'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_incorrect_ntp_stratum(filtered_rows, config_dict)
+    detect_incorrect_ntp_stratum(filtered_rows, config_dict)
     detection_durations['detect_incorrect_ntp_stratum'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_incorrect_authoritative_dns(filtered_rows, config_dict)
+    detect_incorrect_authoritative_dns(filtered_rows, config_dict)
     detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_vpn_traffic(filtered_rows, config_dict)
+    detect_vpn_traffic(filtered_rows, config_dict)
     detection_durations['detect_vpn_traffic'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_many_destinations(filtered_rows, config_dict)
+    detect_many_destinations(filtered_rows, config_dict)
     detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_high_risk_ports(filtered_rows, config_dict)
+    detect_high_risk_ports(filtered_rows, config_dict)
     detection_durations['detect_high_risk_ports'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_port_scanning(filtered_rows, config_dict)
+    detect_port_scanning(filtered_rows, config_dict)
     detection_durations['detect_port_scanning'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_many_destinations(filtered_rows, config_dict)
+    detect_many_destinations(filtered_rows, config_dict)
     detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_tor_traffic(filtered_rows, config_dict)
+    detect_tor_traffic(filtered_rows, config_dict)
     detection_durations['detect_tor_traffic'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_high_bandwidth_flows(filtered_rows, config_dict)
+    detect_high_bandwidth_flows(filtered_rows, config_dict)
     detection_durations['detect_high_bandwidth_flows'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     start = datetime.now()
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
-    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to download pihole dns query logs...")
@@ -333,14 +337,14 @@ def main():
     get_pihole_ftl_logs(10000,config_dict)
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
-    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['retrieve_pihole_dns_query_logs'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect reputation list flows...")
     start = datetime.now()
     import_reputation_list(config_dict)
     reputation_data = load_reputation_data(config_dict)
-    #detect_reputation_flows(filtered_rows, config_dict, reputation_data)
+    detect_reputation_flows(filtered_rows, config_dict, reputation_data)
     detection_durations['detect_reputationlist_flows'] = (datetime.now() - start).total_seconds()
 
     combined_results = {}

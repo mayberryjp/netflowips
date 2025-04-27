@@ -76,7 +76,7 @@ def main():
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
-    STARTUP_DELAY = 15
+    STARTUP_DELAY = 5
     log_info(logger,f"[INFO] Starting fetcher, waiting {STARTUP_DELAY} seconds before starting processing")
     time.sleep(60)
     main()
