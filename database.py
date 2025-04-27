@@ -52,11 +52,18 @@ def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
     logger = logging.getLogger(__name__)
     allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
+    total_packets = 0
+    total_bytes = 0
+
     if allflows_conn:
         try:
             allflows_cursor = allflows_conn.cursor()
             for row in rows:
+
                 src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen = row
+                total_packets = total_packets + packets
+                total_bytes = total_bytes + bytes
+
                 now = datetime.utcnow().isoformat()
                 allflows_cursor.execute("""
                     INSERT INTO allflows (
@@ -76,6 +83,7 @@ def update_allflows(rows, config_dict):
             logger.error(f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
         finally:
             allflows_conn.close()
+        log_info(logger,f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
