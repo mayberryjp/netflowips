@@ -1,6 +1,6 @@
 import sqlite3  # Import the sqlite3 module
 from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, init_configurations, import_whitelists  # Import from database.py
-from detections import detect_reputation_flows, remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections # Import from detections.py, 
+from detections import detect_reputation_flows, remove_whitelist, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, remove_broadcast_flows, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from integrations.reputation import import_reputation_list, load_reputation_data
@@ -40,11 +40,20 @@ def process_data(geolocation_data, reputation_data):
 
             # Pass the rows to update_all_flows
             update_allflows(rows, config_dict)
+
+            if config_dict.get('GeolocationFlowsDetection',0) > 0:
+                geolocation_data = load_geolocation_data()
+
+            if config_dict.get('ReputationListDetection', 0) > 0:
+                reputation_data = load_reputation_data(config_dict)
             
             # process whitelisted entries and remove from detection rows
             whitelist_entries = get_whitelist()
             log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
             filtered_rows = remove_whitelist(rows, whitelist_entries)
+
+            if config_dict.get('RemoveBroadcastFlows', 0) >0:
+                remove_broadcast_flows(filtered_rows, config_dict)
 
             # Proper way to check config values with default of 0
             if config_dict.get("NewHostsDetection", 0) > 0:
@@ -82,6 +91,25 @@ def process_data(geolocation_data, reputation_data):
 
             if config_dict.get("ReputationListDetection", 0) > 0:
                 detect_reputation_flows(filtered_rows, config_dict, reputation_data)
+
+            if config_dict.get("VpnTrafficDetection", 0) > 0:
+                detect_vpn_traffic(filtered_rows, config_dict)
+            
+            if config_dict.get("HighRiskPortDetection", 0) > 0:
+                detect_high_risk_ports(filtered_rows, config_dict)      
+
+            if config_dict.get("ManyDestinationsDetection", 0) > 0:
+                detect_many_destinations(filtered_rows, config_dict)  
+
+            if config_dict.get("PortScanDetection", 0) > 0:
+                detect_port_scanning(filtered_rows, config_dict)           
+
+            if config_dict.get("TorFlowDetection", 0) > 0:
+                detect_tor_traffic(filtered_rows, config_dict)     
+
+            if config_dict.get("HighBandwidthFlowDetection", 0) > 0:
+                detect_tor_traffic(filtered_rows, config_dict)     
+        
         
             log_info(logger,f"[INFO] Processing finished.")   
 
@@ -119,23 +147,15 @@ if __name__ == "__main__":
     #create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
     create_database(CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL)
 
-    if config_dict.get('GeolocationFlowsDetection',0) > 0:
-        create_geolocation_db()
-        geolocation_data = load_geolocation_data()
-
-    if config_dict.get('ReputationListDetection', 0) > 0:
-        import_reputation_list(config_dict)
-        reputation_data = load_reputation_data(config_dict)
-
     while True:
 
         config_dict = get_config_settings()
         if not config_dict:
             log_error(logger, "[ERROR] Failed to load configuration settings")
             exit(1)
-    
+
         PROCESS_RUN_INTERVAL = config_dict.get('ProcessRunInterval', 60)
         log_info(logger, f"[INFO] Process run interval set to {PROCESS_RUN_INTERVAL} seconds.")
 
-        process_data(geolocation_data, reputation_data)
+        process_data()
         time.sleep(PROCESS_RUN_INTERVAL)

@@ -5,26 +5,32 @@ import socket
 import struct
 from datetime import datetime
 from ipaddress import IPv4Network
+import sys
+import os
 
 
 def log_info(logger, message):
+
     """Log a message and print it to the console with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-    formatted_message = f"[{timestamp}] {message}"
+    script_name = os.path.basename(sys.argv[0])
+    formatted_message = f"[{timestamp}] {script_name} {message}"
     print(formatted_message)
     logger.info(formatted_message)
 
 def log_error(logger, message):
     """Log a message and print it to the console with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-    formatted_message = f"[{timestamp}] {message}"
+    script_name = os.path.basename(sys.argv[0])
+    formatted_message = f"[{timestamp}] {script_name} {message}"
     print(formatted_message)
     logger.error(formatted_message)
 
 def log_warn(logger, message):
     """Log a message and print it to the console with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-    formatted_message = f"[{timestamp}] {message}"
+    script_name = os.path.basename(sys.argv[0])
+    formatted_message = f"[{timestamp}] {script_name} {message}"
     print(formatted_message)
     logger.warn(formatted_message)
 
