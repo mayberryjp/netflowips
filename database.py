@@ -62,7 +62,7 @@ def update_allflows(rows, config_dict):
 
                 src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen = row
                 total_packets = total_packets + packets
-                total_bytes = total_bytes + bytes
+                total_bytes = total_bytes + bytes_
 
                 now = datetime.utcnow().isoformat()
                 allflows_cursor.execute("""
