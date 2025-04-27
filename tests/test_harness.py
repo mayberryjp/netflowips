@@ -21,6 +21,7 @@ from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_d
 from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
+from integrations.piholedns import get_pihole_ftl_logs
 from database import get_localhosts, update_localhosts
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -317,20 +318,28 @@ def main():
     detection_durations['detect_tor_traffic'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_high_bandwidth_flows(filtered_rows, config_dict)
+    #detect_high_bandwidth_flows(filtered_rows, config_dict)
     detection_durations['detect_high_bandwidth_flows'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
+    start = datetime.now()
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
-    start = datetime.now()
     #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
 
+    log_info(logger, "[INFO] Preparing to download pihole dns query logs...")
+    start = datetime.now()
+    get_pihole_ftl_logs(10000,config_dict)
+    create_geolocation_db()
+    geolocation_data = load_geolocation_data()
+    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    detection_durations['retrieve_pihole_dns_query_logs'] = (datetime.now() - start).total_seconds()
+
     log_info(logger, "[INFO] Preparing to detect reputation list flows...")
+    start = datetime.now()
     import_reputation_list(config_dict)
     reputation_data = load_reputation_data(config_dict)
-    start = datetime.now()
     #detect_reputation_flows(filtered_rows, config_dict, reputation_data)
     detection_durations['detect_reputationlist_flows'] = (datetime.now() - start).total_seconds()
 

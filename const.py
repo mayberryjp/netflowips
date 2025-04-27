@@ -7,6 +7,7 @@ IS_CONTAINER=1
 CONST_NEWFLOWS_DB="/database/newflows.db"
 CONST_ALLFLOWS_DB="/database/allflows.db"
 CONST_LOCALHOSTS_DB = "/database/localhosts.db"
+CONST_DNSQUERIES_DB = '/database/dnsqueries.db'
 CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
@@ -123,6 +124,18 @@ CONST_CREATE_TORNODES_SQL = '''
     CREATE TABLE IF NOT EXISTS tornodes (
         ip_address TEXT PRIMARY KEY,
         import_date TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+'''
+
+CONST_CREATE_PIHOLE_SQL = '''
+    CREATE TABLE IF NOT EXISTS pihole (
+        client_ip TEXT,
+        times_seen INTEGER DEFAULT 0,
+        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        type TEXT,
+        domain TEXT,
+        PRIMARY KEY (client_ip, domain, type)
     )
 '''
 

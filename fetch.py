@@ -5,6 +5,7 @@ from utils import log_info, log_error
 from database import get_config_settings, delete_database, delete_all_records, create_database
 from integrations.maxmind import create_geolocation_db
 from integrations.reputation import import_reputation_list
+from integrations.piholedns import get_pihole_ftl_logs
 from const import CONST_REINITIALIZE_DB, CONST_GEOLOCATION_DB, IS_CONTAINER
 import os
 
@@ -59,6 +60,15 @@ def main():
                 log_info(logger, "[INFO] Reputation list updated successfully.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
+
+        try: 
+            if config_dict.get('StorePiHoleDnsQueryHistory', 0) > 0:
+                log_info(logger, "[INFO] Fetching pihole dns query history...")
+                get_pihole_ftl_logs(10000,config_dict)
+                log_info(logger, "[INFO] Pihole dns query history updated successfully.")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error during data fetch: {e}")
+
 
         # Wait for the next interval
         log_info(logger, f"[INFO] Sleeping for {fetch_interval} seconds before the next fetch.")

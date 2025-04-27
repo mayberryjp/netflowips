@@ -15,7 +15,7 @@ if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
 
 # Function to process data
-def process_data(geolocation_data, reputation_data):
+def process_data():
     logger = logging.getLogger(__name__)
 
     log_info(logger,f"[INFO] Processing started.") 
@@ -108,7 +108,7 @@ def process_data(geolocation_data, reputation_data):
                 detect_tor_traffic(filtered_rows, config_dict)     
 
             if config_dict.get("HighBandwidthFlowDetection", 0) > 0:
-                detect_tor_traffic(filtered_rows, config_dict)     
+                detect_tor_traffic(rows, config_dict)     
         
         
             log_info(logger,f"[INFO] Processing finished.")   
