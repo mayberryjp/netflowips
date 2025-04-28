@@ -32,33 +32,29 @@ def export_client_definition(client_ip):
     
     try:
         # Create output directory if it doesn't exist
-        output_dir = Path("clientdefinitions")
-        output_dir.mkdir(exist_ok=True)
         
         # Initialize the client data structure
         client_data = {
             "ip_address": client_ip,
             "export_date": datetime.now().isoformat(),
-            "host_info": None,
-            "dns_queries": [],
-            "flows": [],
-            "actions": []
         }
         
         # Get host information from localhosts.db
         localhosts_conn = sqlite3.connect(CONST_LOCALHOSTS_DB)
         localhosts_cursor = localhosts_conn.cursor()
         localhosts_cursor.execute(
-            "SELECT * FROM localhosts WHERE ip_address = ?", 
+            "SELECT ip_address,mac_address,mac_vendor,dhcp_hostname, os_fingerprint, lease_hostname FROM localhosts WHERE ip_address = ?", 
             (client_ip,)
         )
         host_record = localhosts_cursor.fetchone()
         if host_record:
             client_data["host_info"] = {
-                "first_seen": host_record[1],
-                "last_seen": host_record[2],
-                "times_seen": host_record[3],
-                "original_flow": host_record[4]
+                "ip_address": host_record[0],
+                "mac_address": host_record[1],
+                "mac_vendor": host_record[2],
+                "dhcp_hostname": host_record[3],
+                "os_fingerprint": host_record[4],
+                "lease_hostname": host_record[5]
             }
         
         # Get DNS queries from dnsqueries.db
@@ -67,9 +63,8 @@ def export_client_definition(client_ip):
         dns_cursor.execute("""
             SELECT domain 
             FROM pihole 
-            WHERE client = ? 
+            WHERE client_ip = ? 
             GROUP BY domain
-            ORDER BY MAX(timestamp) DESC
         """, (client_ip,))
         client_data["dns_queries"] = [row[0] for row in dns_cursor.fetchall()]
         
