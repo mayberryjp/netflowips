@@ -1,0 +1,47 @@
+{
+    "ip_address": "192.168.50.110",
+    "export_date": "2025-04-28T08:38:17.053621",
+    "host_info": {
+        "ip_address": "192.168.50.110",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Linux_Linux_2.6.X_96",
+        "lease_hostname": null
+    },
+    "dns_queries": [
+        "ping.ui.com"
+    ],
+    "flows": [
+        {
+            "destination": "224.0.0.22",
+            "port": 0,
+            "protocol": 2
+        },
+        {
+            "destination": "239.254.127.63",
+            "port": 48000,
+            "protocol": 17
+        },
+        {
+            "destination": "1.1.1.1",
+            "port": 2048,
+            "protocol": 1
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 2048,
+            "protocol": 1
+        },
+        {
+            "destination": "192.168.50.220",
+            "port": 8080,
+            "protocol": 6
+        },
+        {
+            "destination": "255.255.255.255",
+            "port": 10001,
+            "protocol": 17
+        }
+    ]
+}

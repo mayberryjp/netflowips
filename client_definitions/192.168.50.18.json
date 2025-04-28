@@ -1,0 +1,38 @@
+{
+    "ip_address": "192.168.50.18",
+    "export_date": "2025-04-28T08:38:16.638311",
+    "host_info": {
+        "ip_address": "192.168.50.18",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "DTE_embedded_None_100",
+        "lease_hostname": "aircon-location2"
+    },
+    "dns_queries": [
+        "afus.apc.panasonic.com",
+        "ldcws.pcpf.panasonic.com"
+    ],
+    "flows": [
+        {
+            "destination": "224.0.23.0",
+            "port": 0,
+            "protocol": 2
+        },
+        {
+            "destination": "224.0.23.0",
+            "port": 3610,
+            "protocol": 17
+        },
+        {
+            "destination": "20.27.125.158",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.191.171.212",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

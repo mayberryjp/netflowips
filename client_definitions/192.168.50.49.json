@@ -1,0 +1,124 @@
+{
+    "ip_address": "192.168.50.49",
+    "export_date": "2025-04-28T08:38:16.903369",
+    "host_info": {
+        "ip_address": "192.168.50.49",
+        "mac_address": "94:e6:86:6b:fd:34",
+        "mac_vendor": "Espressif Inc.",
+        "dhcp_hostname": "emporiavue.832-5.com",
+        "os_fingerprint": "Garmin_embedded_None_95",
+        "lease_hostname": "emporiavue"
+    },
+    "dns_queries": [
+        "pool.ntp.org",
+        "prod-mqtt.emporiaenergy.com",
+        "time.google.com"
+    ],
+    "flows": [
+        {
+            "destination": "216.239.35.0",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "216.239.35.4",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "216.239.35.12",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "3.132.204.196",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "50.7.159.155",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "129.250.35.250",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "167.179.119.205",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "162.159.200.123",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "162.159.200.1",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "129.250.35.251",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "172.237.12.44",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "216.239.35.8",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "23.81.40.154",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "3.128.22.47",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "18.116.213.147",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "202.181.103.212",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "108.160.132.224",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "18.116.209.49",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "160.16.113.133",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "45.76.211.39",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "45.77.20.103",
+            "port": 123,
+            "protocol": 17
+        }
+    ]
+}

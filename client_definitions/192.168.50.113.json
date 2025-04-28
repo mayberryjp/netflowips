@@ -1,0 +1,37 @@
+{
+    "ip_address": "192.168.50.113",
+    "export_date": "2025-04-28T08:38:17.403592",
+    "host_info": {
+        "ip_address": "192.168.50.113",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "D-Link_embedded_None_98",
+        "lease_hostname": "coway"
+    },
+    "dns_queries": [
+        "airjpf4l.coway.co.kr"
+    ],
+    "flows": [
+        {
+            "destination": "3.34.10.242",
+            "port": 9090,
+            "protocol": 6
+        },
+        {
+            "destination": "13.125.7.228",
+            "port": 9090,
+            "protocol": 6
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "13.124.139.5",
+            "port": 9090,
+            "protocol": 6
+        }
+    ]
+}

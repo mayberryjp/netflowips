@@ -1,0 +1,100 @@
+{
+    "ip_address": "192.168.51.255",
+    "export_date": "2025-04-28T08:38:16.990539",
+    "host_info": {
+        "ip_address": "192.168.51.255",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "192.168.49.80",
+            "port": 58225,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 37979,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 60469,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 60020,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 53801,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 63672,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 41612,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 43175,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 55328,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 60218,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 49765,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 55959,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 35628,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 46532,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 52910,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 64194,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 39475,
+            "protocol": 6
+        }
+    ]
+}

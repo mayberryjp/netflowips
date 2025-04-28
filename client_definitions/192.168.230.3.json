@@ -1,0 +1,78 @@
+{
+    "ip_address": "192.168.230.3",
+    "export_date": "2025-04-28T08:38:15.187336",
+    "host_info": {
+        "ip_address": "192.168.230.3",
+        "mac_address": "ec:71:db:1b:3e:4e",
+        "mac_vendor": "Reolink Innovation Limited",
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null
+    },
+    "dns_queries": [
+        "devices-apis.reolink.com",
+        "pool.ntp.org"
+    ],
+    "flows": [
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "34.202.215.67",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "239.255.255.250",
+            "port": 0,
+            "protocol": 17
+        },
+        {
+            "destination": "162.159.200.123",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "239.255.255.250",
+            "port": 3702,
+            "protocol": 17
+        },
+        {
+            "destination": "34.193.200.141",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "3.212.214.166",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "35.169.32.111",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "18.235.173.16",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "107.20.155.109",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "129.250.35.251",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "18.214.169.145",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "ip_address": "192.168.50.81",
+    "export_date": "2025-04-28T08:38:17.040633",
+    "host_info": {
+        "ip_address": "192.168.50.81",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Garmin_embedded_None_95",
+        "lease_hostname": "olimex-esp32-bedroom"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17
+        }
+    ]
+}

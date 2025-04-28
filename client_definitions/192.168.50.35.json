@@ -1,0 +1,83 @@
+{
+    "ip_address": "192.168.50.35",
+    "export_date": "2025-04-28T08:38:17.202497",
+    "host_info": {
+        "ip_address": "192.168.50.35",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Xerox_embedded_None_88",
+        "lease_hostname": "racio"
+    },
+    "dns_queries": [
+        "a3bmbcwe3hybwy.iot.us-west-2.amazonaws.com",
+        "pool.ntp.org"
+    ],
+    "flows": [
+        {
+            "destination": "162.159.200.1",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "162.159.200.123",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "167.179.119.205",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "129.250.35.250",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "50.7.159.155",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "52.32.168.173",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.244.141.196",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "129.250.35.251",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "45.76.211.39",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "172.237.12.44",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "45.77.20.103",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "23.81.40.154",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "44.238.62.233",
+            "port": 8883,
+            "protocol": 6
+        }
+    ]
+}

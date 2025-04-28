@@ -75,6 +75,7 @@ def export_client_definition(client_ip):
             SELECT DISTINCT dst_ip, dst_port, protocol
             FROM allflows 
             WHERE src_ip = ?
+            and dst_port < src_port
             ORDER BY last_seen DESC
         """, (client_ip,))
         client_data["flows"] = [

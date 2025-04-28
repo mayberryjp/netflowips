@@ -1,0 +1,20 @@
+{
+    "ip_address": "192.168.230.119",
+    "export_date": "2025-04-28T08:38:14.457356",
+    "host_info": {
+        "ip_address": "192.168.230.119",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Garmin_embedded_None_95",
+        "lease_hostname": "btproxy"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17
+        }
+    ]
+}

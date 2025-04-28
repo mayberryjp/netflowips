@@ -1,0 +1,44 @@
+{
+    "ip_address": "192.168.50.13",
+    "export_date": "2025-04-28T08:38:16.373407",
+    "host_info": {
+        "ip_address": "192.168.50.13",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Linux_Linux_3.X_100",
+        "lease_hostname": "panasonic-hub"
+    },
+    "dns_queries": [
+        "esvchk-s2.svrpf.jp",
+        "jp-ldcws.pcpf.panasonic.com",
+        "ntp.anshin-home.jp"
+    ],
+    "flows": [
+        {
+            "destination": "239.255.255.250",
+            "port": 1900,
+            "protocol": 17
+        },
+        {
+            "destination": "224.0.23.0",
+            "port": 3610,
+            "protocol": 17
+        },
+        {
+            "destination": "13.115.31.26",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "18.182.249.252",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.210.59.191",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

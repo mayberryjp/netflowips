@@ -1,0 +1,30 @@
+{
+    "ip_address": "192.168.50.76",
+    "export_date": "2025-04-28T08:38:17.324968",
+    "host_info": {
+        "ip_address": "192.168.50.76",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Enlogic_embedded_None_92",
+        "lease_hostname": "Presence-Sensor-FP2-45D3"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "230.0.0.1",
+            "port": 10008,
+            "protocol": 17
+        },
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17
+        },
+        {
+            "destination": "49.233.251.124",
+            "port": 11111,
+            "protocol": 6
+        }
+    ]
+}
