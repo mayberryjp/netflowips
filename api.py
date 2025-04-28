@@ -6,6 +6,7 @@ from database import connect_to_db, collect_database_counts  # Import the functi
 from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LOCALHOSTS_DB, IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
+from pathlib import Path
 
 # Initialize the Bottle app
 app = Bottle()
@@ -367,6 +368,38 @@ def get_database_counts():
         log_error(logger, f"[ERROR] Failed to fetch database counts: {e}")
         response.status = 500
         return {"error": str(e)}
+    
+
+@app.route('/api/client/<ip_address>', method=['GET'])
+def get_client_info(ip_address):
+    """
+    API endpoint to get detailed client information for a specific IP address.
+    Returns JSON object containing host info, DNS queries, and flow history.
+    
+    Args:
+        ip_address: IP address of the client to query
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        from client import export_client_definition
+        
+        # Get client definition directly
+        client_data = export_client_definition(ip_address)
+        
+        if client_data:
+            set_json_response()
+            log_info(logger, f"[INFO] Successfully retrieved client info for {ip_address}")
+            return json.dumps(client_data, indent=2)
+        else:
+            log_warn(logger, f"[WARN] No client data found for {ip_address}")
+            response.status = 404
+            return {"error": f"No client data found for {ip_address}"}
+            
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get client info for {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
 
 # Run the Bottle app
 if __name__ == '__main__':
