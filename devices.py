@@ -107,4 +107,5 @@ CONST_DEVICE_CATEGORIES = {
         {"category": "ELECTRICITY_METER", "ICON": "electricity_meter_icon"},
         {"category": "BATTERY_CHARGER", "ICON": "battery_charger_icon"},
         {"category": "BROADCAST_ADDRESS", "ICON": "broadcast_address_icon"},
+        {"category": "PRESENCE_SENSOR", "ICON": "presence_sensor_icon"},
 }
