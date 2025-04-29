@@ -315,13 +315,14 @@ def modify_localhost(ip_address):
         # Update a local host
         data = request.json
         local_description = data.get('local_description')
+        icon = data.get('icon')
 
         try:
             cursor.execute("""
                 UPDATE localhosts
-                SET local_description = ?
+                SET local_description = ?, icon = ?
                 WHERE ip_address = ?
-            """, (local_description, ip_address))
+            """, (local_description, icon, ip_address))
             conn.commit()
             conn.close()
             set_json_response()
