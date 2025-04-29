@@ -626,7 +626,7 @@ def get_machine_unique_identifier_from_db():
         conn.close()
 
         if result:
-            log_info(logger, f"[INFO] Retrieved MachineUniqueIdentifier: {result[0]}")
+            #log_info(logger, f"[INFO] Retrieved MachineUniqueIdentifier: {result[0]}")
             return result[0]
         else:
             log_error(logger, "[ERROR] MachineUniqueIdentifier not found in the configuration database.")
