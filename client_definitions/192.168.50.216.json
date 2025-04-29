@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.50.216",
-    "export_date": "2025-04-29T13:02:09.295484",
+    "export_date": "2025-04-29T23:13:17.590536",
     "host_info": {
         "ip_address": "192.168.50.216",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "Espressif_embedded_None_92",
+        "os_fingerprint": "Grandstream_embedded_None_92",
         "lease_hostname": "Outdoorlighting",
         "icon": "LIGHT_CONTROLLER",
         "local_description": "Sunvie Outdoor Lighting Controller with Tuya Zigbee Relay"

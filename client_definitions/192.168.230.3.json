@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.3",
-    "export_date": "2025-04-29T13:02:07.088030",
+    "export_date": "2025-04-29T23:13:15.628968",
     "host_info": {
         "ip_address": "192.168.230.3",
         "mac_address": "ec:71:db:1b:3e:4e",
@@ -16,6 +16,16 @@
         "pool.ntp.org"
     ],
     "flows": [
+        {
+            "destination": "44.206.150.160",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "44.216.55.169",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "52.5.26.5",
             "port": 443,

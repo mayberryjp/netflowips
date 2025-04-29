@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.7",
-    "export_date": "2025-04-29T13:02:10.207184",
+    "export_date": "2025-04-29T23:13:18.989194",
     "host_info": {
         "ip_address": "192.168.50.7",
         "mac_address": null,
@@ -15,6 +15,7 @@
         "116.202.223.35.bc.googleusercontent.com",
         "196.86.41.34.bc.googleusercontent.com",
         "78.110.185.35.bc.googleusercontent.com",
+        "91.143.138.34.bc.googleusercontent.com",
         "clients3.google.com",
         "connectivitycheck.gstatic.com",
         "lycraservice-pa-cam-prod.googleapis.com",
@@ -24,23 +25,44 @@
         "tools.google.com",
         "trouter-us.production.nest.com",
         "trouter.weave-us-central1.production.nest.com",
+        "trouter.weave-us-east1.production.nest.com",
         "www.googleapis.com",
         "www.gstatic.com"
     ],
     "flows": [
         {
-            "destination": "142.250.207.35",
+            "destination": "216.58.220.99",
             "port": 443,
             "protocol": 6
         },
         {
-            "destination": "216.239.36.223",
+            "destination": "172.217.25.174",
             "port": 443,
             "protocol": 6
         },
         {
-            "destination": "35.223.202.116",
+            "destination": "35.229.61.236",
             "port": 11095,
+            "protocol": 6
+        },
+        {
+            "destination": "35.186.162.24",
+            "port": 11095,
+            "protocol": 6
+        },
+        {
+            "destination": "216.239.34.223",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "172.217.161.234",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 53,
             "protocol": 6
         },
         {
@@ -49,8 +71,18 @@
             "protocol": 6
         },
         {
-            "destination": "192.168.49.80",
-            "port": 53,
+            "destination": "35.223.202.116",
+            "port": 11095,
+            "protocol": 6
+        },
+        {
+            "destination": "142.250.207.35",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "216.239.36.223",
+            "port": 443,
             "protocol": 6
         },
         {
@@ -224,11 +256,6 @@
             "protocol": 6
         },
         {
-            "destination": "172.217.161.234",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "142.250.207.106",
             "port": 443,
             "protocol": 6
@@ -289,11 +316,6 @@
             "protocol": 6
         },
         {
-            "destination": "35.229.61.236",
-            "port": 11095,
-            "protocol": 6
-        },
-        {
             "destination": "35.185.110.78",
             "port": 11095,
             "protocol": 6
@@ -321,16 +343,6 @@
         {
             "destination": "35.225.250.17",
             "port": 11095,
-            "protocol": 6
-        },
-        {
-            "destination": "35.186.162.24",
-            "port": 11095,
-            "protocol": 6
-        },
-        {
-            "destination": "216.239.34.223",
-            "port": 443,
             "protocol": 6
         },
         {

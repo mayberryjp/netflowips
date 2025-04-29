@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.236",
-    "export_date": "2025-04-29T13:01:55.638089",
+    "export_date": "2025-04-29T23:13:09.894824",
     "host_info": {
         "ip_address": "192.168.230.236",
         "mac_address": "e0:51:d8:15:50:fe",
@@ -16,11 +16,6 @@
     ],
     "flows": [
         {
-            "destination": "192.168.10.2",
-            "port": 5360,
-            "protocol": 6
-        },
-        {
             "destination": "255.255.255.255",
             "port": 1900,
             "protocol": 17
@@ -29,6 +24,286 @@
             "destination": "239.255.255.250",
             "port": 1900,
             "protocol": 17
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5834,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5784,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1200,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4880,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3217,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1097,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1212,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1237,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5119,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3491,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2353,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2206,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5140,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 6366,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4211,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3501,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4464,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2520,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5992,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3330,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1391,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3829,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3029,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.230.1",
+            "port": 36094,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.230.1",
+            "port": 43267,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1071,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.230.1",
+            "port": 32404,
+            "protocol": 17
+        },
+        {
+            "destination": "192.168.230.1",
+            "port": 34317,
+            "protocol": 17
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4157,
+            "protocol": 6
+        },
+        {
+            "destination": "54.209.214.174",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.22.85.27",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "185.125.190.56",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "104.26.7.76",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4453,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4695,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2869,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4336,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5863,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1036,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5165,
+            "protocol": 6
+        },
+        {
+            "destination": "91.189.91.47",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4283,
+            "protocol": 6
+        },
+        {
+            "destination": "104.26.6.76",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4491,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5104,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1797,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5011,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1994,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1491,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3470,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7074,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 1682,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4632,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7624,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7194,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 5360,
+            "protocol": 6
         },
         {
             "destination": "192.168.10.2",
@@ -79,11 +354,6 @@
             "destination": "192.168.10.2",
             "port": 1846,
             "protocol": 6
-        },
-        {
-            "destination": "185.125.190.56",
-            "port": 123,
-            "protocol": 17
         },
         {
             "destination": "192.168.10.2",
@@ -143,11 +413,6 @@
         {
             "destination": "172.67.68.101",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 1097,
             "protocol": 6
         },
         {
@@ -447,11 +712,6 @@
         },
         {
             "destination": "192.168.10.2",
-            "port": 7074,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
             "port": 2755,
             "protocol": 6
         },
@@ -637,11 +897,6 @@
         },
         {
             "destination": "172.67.68.90",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "54.209.214.174",
             "port": 443,
             "protocol": 6
         },
@@ -3342,11 +3597,6 @@
         },
         {
             "destination": "192.168.10.2",
-            "port": 5992,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
             "port": 6835,
             "protocol": 6
         },
@@ -3956,18 +4206,8 @@
             "protocol": 6
         },
         {
-            "destination": "52.22.85.27",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "192.168.10.2",
             "port": 1781,
-            "protocol": 6
-        },
-        {
-            "destination": "91.189.91.47",
-            "port": 443,
             "protocol": 6
         },
         {
@@ -4542,11 +4782,6 @@
         },
         {
             "destination": "192.168.10.2",
-            "port": 3029,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
             "port": 1877,
             "protocol": 6
         },
@@ -5097,11 +5332,6 @@
         },
         {
             "destination": "192.168.10.2",
-            "port": 4453,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
             "port": 2821,
             "protocol": 6
         },
@@ -5593,11 +5823,6 @@
         {
             "destination": "192.168.230.1",
             "port": 55600,
-            "protocol": 6
-        },
-        {
-            "destination": "104.26.7.76",
-            "port": 443,
             "protocol": 6
         },
         {
@@ -6298,11 +6523,6 @@
         {
             "destination": "192.168.10.2",
             "port": 2435,
-            "protocol": 6
-        },
-        {
-            "destination": "104.26.6.76",
-            "port": 443,
             "protocol": 6
         },
         {

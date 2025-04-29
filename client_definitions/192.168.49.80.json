@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.49.80",
-    "export_date": "2025-04-29T13:02:08.411941",
+    "export_date": "2025-04-29T23:13:16.438735",
     "host_info": {
         "ip_address": "192.168.49.80",
         "mac_address": "e0:51:d8:11:f1:c8",
@@ -66,6 +66,7 @@
         "powerstation.mayberry.farm",
         "pubsub.googleapis.com",
         "pypi.org",
+        "raw.githubusercontent.com",
         "registry-1.docker.io",
         "rt2.ambientweather.net",
         "security.ubuntu.com",
@@ -92,6 +93,96 @@
     ],
     "flows": [
         {
+            "destination": "34.196.185.21",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "13.228.43.61",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.1",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "98.82.158.198",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "13.249.168.168",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "23.193.184.166",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.1",
+            "port": 35500,
+            "protocol": 6
+        },
+        {
+            "destination": "98.82.157.177",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "172.67.168.106",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.1",
+            "port": 37023,
+            "protocol": 17
+        },
+        {
+            "destination": "16.15.178.16",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "142.250.207.10",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "104.26.4.238",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "18.64.129.218",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "172.217.161.74",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "98.82.159.130",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "185.199.111.133",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "142.250.198.10",
+            "port": 443,
+            "protocol": 6
+        },
+        {
             "destination": "44.199.80.228",
             "port": 443,
             "protocol": 6
@@ -109,11 +200,6 @@
         {
             "destination": "13.225.183.101",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.49.1",
-            "port": 80,
             "protocol": 6
         },
         {
@@ -1072,11 +1158,6 @@
             "protocol": 6
         },
         {
-            "destination": "192.168.49.1",
-            "port": 35500,
-            "protocol": 6
-        },
-        {
             "destination": "192.168.51.255",
             "port": 35886,
             "protocol": 6
@@ -1212,11 +1293,6 @@
             "protocol": 6
         },
         {
-            "destination": "18.64.129.218",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "13.227.62.70",
             "port": 443,
             "protocol": 6
@@ -1334,11 +1410,6 @@
         {
             "destination": "54.251.172.238",
             "port": 80,
-            "protocol": 6
-        },
-        {
-            "destination": "98.82.157.177",
-            "port": 443,
             "protocol": 6
         },
         {
@@ -5912,11 +5983,6 @@
             "protocol": 6
         },
         {
-            "destination": "185.199.111.133",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "139.162.71.178",
             "port": 443,
             "protocol": 6
@@ -6712,11 +6778,6 @@
             "protocol": 6
         },
         {
-            "destination": "104.26.4.238",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "13.251.168.26",
             "port": 80,
             "protocol": 6
@@ -6987,11 +7048,6 @@
             "protocol": 6
         },
         {
-            "destination": "172.217.161.74",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "172.217.175.74",
             "port": 443,
             "protocol": 6
@@ -7149,11 +7205,6 @@
         {
             "destination": "142.250.199.106",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "172.67.168.106",
-            "port": 80,
             "protocol": 6
         },
         {
@@ -7472,11 +7523,6 @@
             "protocol": 6
         },
         {
-            "destination": "142.250.198.10",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "1.1.1.1",
             "port": 53,
             "protocol": 6
@@ -7640,11 +7686,6 @@
             "destination": "192.168.49.1",
             "port": 42496,
             "protocol": 17
-        },
-        {
-            "destination": "98.82.159.130",
-            "port": 443,
-            "protocol": 6
         },
         {
             "destination": "172.217.26.234",
@@ -7877,11 +7918,6 @@
             "protocol": 6
         },
         {
-            "destination": "142.250.207.10",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "149.154.167.220",
             "port": 443,
             "protocol": 6
@@ -7929,11 +7965,6 @@
         {
             "destination": "192.168.49.1",
             "port": 42510,
-            "protocol": 6
-        },
-        {
-            "destination": "13.249.168.168",
-            "port": 443,
             "protocol": 6
         },
         {

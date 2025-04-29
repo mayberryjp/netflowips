@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.111",
-    "export_date": "2025-04-29T13:02:09.955087",
+    "export_date": "2025-04-29T23:13:18.645150",
     "host_info": {
         "ip_address": "192.168.50.111",
         "mac_address": null,
@@ -12,7 +12,8 @@
         "local_description": "Unifi U6 Pro AP"
     },
     "dns_queries": [
-        "ping.ui.com"
+        "ping.ui.com",
+        "trace.svc.ui.com"
     ],
     "flows": [
         {

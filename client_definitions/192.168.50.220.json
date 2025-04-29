@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.220",
-    "export_date": "2025-04-29T13:02:08.940009",
+    "export_date": "2025-04-29T23:13:17.117692",
     "host_info": {
         "ip_address": "192.168.50.220",
         "mac_address": "e0:51:d8:11:9f:9c",
@@ -19,6 +19,276 @@
         "security.ubuntu.com"
     ],
     "flows": [
+        {
+            "destination": "35.85.213.100",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.43.162.152",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.89.223.102",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.240.234.223",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.38.80.11",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "35.167.22.197",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.10.136.254",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.211.158.203",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.224.0.202",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.210.191.32",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "185.125.188.55",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "34.208.191.91",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.148.202.140",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.240.72.233",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.60.4",
+            "port": 53,
+            "protocol": 6
+        },
+        {
+            "destination": "52.38.131.10",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.235.14.60",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.226.75.137",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.239.47.200",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "35.167.135.175",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "35.84.98.81",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.212.66.142",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.210.111.160",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "35.167.61.243",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.27.66.145",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.27.96.48",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.227.52.126",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.35.144.73",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.42.61.33",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.213.254.85",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.213.100.107",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.149.114.170",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.232.150.143",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "35.82.64.39",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.25.222.253",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.89.7.194",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.238.223.217",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.24.247.130",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.254.182.186",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.247.62.1",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "34.243.160.129",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.187.128.166",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.239.31.129",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.214.241.253",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.201.203.200",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "34.212.62.154",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.41.111.157",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.70.224.2",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.171.230.55",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "91.189.91.47",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "3.164.68.7",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "34.214.155.25",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "50.112.161.152",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.225.67.112",
+            "port": 8883,
+            "protocol": 6
+        },
         {
             "destination": "50.112.181.44",
             "port": 8883,
@@ -50,11 +320,6 @@
             "protocol": 6
         },
         {
-            "destination": "54.149.114.170",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "44.225.183.134",
             "port": 8883,
             "protocol": 6
@@ -66,11 +331,6 @@
         },
         {
             "destination": "52.26.197.47",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "50.112.161.152",
             "port": 8883,
             "protocol": 6
         },
@@ -95,16 +355,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.35.144.73",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "34.214.241.253",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "99.84.55.123",
             "port": 443,
             "protocol": 6
@@ -116,16 +366,6 @@
         },
         {
             "destination": "34.209.130.41",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.235.14.60",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.232.150.143",
             "port": 8883,
             "protocol": 6
         },
@@ -175,16 +415,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.27.96.48",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.227.52.126",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.216.188.233",
             "port": 8883,
             "protocol": 6
@@ -210,11 +440,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.10.136.254",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "44.240.114.196",
             "port": 8883,
             "protocol": 6
@@ -230,11 +455,6 @@
             "protocol": 6
         },
         {
-            "destination": "34.213.254.85",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.208.162.139",
             "port": 8883,
             "protocol": 6
@@ -245,22 +465,12 @@
             "protocol": 6
         },
         {
-            "destination": "34.210.111.160",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "54.186.129.30",
             "port": 8883,
             "protocol": 6
         },
         {
             "destination": "54.69.40.230",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.226.75.137",
             "port": 8883,
             "protocol": 6
         },
@@ -300,21 +510,6 @@
             "protocol": 6
         },
         {
-            "destination": "34.212.62.154",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "185.125.188.55",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "34.210.191.32",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "44.241.59.228",
             "port": 8883,
             "protocol": 6
@@ -325,27 +520,7 @@
             "protocol": 6
         },
         {
-            "destination": "52.42.61.33",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "54.187.128.166",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.212.209.204",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.239.31.129",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "34.214.155.25",
             "port": 8883,
             "protocol": 6
         },
@@ -430,11 +605,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.27.66.145",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.210.94.91",
             "port": 8883,
             "protocol": 6
@@ -445,22 +615,7 @@
             "protocol": 6
         },
         {
-            "destination": "54.201.203.200",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "54.70.224.2",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "34.218.216.38",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.239.47.200",
             "port": 8883,
             "protocol": 6
         },
@@ -600,11 +755,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.25.222.253",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.215.65.209",
             "port": 8883,
             "protocol": 6
@@ -695,17 +845,7 @@
             "protocol": 6
         },
         {
-            "destination": "44.238.223.217",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.208.187.179",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.240.72.233",
             "port": 8883,
             "protocol": 6
         },
@@ -727,11 +867,6 @@
         {
             "destination": "44.224.57.47",
             "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.60.4",
-            "port": 53,
             "protocol": 6
         },
         {
@@ -810,11 +945,6 @@
             "protocol": 6
         },
         {
-            "destination": "35.84.98.81",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "34.216.252.67",
             "port": 8883,
             "protocol": 6
@@ -846,11 +976,6 @@
         },
         {
             "destination": "34.211.193.91",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "44.240.234.223",
             "port": 8883,
             "protocol": 6
         },
@@ -1100,11 +1225,6 @@
             "protocol": 6
         },
         {
-            "destination": "34.212.66.142",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "35.83.199.26",
             "port": 8883,
             "protocol": 6
@@ -1140,22 +1260,12 @@
             "protocol": 6
         },
         {
-            "destination": "52.24.247.130",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "44.226.67.152",
             "port": 8883,
             "protocol": 6
         },
         {
             "destination": "34.208.38.145",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "52.38.131.10",
             "port": 8883,
             "protocol": 6
         },
@@ -1300,11 +1410,6 @@
             "protocol": 6
         },
         {
-            "destination": "54.171.230.55",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "34.210.189.64",
             "port": 8883,
             "protocol": 6
@@ -1322,11 +1427,6 @@
         {
             "destination": "185.125.190.81",
             "port": 80,
-            "protocol": 6
-        },
-        {
-            "destination": "34.254.182.186",
-            "port": 443,
             "protocol": 6
         },
         {

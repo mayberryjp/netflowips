@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.40",
-    "export_date": "2025-04-29T13:02:09.736600",
+    "export_date": "2025-04-29T23:13:18.284647",
     "host_info": {
         "ip_address": "192.168.50.40",
         "mac_address": null,
@@ -15,12 +15,12 @@
     "flows": [
         {
             "destination": "255.255.255.255",
-            "port": 67,
+            "port": 6667,
             "protocol": 17
         },
         {
             "destination": "255.255.255.255",
-            "port": 6667,
+            "port": 67,
             "protocol": 17
         },
         {

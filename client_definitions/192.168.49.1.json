@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.49.1",
-    "export_date": "2025-04-29T13:02:08.695970",
+    "export_date": "2025-04-29T23:13:16.714058",
     "host_info": {
         "ip_address": "192.168.49.1",
         "mac_address": "00:e0:97:1b:9a:9c",
@@ -13,6 +13,11 @@
     },
     "dns_queries": [],
     "flows": [
+        {
+            "destination": "192.168.49.80",
+            "port": 37021,
+            "protocol": 6
+        },
         {
             "destination": "192.168.49.80",
             "port": 41623,

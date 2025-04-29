@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.37",
-    "export_date": "2025-04-29T13:02:08.737092",
+    "export_date": "2025-04-29T23:13:16.763125",
     "host_info": {
         "ip_address": "192.168.50.37",
         "mac_address": "c4:5b:be:fa:35:30",
@@ -18,6 +18,26 @@
         "rtupdate.wunderground.com"
     ],
     "flows": [
+        {
+            "destination": "167.179.119.205",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "162.159.200.1",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "129.250.35.251",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "50.7.159.155",
+            "port": 123,
+            "protocol": 17
+        },
         {
             "destination": "129.250.35.250",
             "port": 123,
@@ -64,27 +84,7 @@
             "protocol": 6
         },
         {
-            "destination": "162.159.200.1",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "167.179.119.205",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "129.250.35.251",
-            "port": 123,
-            "protocol": 17
-        },
-        {
             "destination": "45.76.211.39",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "50.7.159.155",
             "port": 123,
             "protocol": 17
         },

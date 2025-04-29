@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.50.41",
-    "export_date": "2025-04-29T13:02:09.652573",
+    "export_date": "2025-04-29T23:13:18.050352",
     "host_info": {
         "ip_address": "192.168.50.41",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "Espressif_embedded_None_92",
+        "os_fingerprint": "NodeMCU_embedded_None_92",
         "lease_hostname": "plug2",
         "icon": "PLUG",
         "local_description": "Tuya Smart Plug"
@@ -15,12 +15,12 @@
     "flows": [
         {
             "destination": "255.255.255.255",
-            "port": 67,
+            "port": 6667,
             "protocol": 17
         },
         {
             "destination": "255.255.255.255",
-            "port": 6667,
+            "port": 67,
             "protocol": 17
         },
         {

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.149",
-    "export_date": "2025-04-29T13:02:09.095419",
+    "export_date": "2025-04-29T23:13:17.318629",
     "host_info": {
         "ip_address": "192.168.50.149",
         "mac_address": "e4:c7:67:4f:e0:75",
@@ -42,6 +42,7 @@
         "ipv6.msftconnecttest.com",
         "ipv6.msftncsi.com",
         "licensing.mp.microsoft.com",
+        "login.live.com",
         "login.microsoftonline.com",
         "mdav.eu.endpoint.security.microsoft.com",
         "metadata.google.internal",
@@ -50,6 +51,7 @@
         "mwh05amevdc01.ame.gbl",
         "mwh05amevdc03.ame.gbl",
         "mwh05amevdc06.ame.gbl",
+        "ocsp.digicert.com",
         "odc.officeapps.live.com",
         "officeclient.microsoft.com",
         "outlook.office365.com",

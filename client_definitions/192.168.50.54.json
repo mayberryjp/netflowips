@@ -1,11 +1,11 @@
 {
     "ip_address": "192.168.50.54",
-    "export_date": "2025-04-29T13:02:09.563372",
+    "export_date": "2025-04-29T23:13:17.889625",
     "host_info": {
         "ip_address": "192.168.50.54",
-        "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
+        "mac_address": "74:7a:90:bb:de:0c",
+        "mac_vendor": "Murata Manufacturing Co., Ltd.",
+        "dhcp_hostname": "rinnai.832-5.com",
         "os_fingerprint": "ZyXEL_ZyNOS_2.X_87",
         "lease_hostname": "rinnai",
         "icon": "WATER_HEATER",
@@ -18,6 +18,16 @@
         "remocon-device-apigw.iot.rinnaijapan.cloud"
     ],
     "flows": [
+        {
+            "destination": "54.178.231.33",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "18.65.100.38",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "224.0.23.0",
             "port": 3610,

@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.230.12",
-    "export_date": "2025-04-29T13:02:01.420206",
+    "export_date": "2025-04-29T23:13:11.563464",
     "host_info": {
         "ip_address": "192.168.230.12",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "Garmin_embedded_None_87",
+        "os_fingerprint": "Garmin_embedded_None_88",
         "lease_hostname": null,
         "icon": "WEATHER_STATION",
         "local_description": "Ambient Weather"
@@ -14,37 +14,7 @@
     "dns_queries": [],
     "flows": [
         {
-            "destination": "128.138.140.44",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "132.163.96.1",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "132.163.97.3",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "132.163.96.6",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "192.168.230.1",
-            "port": 53,
-            "protocol": 17
-        },
-        {
-            "destination": "132.163.97.4",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "132.163.97.1",
+            "destination": "132.163.97.2",
             "port": 123,
             "protocol": 17
         },
@@ -59,12 +29,52 @@
             "protocol": 17
         },
         {
-            "destination": "128.138.141.172",
+            "destination": "132.163.96.2",
             "port": 123,
             "protocol": 17
         },
         {
-            "destination": "132.163.96.2",
+            "destination": "132.163.97.4",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "132.163.96.6",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "128.138.140.44",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "163.181.129.231",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "132.163.96.1",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "132.163.97.3",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "192.168.230.1",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "132.163.97.1",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "128.138.141.172",
             "port": 123,
             "protocol": 17
         },
@@ -92,11 +102,6 @@
             "destination": "104.26.6.76",
             "port": 80,
             "protocol": 6
-        },
-        {
-            "destination": "132.163.97.2",
-            "port": 123,
-            "protocol": 17
         },
         {
             "destination": "129.6.15.26",

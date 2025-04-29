@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.230.159",
-    "export_date": "2025-04-29T13:02:02.052564",
+    "export_date": "2025-04-29T23:13:12.884813",
     "host_info": {
         "ip_address": "192.168.230.159",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "NodeMCU_embedded_None_92",
+        "os_fingerprint": "Grandstream_embedded_None_92",
         "lease_hostname": "electricity_meter",
         "icon": "ENERGY_MONITOR",
         "local_description": "Tuya Electricity Meter"

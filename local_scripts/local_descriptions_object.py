@@ -346,5 +346,11 @@ LOCAL_DESCRIPTIONS = [
         "ip_address": "192.168.50.27",
         "category": "PET_FEEDER",
         "local_description": "Petkit Duo"
+    },
+    {
+        "api_endpoint": "http://192.168.49.80:8044",
+        "ip_address": "192.168.49.100",
+        "category": "SWITCH",
+        "local_description": "QNAP QSW-M2116P-2T2S"
     }
 ]

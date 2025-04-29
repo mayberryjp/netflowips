@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.230.1",
-    "export_date": "2025-04-29T13:02:01.002882",
+    "export_date": "2025-04-29T23:13:10.381996",
     "host_info": {
         "ip_address": "192.168.230.1",
         "mac_address": "00:d0:b4:04:3a:b9",
         "mac_vendor": "Katsujima Co., Ltd.",
         "dhcp_hostname": "firewall.832-5.com",
-        "os_fingerprint": "No OS fingerprint detected",
+        "os_fingerprint": "FreeBSD_FreeBSD_11.X_90",
         "lease_hostname": null,
         "icon": "FIREWALL",
         "local_description": "PfSense Firewall"
