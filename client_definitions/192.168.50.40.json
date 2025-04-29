@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.50.40",
-    "export_date": "2025-04-28T08:38:16.966290",
+    "export_date": "2025-04-29T08:22:02.980972",
     "host_info": {
         "ip_address": "192.168.50.40",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "Grandstream_embedded_None_92",
+        "os_fingerprint": "NodeMCU_embedded_None_92",
         "lease_hostname": "plug1"
     },
     "dns_queries": [],
@@ -22,13 +22,13 @@
             "protocol": 17
         },
         {
-            "destination": "34.211.189.2",
-            "port": 8886,
+            "destination": "34.218.147.23",
+            "port": 443,
             "protocol": 6
         },
         {
-            "destination": "34.218.147.23",
-            "port": 443,
+            "destination": "34.211.189.2",
+            "port": 8886,
             "protocol": 6
         }
     ]

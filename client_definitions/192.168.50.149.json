@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.149",
-    "export_date": "2025-04-28T08:38:16.614170",
+    "export_date": "2025-04-29T08:22:02.279763",
     "host_info": {
         "ip_address": "192.168.50.149",
         "mac_address": "e4:c7:67:4f:e0:75",
@@ -14,31 +14,46 @@
         "activity.windows.com",
         "azds.kusto.windows.net",
         "azsupport.westus2.kusto.windows.net",
+        "centralus-2.in.applicationinsights.azure.com",
         "centralus-3.in.applicationinsights.azure.com",
         "client.wns.windows.com",
+        "config.edge.skype.com",
         "cp-byo.saw.microsoft.com",
         "cp.vpn.saw.microsoft.com",
+        "crl.microsoft.com",
         "ctldl.windowsupdate.com",
+        "dc.services.visualstudio.com",
+        "discover.aadrm.com",
         "discovery.hpdaas.com",
         "displaycatalog.mp.microsoft.com",
         "dns.msftncsi.com",
+        "eastus-2.in.applicationinsights.azure.com",
         "edge.microsoft.com",
         "edr-neu.eu.endpoint.security.microsoft.com",
         "eu-v20.events.endpoint.security.microsoft.com",
         "explorer-saw.kusto.io",
+        "fs.microsoft.com",
         "geo-byo.saw.microsoft.com",
+        "graph.microsoft.com",
         "inference.location.live.net",
         "ipv6.msftconnecttest.com",
         "ipv6.msftncsi.com",
+        "licensing.mp.microsoft.com",
         "login.microsoftonline.com",
         "mdav.eu.endpoint.security.microsoft.com",
         "metadata.google.internal",
+        "mscrl.microsoft.com",
+        "mwh05amedc01.ame.gbl",
         "mwh05amevdc01.ame.gbl",
+        "mwh05amevdc03.ame.gbl",
         "mwh05amevdc06.ame.gbl",
+        "odc.officeapps.live.com",
         "officeclient.microsoft.com",
         "outlook.office365.com",
         "r.bing.comms-appx-web",
+        "settings-win.data.microsoft.com",
         "slscr.update.microsoft.com",
+        "v20.events.data.microsoft.com",
         "www.intel.com",
         "www.microsoft.com",
         "www.msftconnecttest.com",
@@ -46,9 +61,64 @@
     ],
     "flows": [
         {
-            "destination": "192.168.51.255",
-            "port": 138,
+            "destination": "25.4.24.158",
+            "port": 8080,
+            "protocol": 6
+        },
+        {
+            "destination": "25.4.25.20",
+            "port": 8080,
+            "protocol": 6
+        },
+        {
+            "destination": "23.203.133.184",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "23.220.70.142",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "25.4.29.73",
+            "port": 445,
+            "protocol": 6
+        },
+        {
+            "destination": "25.4.29.73",
+            "port": 443,
             "protocol": 17
+        },
+        {
+            "destination": "23.46.155.6",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "23.46.155.19",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "25.7.29.10",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "25.6.28.138",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "25.6.28.10",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "23.220.70.136",
+            "port": 80,
+            "protocol": 6
         },
         {
             "destination": "167.220.249.129",
@@ -66,11 +136,6 @@
             "protocol": 6
         },
         {
-            "destination": "224.0.0.22",
-            "port": 0,
-            "protocol": 2
-        },
-        {
             "destination": "25.4.24.52",
             "port": 8080,
             "protocol": 6
@@ -79,11 +144,6 @@
             "destination": "25.4.24.51",
             "port": 8080,
             "protocol": 6
-        },
-        {
-            "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17
         },
         {
             "destination": "239.255.255.250",
@@ -119,11 +179,6 @@
             "destination": "25.4.24.141",
             "port": 80,
             "protocol": 6
-        },
-        {
-            "destination": "192.168.51.255",
-            "port": 137,
-            "protocol": 17
         },
         {
             "destination": "150.171.27.11",
@@ -441,11 +496,6 @@
             "protocol": 6
         },
         {
-            "destination": "23.46.155.6",
-            "port": 80,
-            "protocol": 6
-        },
-        {
             "destination": "20.118.198.33",
             "port": 443,
             "protocol": 6
@@ -466,21 +516,6 @@
             "protocol": 6
         },
         {
-            "destination": "25.7.29.10",
-            "port": 53,
-            "protocol": 17
-        },
-        {
-            "destination": "25.6.28.138",
-            "port": 53,
-            "protocol": 17
-        },
-        {
-            "destination": "25.6.28.10",
-            "port": 53,
-            "protocol": 17
-        },
-        {
             "destination": "23.46.155.69",
             "port": 80,
             "protocol": 6
@@ -493,11 +528,6 @@
         {
             "destination": "4.213.25.240",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "23.220.70.142",
-            "port": 80,
             "protocol": 6
         },
         {

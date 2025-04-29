@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.119",
-    "export_date": "2025-04-28T08:38:14.457356",
+    "export_date": "2025-04-29T08:21:57.282306",
     "host_info": {
         "ip_address": "192.168.230.119",
         "mac_address": null,
@@ -10,11 +10,5 @@
         "lease_hostname": "btproxy"
     },
     "dns_queries": [],
-    "flows": [
-        {
-            "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17
-        }
-    ]
+    "flows": []
 }

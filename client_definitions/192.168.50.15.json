@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.15",
-    "export_date": "2025-04-28T08:38:16.695803",
+    "export_date": "2025-04-29T08:22:02.451425",
     "host_info": {
         "ip_address": "192.168.50.15",
         "mac_address": null,
@@ -10,14 +10,10 @@
         "lease_hostname": "aircon-location1"
     },
     "dns_queries": [
+        "afus.apc.panasonic.com",
         "ldcws.pcpf.panasonic.com"
     ],
     "flows": [
-        {
-            "destination": "224.0.23.0",
-            "port": 0,
-            "protocol": 2
-        },
         {
             "destination": "224.0.23.0",
             "port": 3610,

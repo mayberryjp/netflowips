@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.230.5",
-    "export_date": "2025-04-28T08:38:14.327946",
+    "export_date": "2025-04-29T08:21:56.917909",
     "host_info": {
         "ip_address": "192.168.230.5",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "No OS fingerprint detected",
+        "os_fingerprint": "NodeMCU_embedded_None_93",
         "lease_hostname": "tuya-shedwaterpump"
     },
     "dns_queries": [],

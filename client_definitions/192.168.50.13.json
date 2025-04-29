@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.13",
-    "export_date": "2025-04-28T08:38:16.373407",
+    "export_date": "2025-04-29T08:22:01.878440",
     "host_info": {
         "ip_address": "192.168.50.13",
         "mac_address": null,
@@ -15,11 +15,6 @@
         "ntp.anshin-home.jp"
     ],
     "flows": [
-        {
-            "destination": "239.255.255.250",
-            "port": 1900,
-            "protocol": 17
-        },
         {
             "destination": "224.0.23.0",
             "port": 3610,

@@ -43,7 +43,7 @@ def export_client_definition(client_ip):
         localhosts_conn = sqlite3.connect(CONST_LOCALHOSTS_DB)
         localhosts_cursor = localhosts_conn.cursor()
         localhosts_cursor.execute(
-            "SELECT ip_address,mac_address,mac_vendor,dhcp_hostname, os_fingerprint, lease_hostname FROM localhosts WHERE ip_address = ?", 
+            "SELECT ip_address,mac_address,mac_vendor,dhcp_hostname, os_fingerprint, lease_hostname, icon, local_description FROM localhosts WHERE ip_address = ?", 
             (client_ip,)
         )
         host_record = localhosts_cursor.fetchone()
@@ -54,7 +54,9 @@ def export_client_definition(client_ip):
                 "mac_vendor": host_record[2],
                 "dhcp_hostname": host_record[3],
                 "os_fingerprint": host_record[4],
-                "lease_hostname": host_record[5]
+                "lease_hostname": host_record[5],
+                "icon": host_record[6],
+                "local_description": host_record[7]
             }
         
         # Get DNS queries from dnsqueries.db
@@ -87,7 +89,6 @@ def export_client_definition(client_ip):
             for row in flows_cursor.fetchall()
         ]
         
-            
         log_info(logger, f"[INFO] Exported client definition for {client_ip}")
         
     except Exception as e:

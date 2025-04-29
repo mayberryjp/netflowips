@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.18",
-    "export_date": "2025-04-28T08:38:16.638311",
+    "export_date": "2025-04-29T08:22:02.310575",
     "host_info": {
         "ip_address": "192.168.50.18",
         "mac_address": null,
@@ -14,11 +14,6 @@
         "ldcws.pcpf.panasonic.com"
     ],
     "flows": [
-        {
-            "destination": "224.0.23.0",
-            "port": 0,
-            "protocol": 2
-        },
         {
             "destination": "224.0.23.0",
             "port": 3610,

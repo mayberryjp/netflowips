@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.101",
-    "export_date": "2025-04-28T08:38:16.889537",
+    "export_date": "2025-04-29T08:22:02.826047",
     "host_info": {
         "ip_address": "192.168.50.101",
         "mac_address": "7c:66:ef:cb:69:e4",
@@ -19,16 +19,6 @@
             "destination": "61.214.248.211",
             "port": 443,
             "protocol": 6
-        },
-        {
-            "destination": "224.0.23.0",
-            "port": 0,
-            "protocol": 2
-        },
-        {
-            "destination": "224.0.23.0",
-            "port": 3610,
-            "protocol": 17
         },
         {
             "destination": "61.214.248.218",

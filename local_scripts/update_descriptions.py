@@ -77,7 +77,7 @@ def update_localhosts(data_object):
                     if updated_host.get("local_description") == local_description and updated_host.get("icon") == category: 
                         log_info(logger,f"Verification successful for local host: {ip_address}")
                     else:
-                        log_error(logger,f"Verification failed for local host: {ip_address}. Data mismatch. Expected {local_description} got {updated_host.get("local_description")}")
+                        log_error(logger,f"Verification failed for local host: {ip_address}. Data mismatch. Expected {local_description} got {updated_host.get("local_description")} and {category} got {updated_host.get("icon")}")
                 else:
                     log_error(logger,f"Host with IP {ip_address} not found in the host list.")
             else:

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.10",
-    "export_date": "2025-04-28T08:38:14.934897",
+    "export_date": "2025-04-29T08:22:00.350010",
     "host_info": {
         "ip_address": "192.168.230.10",
         "mac_address": null,
@@ -10,76 +10,5 @@
         "lease_hostname": null
     },
     "dns_queries": [],
-    "flows": [
-        {
-            "destination": "192.168.8.1",
-            "port": 0,
-            "protocol": 1
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 13830,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 46134,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 4977,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 6364,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 61747,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 40109,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 10912,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 25842,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 22961,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 58378,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 63236,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 32908,
-            "protocol": 6
-        },
-        {
-            "destination": "192.168.10.2",
-            "port": 37965,
-            "protocol": 6
-        }
-    ]
+    "flows": []
 }

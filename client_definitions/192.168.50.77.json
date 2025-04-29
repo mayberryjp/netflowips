@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.77",
-    "export_date": "2025-04-28T08:38:17.075222",
+    "export_date": "2025-04-29T08:22:03.134726",
     "host_info": {
         "ip_address": "192.168.50.77",
         "mac_address": null,
@@ -9,22 +9,14 @@
         "os_fingerprint": "Enlogic_embedded_None_92",
         "lease_hostname": "Presence-Sensor-FP2-4749"
     },
-    "dns_queries": [],
+    "dns_queries": [
+        "aiot-coap.aqara.cn"
+    ],
     "flows": [
         {
             "destination": "101.42.246.140",
             "port": 11111,
             "protocol": 6
-        },
-        {
-            "destination": "224.0.0.251",
-            "port": 0,
-            "protocol": 2
-        },
-        {
-            "destination": "230.0.0.1",
-            "port": 0,
-            "protocol": 2
         },
         {
             "destination": "101.43.143.15",
@@ -35,16 +27,6 @@
             "destination": "49.233.237.221",
             "port": 5050,
             "protocol": 6
-        },
-        {
-            "destination": "230.0.0.1",
-            "port": 10008,
-            "protocol": 17
-        },
-        {
-            "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17
         },
         {
             "destination": "49.233.251.124",

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.54",
-    "export_date": "2025-04-28T08:38:16.874873",
+    "export_date": "2025-04-29T08:22:02.796415",
     "host_info": {
         "ip_address": "192.168.50.54",
         "mac_address": null,
@@ -17,14 +17,9 @@
     ],
     "flows": [
         {
-            "destination": "52.198.105.150",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "3.113.157.71",
-            "port": 8883,
-            "protocol": 6
+            "destination": "224.0.23.0",
+            "port": 3610,
+            "protocol": 17
         },
         {
             "destination": "57.180.109.53",
@@ -32,33 +27,8 @@
             "protocol": 6
         },
         {
-            "destination": "133.243.238.164",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "3.115.163.195",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "224.0.23.0",
-            "port": 0,
-            "protocol": 2
-        },
-        {
             "destination": "54.249.16.196",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "133.243.238.244",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "3.112.148.251",
-            "port": 8883,
             "protocol": 6
         },
         {
@@ -67,19 +37,9 @@
             "protocol": 6
         },
         {
-            "destination": "224.0.23.0",
-            "port": 3610,
-            "protocol": 17
-        },
-        {
             "destination": "3.114.172.90",
             "port": 443,
             "protocol": 6
-        },
-        {
-            "destination": "61.205.120.130",
-            "port": 123,
-            "protocol": 17
         },
         {
             "destination": "18.65.100.19",
@@ -87,28 +47,8 @@
             "protocol": 6
         },
         {
-            "destination": "52.194.169.38",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
-            "destination": "52.197.72.120",
-            "port": 8883,
-            "protocol": 6
-        },
-        {
             "destination": "52.69.155.228",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "133.243.238.243",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "35.73.142.234",
-            "port": 8883,
             "protocol": 6
         },
         {
@@ -119,11 +59,6 @@
         {
             "destination": "18.65.207.65",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "54.178.47.159",
-            "port": 8883,
             "protocol": 6
         }
     ]

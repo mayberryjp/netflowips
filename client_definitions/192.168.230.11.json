@@ -1,12 +1,12 @@
 {
     "ip_address": "192.168.230.11",
-    "export_date": "2025-04-28T08:38:14.588564",
+    "export_date": "2025-04-29T08:21:57.544448",
     "host_info": {
         "ip_address": "192.168.230.11",
         "mac_address": "fc:e8:c0:f8:78:db",
         "mac_vendor": "Espressif Inc.",
         "dhcp_hostname": null,
-        "os_fingerprint": "Garmin_embedded_None_89",
+        "os_fingerprint": "Garmin_embedded_None_88",
         "lease_hostname": null
     },
     "dns_queries": [
@@ -14,11 +14,6 @@
         "updates.smlight.tech"
     ],
     "flows": [
-        {
-            "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17
-        },
         {
             "destination": "192.68.230.236",
             "port": 123,

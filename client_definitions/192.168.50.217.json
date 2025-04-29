@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.217",
-    "export_date": "2025-04-28T08:38:17.102058",
+    "export_date": "2025-04-29T08:22:03.197876",
     "host_info": {
         "ip_address": "192.168.50.217",
         "mac_address": "fc:e8:c0:f8:78:a3",
@@ -14,16 +14,6 @@
         "updates.smlight.tech"
     ],
     "flows": [
-        {
-            "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17
-        },
-        {
-            "destination": "224.0.0.251",
-            "port": 0,
-            "protocol": 2
-        },
         {
             "destination": "45.83.192.98",
             "port": 443,
