@@ -1,0 +1,25 @@
+{
+    "ip_address": "192.168.50.217",
+    "export_date": "2025-04-29T13:02:09.990883",
+    "host_info": {
+        "ip_address": "192.168.50.217",
+        "mac_address": "fc:e8:c0:f8:78:a3",
+        "mac_vendor": "Espressif Inc.",
+        "dhcp_hostname": "slzb-06p7.local",
+        "os_fingerprint": "Garmin_embedded_None_88",
+        "lease_hostname": "slzb-06p7",
+        "icon": "ZIGBEE_RADIO",
+        "local_description": "SLZB-06P7 POE Adapter"
+    },
+    "dns_queries": [
+        "google.com",
+        "updates.smlight.tech"
+    ],
+    "flows": [
+        {
+            "destination": "45.83.192.98",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

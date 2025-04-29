@@ -1,0 +1,47 @@
+{
+    "ip_address": "192.168.49.1",
+    "export_date": "2025-04-29T13:02:08.695970",
+    "host_info": {
+        "ip_address": "192.168.49.1",
+        "mac_address": "00:e0:97:1b:9a:9c",
+        "mac_vendor": "Carrier Access Corporation",
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null,
+        "icon": "FIREWALL",
+        "local_description": "PfSense Firewall"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "192.168.49.80",
+            "port": 41623,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 36533,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 33675,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 35013,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 39675,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 2055,
+            "protocol": 17
+        }
+    ]
+}

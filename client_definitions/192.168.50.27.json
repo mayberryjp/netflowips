@@ -1,0 +1,119 @@
+{
+    "ip_address": "192.168.50.27",
+    "export_date": "2025-04-29T13:02:09.173038",
+    "host_info": {
+        "ip_address": "192.168.50.27",
+        "mac_address": "50:e4:78:bc:a1:e2",
+        "mac_vendor": "Sichuan AI-Link Technology Co., Ltd.",
+        "dhcp_hostname": "newpetkit.832-5.com",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "newpetkit",
+        "icon": "PET_FEEDER",
+        "local_description": "Petkit Duo"
+    },
+    "dns_queries": [
+        "ap2.agora.io",
+        "api.petkt.com",
+        "axt0v2rgavdh.objectstorage.us-sanjose-1.oci.customer-oci.com",
+        "iot-500a8kyx.mqtt.iothub.aliyuncs.com",
+        "report-edge.agora.io",
+        "upload.qiniup.com"
+    ],
+    "flows": [
+        {
+            "destination": "128.1.157.228",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.231",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "208.67.222.222",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "106.14.12.130",
+            "port": 9700,
+            "protocol": 17
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 6
+        },
+        {
+            "destination": "47.88.20.79",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "47.251.63.240",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "134.70.124.2",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "47.88.66.122",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "114.114.115.115",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "199.85.126.10",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "114.114.114.114",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "128.1.157.225",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.227",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.230",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.226",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.232",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "128.1.157.229",
+            "port": 80,
+            "protocol": 6
+        }
+    ]
+}

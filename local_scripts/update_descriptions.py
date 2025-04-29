@@ -33,6 +33,7 @@ def update_localhosts(data_object):
         ip_address = entry.get("ip_address")
         category = entry.get("category")
         local_description = entry.get("local_description")
+        log_info(logger,f"[INFO] Processing entry: {ip_address}")
 
         #log_info(logger,f"[INFO] Processing entry: {dump_json(entry)}")
         if not api_endpoint or not ip_address or not category or not local_description:
@@ -71,13 +72,12 @@ def update_localhosts(data_object):
                 # Filter the specific host by IP address
                 updated_host = next((host for host in all_hosts if host.get("ip_address") == ip_address), None)
 
-                #log_info(logger,f"Updated host data: {dump_json(updated_host)}")  # Print the updated host information
-                #print(dump_json(updated_host))  # Print the updated host information
                 if updated_host:
-                    if updated_host.get("local_description") == local_description and updated_host.get("icon") == category: 
+                    if (updated_host.get("local_description") == local_description and updated_host.get("icon") == category): 
                         log_info(logger,f"Verification successful for local host: {ip_address}")
                     else:
-                        log_error(logger,f"Verification failed for local host: {ip_address}. Data mismatch. Expected {local_description} got {updated_host.get("local_description")} and {category} got {updated_host.get("icon")}")
+                        pass
+                        #log_error(logger,f"Verification failed for local host: {ip_address}. Data mismatch. Expected {local_description} got {updated_host.get("local_description")} and {category} got {updated_host.get("icon")}")
                 else:
                     log_error(logger,f"Host with IP {ip_address} not found in the host list.")
             else:

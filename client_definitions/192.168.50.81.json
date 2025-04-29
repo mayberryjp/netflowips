@@ -1,0 +1,16 @@
+{
+    "ip_address": "192.168.50.81",
+    "export_date": "2025-04-29T13:02:09.864535",
+    "host_info": {
+        "ip_address": "192.168.50.81",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Garmin_embedded_None_95",
+        "lease_hostname": "olimex-esp32-bedroom",
+        "icon": "BLUETOOTH_RADIO",
+        "local_description": "192.168.50.81"
+    },
+    "dns_queries": [],
+    "flows": []
+}

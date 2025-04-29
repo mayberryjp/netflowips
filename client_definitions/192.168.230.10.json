@@ -1,0 +1,16 @@
+{
+    "ip_address": "192.168.230.10",
+    "export_date": "2025-04-29T13:02:06.763434",
+    "host_info": {
+        "ip_address": "192.168.230.10",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Microsoft_Windows_Vista_96",
+        "lease_hostname": null,
+        "icon": "SWITCH",
+        "local_description": "Netgear GS308EPP POE Switch"
+    },
+    "dns_queries": [],
+    "flows": []
+}

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.15",
-    "export_date": "2025-04-29T08:59:32.937372",
+    "export_date": "2025-04-29T13:02:09.261003",
     "host_info": {
         "ip_address": "192.168.50.15",
         "mac_address": null,
@@ -8,8 +8,8 @@
         "dhcp_hostname": null,
         "os_fingerprint": "DTE_embedded_None_100",
         "lease_hostname": "aircon-location1",
-        "icon": null,
-        "local_description": null
+        "icon": "AIR_CONDITIONER",
+        "local_description": "Panasonic Air Conditioner"
     },
     "dns_queries": [
         "afus.apc.panasonic.com",

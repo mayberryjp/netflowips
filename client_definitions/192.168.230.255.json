@@ -1,0 +1,16 @@
+{
+    "ip_address": "192.168.230.255",
+    "export_date": "2025-04-29T13:02:03.656910",
+    "host_info": {
+        "ip_address": "192.168.230.255",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null,
+        "icon": "BROADCAST_ADDRESS",
+        "local_description": "Local Broadcast Address"
+    },
+    "dns_queries": [],
+    "flows": []
+}
