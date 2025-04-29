@@ -600,5 +600,44 @@ def store_machine_unique_identifier():
         log_error(logger, f"[ERROR] Unexpected error while storing machine unique identifier: {e}")
         return False
 
+def get_machine_unique_identifier_from_db():
+    """
+    Retrieve the machine unique identifier from the configuration database.
+
+    Returns:
+        str: The machine unique identifier if found, None otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Connect to the configuration database
+        conn = connect_to_db(CONST_CONFIG_DB)
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to configuration database.")
+            return None
+
+        cursor = conn.cursor()
+
+        # Query the MachineUniqueIdentifier from the configuration table
+        cursor.execute("""
+            SELECT value FROM configuration WHERE key = 'MachineUniqueIdentifier'
+        """)
+        result = cursor.fetchone()
+
+        conn.close()
+
+        if result:
+            log_info(logger, f"[INFO] Retrieved MachineUniqueIdentifier: {result[0]}")
+            return result[0]
+        else:
+            log_error(logger, "[ERROR] MachineUniqueIdentifier not found in the configuration database.")
+            return None
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving machine unique identifier: {e}")
+        return None
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving machine unique identifier: {e}")
+        return None
+
 
 

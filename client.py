@@ -10,6 +10,7 @@ from const import (
     CONST_ALLFLOWS_DB
 )
 from utils import log_info, log_error
+from database import get_machine_unique_identifier_from_db
 
 class ActionType(Enum):
     """Placeholder for action types"""
@@ -29,6 +30,9 @@ def export_client_definition(client_ip):
     - Recommended actions
     """
     logger = logging.getLogger(__name__)
+
+    instance_identifier = get_machine_unique_identifier_from_db()
+
     
     try:
         # Create output directory if it doesn't exist
@@ -37,6 +41,7 @@ def export_client_definition(client_ip):
         client_data = {
             "ip_address": client_ip,
             "export_date": datetime.now().isoformat(),
+            "instance_identifier": instance_identifier
         }
         
         # Get host information from localhosts.db
