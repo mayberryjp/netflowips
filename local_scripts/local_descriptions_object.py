@@ -1,89 +1,88 @@
 LOCAL_DESCRIPTIONS = [
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.1",
-            "category": "FIREWALL",
-            "local_description": "PfSense Firewall"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.2",
-            "category": "IP_CAMERA",
-            "local_description": "Reolink RLC-811A"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.3",
-            "category": "IP_CAMERA",
-            "local_description": "Reolink RLC-811A"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.5",
-            "category": "WATER_PUMP",
-            "local_description": "Tuya Water Pump Relay"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.10",
-            "category": "SWITCH",
-            "local_description": "Netgear GS308EPP POE Switch"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.11",
-            "category": "ZIGBEE_RADIO",
-            "local_description": "Zigbee SLZB-06P7 POE Adapter"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.12",
-            "category": "WEATHER_STATION",
-            "local_description": "Ambient Weather"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.119",
-            "category": "BLUETOOTH_RADIO",
-            "local_description": "ESP32 Bluetooth Radio"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.148",
-            "category": "MOBILE_PHONE",
-            "local_description": "Thao's iPhone"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.159",
-            "category": "ENERGY_MONITOR",
-            "local_description": "Tuya Electricity Meter"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.183",
-            "category": "WIFI_ACCESS_POINT",
-            "local_description": "Ubiquiti U7 Pro Outdoor AP"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.191",
-            "category": "BATTERY_CHARGER",
-            "local_description": "Tuya Battery Charger Relay"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.236",
-            "category": "SERVER",
-            "local_description": "Farm Ubuntu Server/Docker"
-        },
-        {
-            "api_endpoint": "http://192.168.230.236:8044",
-            "ip_address": "192.168.230.255",
-            "category": "BROADCAST_ADDRESS",
-            "local_description": "Local Broadcast Address"
-        },
-
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.1",
+        "category": "FIREWALL",
+        "local_description": "PfSense Firewall"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.2",
+        "category": "IP_CAMERA",
+        "local_description": "Reolink RLC-811A"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.3",
+        "category": "IP_CAMERA",
+        "local_description": "Reolink RLC-811A"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.5",
+        "category": "WATER_PUMP",
+        "local_description": "Tuya Water Pump Relay"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.10",
+        "category": "SWITCH",
+        "local_description": "Netgear GS308EPP POE Switch"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.11",
+        "category": "ZIGBEE_RADIO",
+        "local_description": "Zigbee SLZB-06P7 POE Adapter"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.12",
+        "category": "WEATHER_STATION",
+        "local_description": "Ambient Weather"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.119",
+        "category": "BLUETOOTH_RADIO",
+        "local_description": "ESP32 Bluetooth Radio"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.148",
+        "category": "MOBILE_PHONE",
+        "local_description": "Thao's iPhone"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.159",
+        "category": "ENERGY_MONITOR",
+        "local_description": "Tuya Electricity Meter"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.183",
+        "category": "WIFI_ACCESS_POINT",
+        "local_description": "Ubiquiti U7 Pro Outdoor AP"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.191",
+        "category": "BATTERY_CHARGER",
+        "local_description": "Tuya Battery Charger Relay"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.236",
+        "category": "SERVER",
+        "local_description": "Farm Ubuntu Server/Docker"
+    },
+    {
+        "api_endpoint": "http://192.168.230.236:8044",
+        "ip_address": "192.168.230.255",
+        "category": "BROADCAST_ADDRESS",
+        "local_description": "Local Broadcast Address"
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.49.1",
@@ -158,12 +157,6 @@ LOCAL_DESCRIPTIONS = [
     },
     {
         "api_endpoint": "http://192.168.49.80:8044",
-        "ip_address": "",
-        "category": "",
-        "local_description": ""
-    },
-    {
-        "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.149",
         "category": "LAPTOP",
         "local_description": "SAW Laptop"
@@ -207,7 +200,7 @@ LOCAL_DESCRIPTIONS = [
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.101",
-        "category": "REFRIGERATOR"
+        "category": "REFRIGERATOR",
         "local_description": "Sharp Refrigerator"
     },
     {
@@ -323,31 +316,31 @@ LOCAL_DESCRIPTIONS = [
         "ip_address": "192.168.50.35",
         "category": "SPRINKLER_CONTROLLER",
         "local_description": "Rachio Sprinkler Controller"
-    }
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.15",
         "category": "AIR_CONDITIONER",
         "local_description": "Panasonic Air Conditioner"
-    }
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.17",
         "category": "LAPTOP",
         "local_description": "Thinkpad X1 Laptop"
-    }
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.18",
         "category": "AIR_CONDITIONER",
         "local_description": "Panasonic Air Condition"
-    }
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.25",
         "category": "MOBILE_PHONE",
         "local_description": "Samsung ZFold"
-    }
+    },
     {
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.27",
