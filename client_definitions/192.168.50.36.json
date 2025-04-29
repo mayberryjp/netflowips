@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.36",
-    "export_date": "2025-04-29T08:22:02.560727",
+    "export_date": "2025-04-29T08:59:32.998934",
     "host_info": {
         "ip_address": "192.168.50.36",
         "mac_address": "84:d3:52:56:8c:27",
         "mac_vendor": "Tonly Technology Co. Ltd",
         "dhcp_hostname": "jbl1000.832-5.com",
         "os_fingerprint": "Linux_Linux_4.X_100",
-        "lease_hostname": "jbl1000"
+        "lease_hostname": "jbl1000",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "android.clients.google.com",
@@ -25,6 +27,26 @@
         "www.gstatic.com"
     ],
     "flows": [
+        {
+            "destination": "3.5.17.89",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "54.231.128.41",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "52.217.105.52",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "3.5.27.150",
+            "port": 80,
+            "protocol": 6
+        },
         {
             "destination": "52.216.138.211",
             "port": 80,

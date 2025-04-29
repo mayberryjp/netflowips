@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.40",
-    "export_date": "2025-04-29T08:22:02.980972",
+    "export_date": "2025-04-29T08:59:33.294291",
     "host_info": {
         "ip_address": "192.168.50.40",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "NodeMCU_embedded_None_92",
-        "lease_hostname": "plug1"
+        "lease_hostname": "plug1",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [],
     "flows": [

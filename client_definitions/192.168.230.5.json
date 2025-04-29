@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.230.5",
-    "export_date": "2025-04-29T08:21:56.917909",
+    "export_date": "2025-04-29T08:59:25.292297",
     "host_info": {
         "ip_address": "192.168.230.5",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "NodeMCU_embedded_None_93",
-        "lease_hostname": "tuya-shedwaterpump"
+        "lease_hostname": "tuya-shedwaterpump",
+        "icon": "WATER_PUMP",
+        "local_description": "Tuya Water Pump Relay"
     },
     "dns_queries": [],
     "flows": [

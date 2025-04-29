@@ -1,18 +1,80 @@
 {
     "ip_address": "192.168.230.236",
-    "export_date": "2025-04-29T08:21:52.801916",
+    "export_date": "2025-04-29T08:59:15.915475",
     "host_info": {
         "ip_address": "192.168.230.236",
         "mac_address": "e0:51:d8:15:50:fe",
         "mac_vendor": "China Dragon Technology Limited",
         "dhcp_hostname": "pi.hole",
         "os_fingerprint": "Linux_Linux_2.6.X_100",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": "SERVER",
+        "local_description": "Farm Ubuntu Server/Docker"
     },
     "dns_queries": [
         "www.google.com"
     ],
     "flows": [
+        {
+            "destination": "192.168.10.2",
+            "port": 4278,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2829,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 6936,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7002,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4529,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 4607,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2292,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7807,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 7714,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3036,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 3978,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.10.2",
+            "port": 2356,
+            "protocol": 6
+        },
         {
             "destination": "192.168.10.2",
             "port": 4497,

@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.49.1",
-    "export_date": "2025-04-29T08:22:01.771679",
+    "export_date": "2025-04-29T08:59:32.455094",
     "host_info": {
         "ip_address": "192.168.49.1",
         "mac_address": "00:e0:97:1b:9a:9c",
         "mac_vendor": "Carrier Access Corporation",
         "dhcp_hostname": null,
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [],
     "flows": [

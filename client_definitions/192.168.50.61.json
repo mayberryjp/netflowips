@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.61",
-    "export_date": "2025-04-29T08:22:01.684444",
+    "export_date": "2025-04-29T08:59:32.421330",
     "host_info": {
         "ip_address": "192.168.50.61",
         "mac_address": "1c:53:f9:79:a0:96",
         "mac_vendor": "Google, Inc.",
         "dhcp_hostname": "nest-desk.832-5.com",
-        "os_fingerprint": "Cisco_IOS_12.X_85",
-        "lease_hostname": "nest-desk"
+        "os_fingerprint": "Linux_Linux_2.4.X_86",
+        "lease_hostname": "nest-desk",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "ajax.googleapis.com",
@@ -49,6 +51,11 @@
         "www.youtube.com"
     ],
     "flows": [
+        {
+            "destination": "172.217.161.35",
+            "port": 80,
+            "protocol": 6
+        },
         {
             "destination": "142.250.207.99",
             "port": 80,
@@ -337,11 +344,6 @@
         {
             "destination": "142.250.207.35",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "172.217.161.35",
-            "port": 80,
             "protocol": 6
         },
         {

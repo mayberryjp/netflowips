@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.230.148",
-    "export_date": "2025-04-29T08:22:00.823888",
+    "export_date": "2025-04-29T08:59:31.665613",
     "host_info": {
         "ip_address": "192.168.230.148",
         "mac_address": "6a:85:c5:bc:c1:9b",
         "mac_vendor": "",
         "dhcp_hostname": "maybethaosphone.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "maybethaosphone"
+        "lease_hostname": "maybethaosphone",
+        "icon": "MOBILE_PHONE",
+        "local_description": "Thao's iPhone"
     },
     "dns_queries": [],
     "flows": [

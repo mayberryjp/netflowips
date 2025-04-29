@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.13",
-    "export_date": "2025-04-29T08:22:01.878440",
+    "export_date": "2025-04-29T08:59:32.488728",
     "host_info": {
         "ip_address": "192.168.50.13",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "Linux_Linux_3.X_100",
-        "lease_hostname": "panasonic-hub"
+        "lease_hostname": "panasonic-hub",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "esvchk-s2.svrpf.jp",

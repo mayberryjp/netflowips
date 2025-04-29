@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.18",
-    "export_date": "2025-04-29T08:22:02.310575",
+    "export_date": "2025-04-29T08:59:32.847959",
     "host_info": {
         "ip_address": "192.168.50.18",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "DTE_embedded_None_100",
-        "lease_hostname": "aircon-location2"
+        "lease_hostname": "aircon-location2",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "afus.apc.panasonic.com",

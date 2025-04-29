@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.124",
-    "export_date": "2025-04-29T08:22:02.669398",
+    "export_date": "2025-04-29T08:59:33.063776",
     "host_info": {
         "ip_address": "192.168.50.124",
         "mac_address": "7c:61:66:9d:01:a6",
         "mac_vendor": "Amazon Technologies Inc.",
         "dhcp_hostname": "outdoor-alexa.832-5.com",
         "os_fingerprint": "Linux_Linux_3.X_100",
-        "lease_hostname": "outdoor-alexa"
+        "lease_hostname": "outdoor-alexa",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "a32doymun6dtxa.us-east-1.prod.service.minerva.devices.a2z.com",
@@ -28,6 +30,36 @@
         "web.diagnostic.networking.aws.dev"
     ],
     "flows": [
+        {
+            "destination": "54.204.180.140",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.244.28.174",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "239.255.255.250",
+            "port": 1900,
+            "protocol": 17
+        },
+        {
+            "destination": "54.147.43.111",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "15.220.123.83",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "18.204.73.53",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "35.175.71.102",
             "port": 443,
@@ -77,11 +109,6 @@
             "destination": "18.138.26.111",
             "port": 80,
             "protocol": 6
-        },
-        {
-            "destination": "239.255.255.250",
-            "port": 1900,
-            "protocol": 17
         },
         {
             "destination": "3.168.84.155",
@@ -351,11 +378,6 @@
         {
             "destination": "40.176.81.134",
             "port": 80,
-            "protocol": 6
-        },
-        {
-            "destination": "54.204.180.140",
-            "port": 443,
             "protocol": 6
         },
         {
@@ -1489,11 +1511,6 @@
             "protocol": 6
         },
         {
-            "destination": "54.147.43.111",
-            "port": 80,
-            "protocol": 6
-        },
-        {
             "destination": "52.44.60.58",
             "port": 443,
             "protocol": 6
@@ -2586,11 +2603,6 @@
         {
             "destination": "98.82.158.117",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "54.244.28.174",
-            "port": 80,
             "protocol": 6
         },
         {

@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.77",
-    "export_date": "2025-04-29T08:22:03.134726",
+    "export_date": "2025-04-29T08:59:33.444529",
     "host_info": {
         "ip_address": "192.168.50.77",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "Enlogic_embedded_None_92",
-        "lease_hostname": "Presence-Sensor-FP2-4749"
+        "lease_hostname": "Presence-Sensor-FP2-4749",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "aiot-coap.aqara.cn"

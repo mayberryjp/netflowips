@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.49.80",
-    "export_date": "2025-04-29T08:22:01.489658",
+    "export_date": "2025-04-29T08:59:32.248168",
     "host_info": {
         "ip_address": "192.168.49.80",
         "mac_address": "e0:51:d8:11:f1:c8",
         "mac_vendor": "China Dragon Technology Limited",
         "dhcp_hostname": "pi.hole",
         "os_fingerprint": "Linux_Linux_2.6.X_100",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "aa015h6buqvih86i1.api.met.no",
@@ -87,6 +89,26 @@
         "www.googleapis.com"
     ],
     "flows": [
+        {
+            "destination": "44.223.191.138",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "192.168.51.255",
+            "port": 30211,
+            "protocol": 17
+        },
+        {
+            "destination": "192.168.49.1",
+            "port": 38134,
+            "protocol": 17
+        },
+        {
+            "destination": "192.168.49.1",
+            "port": 40471,
+            "protocol": 17
+        },
         {
             "destination": "192.168.49.1",
             "port": 37390,
@@ -5814,11 +5836,6 @@
         },
         {
             "destination": "23.128.64.156",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "44.223.191.138",
             "port": 443,
             "protocol": 6
         },

@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.87",
-    "export_date": "2025-04-29T08:22:02.405550",
+    "export_date": "2025-04-29T08:59:32.881883",
     "host_info": {
         "ip_address": "192.168.50.87",
         "mac_address": "fc:d7:49:fa:4c:8c",
         "mac_vendor": "Amazon Technologies Inc.",
         "dhcp_hostname": "amazondot.832-5.com",
         "os_fingerprint": "Linux_Linux_5.X_98",
-        "lease_hostname": "amazondot"
+        "lease_hostname": "amazondot",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "0.north-america.pool.ntp.org",

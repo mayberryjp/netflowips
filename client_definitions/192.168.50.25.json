@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.25",
-    "export_date": "2025-04-29T08:22:02.203042",
+    "export_date": "2025-04-29T08:59:32.717367",
     "host_info": {
         "ip_address": "192.168.50.25",
         "mac_address": "42:cf:43:c0:30:3e",
         "mac_vendor": "",
         "dhcp_hostname": "jrphone.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "jrphone"
+        "lease_hostname": "jrphone",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "0.datadog.pool.ntp.org",
@@ -91,6 +93,7 @@
         "braze-images.com",
         "browser-intake-datadoghq.com",
         "c.paypal.com",
+        "calendarpushsubscription-pa.googleapis.com",
         "capi.samsungcloud.com",
         "cdn-mum.alibabachengdun.com",
         "cdn.ampproject.org",
@@ -486,6 +489,46 @@
         "zn2ociattcowprqp4-fmrpi.siteintercept.qualtrics.com"
     ],
     "flows": [
+        {
+            "destination": "142.250.76.138",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "142.251.42.195",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "35.84.237.5",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "3.37.77.139",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "3.37.216.224",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.166.89.152",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "142.250.206.196",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "157.240.209.23",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "47.246.167.133",
             "port": 443,
@@ -1862,11 +1905,6 @@
             "protocol": 6
         },
         {
-            "destination": "20.166.89.152",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "34.36.81.36",
             "port": 443,
             "protocol": 6
@@ -2597,11 +2635,6 @@
             "protocol": 6
         },
         {
-            "destination": "142.250.76.138",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "104.18.43.26",
             "port": 443,
             "protocol": 17
@@ -2993,11 +3026,6 @@
         },
         {
             "destination": "52.78.153.52",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "142.250.206.196",
             "port": 443,
             "protocol": 6
         },
@@ -8028,11 +8056,6 @@
         },
         {
             "destination": "216.58.220.131",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "3.37.216.224",
             "port": 443,
             "protocol": 6
         },

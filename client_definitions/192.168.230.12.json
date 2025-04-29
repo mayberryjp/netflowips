@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.230.12",
-    "export_date": "2025-04-29T08:21:55.402080",
+    "export_date": "2025-04-29T08:59:22.485532",
     "host_info": {
         "ip_address": "192.168.230.12",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "OSRAM_embedded_None_92",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": "WEATHER_STATION",
+        "local_description": "Ambient Weather"
     },
     "dns_queries": [],
     "flows": [

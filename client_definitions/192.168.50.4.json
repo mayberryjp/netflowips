@@ -1,17 +1,20 @@
 {
     "ip_address": "192.168.50.4",
-    "export_date": "2025-04-29T08:22:03.084197",
+    "export_date": "2025-04-29T08:59:33.371194",
     "host_info": {
         "ip_address": "192.168.50.4",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "nest-doorbell-frontyard"
+        "lease_hostname": "nest-doorbell-frontyard",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "208.43.173.34.bc.googleusercontent.com",
         "56.62.236.23.bc.googleusercontent.com",
+        "57.90.194.35.bc.googleusercontent.com",
         "97.192.236.35.bc.googleusercontent.com",
         "clients3.google.com",
         "connectivitycheck.gstatic.com",
@@ -22,10 +25,41 @@
         "tools.google.com",
         "trouter-us.production.nest.com",
         "trouter.weave-us-central1.production.nest.com",
+        "trouter.weave-us-east4.production.nest.com",
         "www.googleapis.com",
         "www.gstatic.com"
     ],
     "flows": [
+        {
+            "destination": "142.250.207.3",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "34.85.246.101",
+            "port": 11095,
+            "protocol": 6
+        },
+        {
+            "destination": "172.217.161.195",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "142.251.42.195",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "35.194.90.57",
+            "port": 11095,
+            "protocol": 6
+        },
+        {
+            "destination": "142.251.222.3",
+            "port": 80,
+            "protocol": 6
+        },
         {
             "destination": "142.250.207.14",
             "port": 443,

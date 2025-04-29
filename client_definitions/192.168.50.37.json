@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.37",
-    "export_date": "2025-04-29T08:22:01.832972",
+    "export_date": "2025-04-29T08:59:32.468536",
     "host_info": {
         "ip_address": "192.168.50.37",
         "mac_address": "c4:5b:be:fa:35:30",
         "mac_vendor": "Espressif Inc.",
         "dhcp_hostname": "weatherstation.832-5.com",
         "os_fingerprint": "OSRAM_embedded_None_89",
-        "lease_hostname": "weatherstation"
+        "lease_hostname": "weatherstation",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "api.ambientweather.net",
@@ -16,6 +18,16 @@
         "rtupdate.wunderground.com"
     ],
     "flows": [
+        {
+            "destination": "172.237.12.44",
+            "port": 123,
+            "protocol": 17
+        },
+        {
+            "destination": "104.26.7.76",
+            "port": 80,
+            "protocol": 6
+        },
         {
             "destination": "162.159.200.123",
             "port": 123,
@@ -130,11 +142,6 @@
             "destination": "155.102.42.22",
             "port": 80,
             "protocol": 6
-        },
-        {
-            "destination": "172.237.12.44",
-            "port": 123,
-            "protocol": 17
         },
         {
             "destination": "155.102.42.20",

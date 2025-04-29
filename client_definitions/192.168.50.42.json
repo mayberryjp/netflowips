@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.42",
-    "export_date": "2025-04-29T08:22:03.011543",
+    "export_date": "2025-04-29T08:59:33.304679",
     "host_info": {
         "ip_address": "192.168.50.42",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "os_fingerprint": "Grandstream_embedded_None_92",
-        "lease_hostname": "plug3"
+        "os_fingerprint": "Espressif_embedded_None_92",
+        "lease_hostname": "plug3",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [],
     "flows": [

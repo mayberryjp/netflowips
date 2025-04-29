@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.149",
-    "export_date": "2025-04-29T08:22:02.279763",
+    "export_date": "2025-04-29T08:59:32.796879",
     "host_info": {
         "ip_address": "192.168.50.149",
         "mac_address": "e4:c7:67:4f:e0:75",
         "mac_vendor": "Intel Corporate",
         "dhcp_hostname": "saw-l18493610z2.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "saw-l18493610z2"
+        "lease_hostname": "saw-l18493610z2",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "1d.tlu.dl.delivery.mp.microsoft.com",

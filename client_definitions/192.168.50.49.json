@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.49",
-    "export_date": "2025-04-29T08:22:02.838635",
+    "export_date": "2025-04-29T08:59:33.178620",
     "host_info": {
         "ip_address": "192.168.50.49",
         "mac_address": "94:e6:86:6b:fd:34",
         "mac_vendor": "Espressif Inc.",
         "dhcp_hostname": "emporiavue.832-5.com",
         "os_fingerprint": "Garmin_embedded_None_95",
-        "lease_hostname": "emporiavue"
+        "lease_hostname": "emporiavue",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "pool.ntp.org",
@@ -15,6 +17,11 @@
         "time.google.com"
     ],
     "flows": [
+        {
+            "destination": "129.250.35.250",
+            "port": 123,
+            "protocol": 17
+        },
         {
             "destination": "162.159.200.123",
             "port": 123,
@@ -72,11 +79,6 @@
         },
         {
             "destination": "216.239.35.0",
-            "port": 123,
-            "protocol": 17
-        },
-        {
-            "destination": "129.250.35.250",
             "port": 123,
             "protocol": 17
         },

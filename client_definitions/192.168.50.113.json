@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.113",
-    "export_date": "2025-04-29T08:22:03.873487",
+    "export_date": "2025-04-29T08:59:33.847750",
     "host_info": {
         "ip_address": "192.168.50.113",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "D-Link_embedded_None_98",
-        "lease_hostname": "coway"
+        "lease_hostname": "coway",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "airjpf4l.coway.co.kr"

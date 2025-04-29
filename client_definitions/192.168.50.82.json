@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.82",
-    "export_date": "2025-04-29T08:22:03.258541",
+    "export_date": "2025-04-29T08:59:33.516638",
     "host_info": {
         "ip_address": "192.168.50.82",
         "mac_address": "50:f7:ed:6c:5d:7e",
         "mac_vendor": "Huawei Device Co., Ltd.",
         "dhcp_hostname": "huaweip70.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "aliexpress.com",
@@ -86,6 +88,11 @@
         "z-p42-chat-e2ee-ig.facebook.com"
     ],
     "flows": [
+        {
+            "destination": "52.17.27.207",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "54.178.149.216",
             "port": 443,

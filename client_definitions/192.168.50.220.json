@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.220",
-    "export_date": "2025-04-29T08:22:02.093670",
+    "export_date": "2025-04-29T08:59:32.657812",
     "host_info": {
         "ip_address": "192.168.50.220",
         "mac_address": "e0:51:d8:11:9f:9c",
         "mac_vendor": "China Dragon Technology Limited",
         "dhcp_hostname": "ubuntu-server.832-5.jp",
         "os_fingerprint": "Linux_Linux_4.X_100",
-        "lease_hostname": null
+        "lease_hostname": null,
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "a1ewuiz2p7wdvw-ats.iot.us-west-2.amazonaws.com",

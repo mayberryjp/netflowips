@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.6",
-    "export_date": "2025-04-29T08:22:03.745701",
+    "export_date": "2025-04-29T08:59:33.768100",
     "host_info": {
         "ip_address": "192.168.50.6",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "galaxy-tab"
+        "lease_hostname": "galaxy-tab",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "android.clients.google.com",

@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.27",
-    "export_date": "2025-04-29T08:22:02.374112",
+    "export_date": "2025-04-29T08:59:32.862420",
     "host_info": {
         "ip_address": "192.168.50.27",
         "mac_address": "50:e4:78:bc:a1:e2",
         "mac_vendor": "Sichuan AI-Link Technology Co., Ltd.",
         "dhcp_hostname": "newpetkit.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "newpetkit"
+        "lease_hostname": "newpetkit",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "ap2.agora.io",

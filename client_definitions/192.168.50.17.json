@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.17",
-    "export_date": "2025-04-29T08:22:03.570135",
+    "export_date": "2025-04-29T08:59:33.657626",
     "host_info": {
         "ip_address": "192.168.50.17",
         "mac_address": "bc:09:1b:f1:6f:35",
         "mac_vendor": "Intel Corporate",
         "dhcp_hostname": "jrlaptopwifi.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "jrlaptopwifi"
+        "lease_hostname": "jrlaptopwifi",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "1d.tlu.dl.delivery.mp.microsoft.com",

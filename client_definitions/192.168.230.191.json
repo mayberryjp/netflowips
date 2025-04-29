@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.230.191",
-    "export_date": "2025-04-29T08:21:55.703019",
+    "export_date": "2025-04-29T08:59:22.751534",
     "host_info": {
         "ip_address": "192.168.230.191",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "battery_charger"
+        "lease_hostname": "battery_charger",
+        "icon": "BATTERY_CHARGER",
+        "local_description": "Tuya Battery Charger Relay"
     },
     "dns_queries": [],
     "flows": [

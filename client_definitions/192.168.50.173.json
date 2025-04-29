@@ -1,13 +1,15 @@
 {
     "ip_address": "192.168.50.173",
-    "export_date": "2025-04-29T08:22:01.271146",
+    "export_date": "2025-04-29T08:59:32.087703",
     "host_info": {
         "ip_address": "192.168.50.173",
         "mac_address": "2c:7b:a0:da:f6:60",
         "mac_vendor": "Intel Corporate",
         "dhcp_hostname": "jrdesktop.832-5.com",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "jrdesktop"
+        "lease_hostname": "jrdesktop",
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         "0196554a47bf4968a96bbbee2e2e95d7.fp.measure.office.com",
@@ -190,6 +192,7 @@
         "bat.bing.com",
         "bats.video.yahoo.com",
         "bbc.gscontxt.net",
+        "bd5c019771124c0cbe7e498b28b01068.fp.measure.office.com",
         "bea4.v.fwmrm.net",
         "beacons.gcp.gvt2.com",
         "beacons.gvt2.com",
@@ -372,8 +375,10 @@
         "dual-s-ring.msedge.net",
         "e2c1.gcp.gvt2.com",
         "e2c10.gcp.gvt2.com",
+        "e2c11.gcp.gvt2.com",
         "e2c12.gcp.gvt2.com",
         "e2c14.gcp.gvt2.com",
+        "e2c16.gcp.gvt2.com",
         "e2c17.gcp.gvt2.com",
         "e2c19.gcp.gvt2.com",
         "e2c20.gcp.gvt2.com",
@@ -403,6 +408,7 @@
         "e2c7.gcp.gvt2.com",
         "e2c71.gcp.gvt2.com",
         "e2c72.gcp.gvt2.com",
+        "e2c73.gcp.gvt2.com",
         "e2c74.gcp.gvt2.com",
         "e2c77.gcp.gvt2.com",
         "e2c78.gcp.gvt2.com",
@@ -714,6 +720,7 @@
         "onedriveclubprodbn20022.blob.core.windows.net",
         "onedriveclubprodbn20037.blob.core.windows.net",
         "onedriveclubprodbn20040.blob.core.windows.net",
+        "onedriveclubprodbn20048.blob.core.windows.net",
         "onedriveclubprodbn20052.blob.core.windows.net",
         "onedriveclubprodbn20054.blob.core.windows.net",
         "onedriveclubproddm20001.blob.core.windows.net",
@@ -856,15 +863,22 @@
         "rr1---sn-oguelnsy.googlevideo.com",
         "rr1---sn-oguelnsz.googlevideo.com",
         "rr1---sn-oguesn6s.googlevideo.com",
+        "rr1---sn-oguesnde.googlevideo.com",
         "rr1---sn-oguesndr.googlevideo.com",
         "rr1---sn-oguesnds.googlevideo.com",
         "rr1---sn-ogul7n7d.googlevideo.com",
         "rr1---sn-ogul7n7s.googlevideo.com",
         "rr1---sn-ouuqvjvhv-ioqe7.googlevideo.com",
         "rr1---sn-q4fl6n6r.googlevideo.com",
+        "rr2---sn-3pm76nee.googlevideo.com",
+        "rr2---sn-3pm76nel.googlevideo.com",
+        "rr2---sn-3pm76nes.googlevideo.com",
         "rr2---sn-3pm7dn7r.googlevideo.com",
+        "rr2---sn-3pm7dn7y.googlevideo.com",
         "rr2---sn-3pm7dn7z.googlevideo.com",
         "rr2---sn-3pm7dne6.googlevideo.com",
+        "rr2---sn-3pm7dned.googlevideo.com",
+        "rr2---sn-3pm7dnek.googlevideo.com",
         "rr2---sn-3pm7dnel.googlevideo.com",
         "rr2---sn-3pm7dner.googlevideo.com",
         "rr2---sn-3pm7dnes.googlevideo.com",
@@ -881,6 +895,7 @@
         "rr2---sn-oguelnze.googlevideo.com",
         "rr2---sn-oguesn6k.googlevideo.com",
         "rr2---sn-oguesn6r.googlevideo.com",
+        "rr2---sn-oguesn6s.googlevideo.com",
         "rr2---sn-oguesnde.googlevideo.com",
         "rr2---sn-ogul7n7k.googlevideo.com",
         "rr2---sn-ouuqvjvhv-ioqe7.googlevideo.com",
@@ -890,6 +905,7 @@
         "rr3---sn-3pm76nes.googlevideo.com",
         "rr3---sn-3pm7dn7d.googlevideo.com",
         "rr3---sn-3pm7dn7y.googlevideo.com",
+        "rr3---sn-3pm7dn7z.googlevideo.com",
         "rr3---sn-3pm7dne6.googlevideo.com",
         "rr3---sn-3pm7dnek.googlevideo.com",
         "rr3---sn-3pm7dnel.googlevideo.com",
@@ -904,6 +920,9 @@
         "rr3---sn-hgn7yn7e.googlevideo.com",
         "rr3---sn-ogueln66.googlevideo.com",
         "rr3---sn-oguelnss.googlevideo.com",
+        "rr3---sn-oguelnsz.googlevideo.com",
+        "rr3---sn-oguelnzy.googlevideo.com",
+        "rr3---sn-oguelnzz.googlevideo.com",
         "rr3---sn-oguesn6y.googlevideo.com",
         "rr3---sn-oguesnd6.googlevideo.com",
         "rr3---sn-oguesndr.googlevideo.com",
@@ -933,11 +952,18 @@
         "rr4---sn-oguelnsk.googlevideo.com",
         "rr4---sn-oguelnsz.googlevideo.com",
         "rr4---sn-oguelnzl.googlevideo.com",
+        "rr4---sn-oguesn6k.googlevideo.com",
+        "rr4---sn-oguesn6r.googlevideo.com",
+        "rr4---sn-oguesn6y.googlevideo.com",
+        "rr4---sn-oguesndl.googlevideo.com",
         "rr4---sn-oguesndr.googlevideo.com",
+        "rr4---sn-ogul7n76.googlevideo.com",
         "rr4---sn-ogul7n7d.googlevideo.com",
+        "rr4---sn-ogul7nez.googlevideo.com",
         "rr4---sn-ouuqvjvhv-ioqe7.googlevideo.com",
         "rr4---sn-ouuqvjvhv-ioqk.googlevideo.com",
         "rr5---sn-3pm76nee.googlevideo.com",
+        "rr5---sn-3pm76nel.googlevideo.com",
         "rr5---sn-3pm7dn7k.googlevideo.com",
         "rr5---sn-3pm7dne6.googlevideo.com",
         "rr5---sn-3pm7dnek.googlevideo.com",
@@ -952,6 +978,7 @@
         "rr5---sn-3pm7knee.googlevideo.com",
         "rr5---sn-3pm7knel.googlevideo.com",
         "rr5---sn-aigl6n6s.googlevideo.com",
+        "rr5---sn-ajogu5-55.googlevideo.com",
         "rr5---sn-oguelney.googlevideo.com",
         "rr5---sn-oguelnlz.googlevideo.com",
         "rr5---sn-oguelnsk.googlevideo.com",
@@ -967,6 +994,7 @@
         "rr7---sn-ouuqvjvhv-ioqe7.googlevideo.com",
         "rr7---sn-ouuqvjvhv-ioqk.googlevideo.com",
         "rr8---sn-ouuqvjvhv-ioqe7.googlevideo.com",
+        "rr8---sn-ouuqvjvhv-ioqk.googlevideo.com",
         "rtb.gumgum.com",
         "rtb.openx.net",
         "rum-ingest.eu0.signalfx.com",
@@ -1224,6 +1252,96 @@
         "zws5.web.telegram.org"
     ],
     "flows": [
+        {
+            "destination": "140.82.114.26",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.182.143.215",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "40.64.146.36",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "23.41.22.158",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "23.46.155.220",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "13.107.246.47",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "20.190.141.15",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "23.219.68.35",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.60.237.129",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.98.77.66",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "23.39.160.22",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.98.63.66",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "40.99.43.146",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.113.197.254",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.113.196.254",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.190.141.45",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "13.105.28.1",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "20.189.173.8",
+            "port": 443,
+            "protocol": 6
+        },
         {
             "destination": "192.168.230.2",
             "port": 80,
@@ -1930,11 +2048,6 @@
             "protocol": 17
         },
         {
-            "destination": "23.219.68.35",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "23.48.5.9",
             "port": 443,
             "protocol": 17
@@ -2375,22 +2488,12 @@
             "protocol": 6
         },
         {
-            "destination": "52.113.196.254",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "216.58.220.131",
             "port": 443,
             "protocol": 6
         },
         {
             "destination": "40.126.38.160",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "52.113.197.254",
             "port": 443,
             "protocol": 6
         },
@@ -4170,11 +4273,6 @@
             "protocol": 6
         },
         {
-            "destination": "140.82.114.26",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "34.36.133.15",
             "port": 443,
             "protocol": 6
@@ -5238,11 +5336,6 @@
             "destination": "23.46.155.76",
             "port": 443,
             "protocol": 17
-        },
-        {
-            "destination": "23.41.22.158",
-            "port": 80,
-            "protocol": 6
         },
         {
             "destination": "20.60.225.225",
@@ -6980,11 +7073,6 @@
             "protocol": 6
         },
         {
-            "destination": "23.46.155.220",
-            "port": 80,
-            "protocol": 6
-        },
-        {
             "destination": "52.109.136.13",
             "port": 443,
             "protocol": 6
@@ -7267,11 +7355,6 @@
         {
             "destination": "172.217.161.228",
             "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "13.107.246.47",
-            "port": 80,
             "protocol": 6
         },
         {
@@ -9315,11 +9398,6 @@
             "protocol": 6
         },
         {
-            "destination": "52.98.77.66",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "23.103.235.31",
             "port": 443,
             "protocol": 6
@@ -9731,11 +9809,6 @@
         },
         {
             "destination": "52.27.46.94",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "20.189.173.8",
             "port": 443,
             "protocol": 6
         },
@@ -10465,11 +10538,6 @@
             "protocol": 6
         },
         {
-            "destination": "20.60.237.129",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "23.220.70.98",
             "port": 80,
             "protocol": 6
@@ -10491,11 +10559,6 @@
         },
         {
             "destination": "185.199.111.133",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "52.98.63.66",
             "port": 443,
             "protocol": 6
         },
@@ -11003,11 +11066,6 @@
             "destination": "18.139.243.251",
             "port": 80,
             "protocol": 17
-        },
-        {
-            "destination": "20.190.141.15",
-            "port": 443,
-            "protocol": 6
         },
         {
             "destination": "151.101.2.132",
@@ -12220,11 +12278,6 @@
             "protocol": 6
         },
         {
-            "destination": "20.190.141.45",
-            "port": 443,
-            "protocol": 6
-        },
-        {
             "destination": "52.98.73.226",
             "port": 443,
             "protocol": 6
@@ -12436,11 +12489,6 @@
         },
         {
             "destination": "23.56.0.188",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "40.99.43.146",
             "port": 443,
             "protocol": 6
         },
@@ -17781,11 +17829,6 @@
         },
         {
             "destination": "20.190.141.13",
-            "port": 443,
-            "protocol": 6
-        },
-        {
-            "destination": "23.39.160.22",
             "port": 443,
             "protocol": 6
         },
@@ -31973,11 +32016,6 @@
             "destination": "52.110.12.9",
             "port": 443,
             "protocol": 17
-        },
-        {
-            "destination": "13.105.28.1",
-            "port": 443,
-            "protocol": 6
         },
         {
             "destination": "40.83.50.87",
