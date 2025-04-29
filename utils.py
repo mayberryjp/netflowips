@@ -7,6 +7,8 @@ from datetime import datetime
 from ipaddress import IPv4Network
 import sys
 import os
+import uuid
+import hashlib
 
 
 def log_info(logger, message):
@@ -149,6 +151,30 @@ def calculate_broadcast(network_cidr):
         return None
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to calculate broadcast address: {e}")
+        return None
+
+def get_machine_unique_identifier():
+    """
+    Generate a unique identifier for the machine based on its hardware (e.g., MAC address).
+
+    Returns:
+        str: A unique identifier as a hexadecimal string.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Get the MAC address of the machine
+        mac_address = uuid.getnode()
+
+        if mac_address == uuid.getnode():
+            log_info(logger, f"[INFO] Retrieved MAC address: {mac_address}")
+
+        # Convert the MAC address to a hashed unique identifier
+        unique_id = hashlib.sha256(str(mac_address).encode('utf-8')).hexdigest()
+
+        log_info(logger, f"[INFO] Generated unique identifier: {unique_id}")
+        return unique_id
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to generate machine unique identifier: {e}")
         return None
 
 

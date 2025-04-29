@@ -1,6 +1,6 @@
 import sqlite3
 import logging
-from utils import log_info, log_error  # Assuming log_info is defined in utils
+from utils import log_info, log_error, get_machine_unique_identifier  # Assuming log_info is defined in utils
 from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER, CONST_LOCALHOSTS_DB
 import ipaddress
 import os
@@ -554,6 +554,51 @@ def collect_database_counts():
         log_error(logger, f"[ERROR] Unexpected error: {e}")
 
     return counts
+
+def store_machine_unique_identifier():
+    """
+    Generate a unique identifier for the machine and store it in the configuration database
+    with the key 'MachineUniqueIdentifier'.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Generate the unique identifier
+        unique_id = get_machine_unique_identifier()
+        if not unique_id:
+            log_error(logger, "[ERROR] Failed to generate machine unique identifier.")
+            return False
+
+        # Connect to the configuration database
+        conn = connect_to_db(CONST_CONFIG_DB)
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to configuration database.")
+            return False
+
+        cursor = conn.cursor()
+
+        # Insert or update the MachineUniqueIdentifier in the configuration table
+        cursor.execute("""
+            INSERT INTO configuration (key, value)
+            VALUES ('MachineUniqueIdentifier', ?)
+            ON CONFLICT(key)
+            DO UPDATE SET value = excluded.value
+        """, (unique_id,))
+
+        conn.commit()
+        conn.close()
+
+        log_info(logger, f"[INFO] Machine unique identifier stored successfully: {unique_id}")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while storing machine unique identifier: {e}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while storing machine unique identifier: {e}")
+        return False
 
 
 

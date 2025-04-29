@@ -382,7 +382,7 @@ def get_client_info(ip_address):
     """
     logger = logging.getLogger(__name__)
     try:
-        from local_scripts.client import export_client_definition
+        from client import export_client_definition
         
         # Get client definition directly
         client_data = export_client_definition(ip_address)
