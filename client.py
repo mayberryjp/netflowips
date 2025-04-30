@@ -4,13 +4,14 @@ from pathlib import Path
 from enum import Enum
 import logging
 from datetime import datetime
+import requests
 from const import (
     CONST_LOCALHOSTS_DB, 
     CONST_DNSQUERIES_DB, 
     CONST_ALLFLOWS_DB
 )
-from utils import log_info, log_error
-from database import get_machine_unique_identifier_from_db
+from utils import log_info, log_error, log_warn
+from database import get_machine_unique_identifier_from_db, get_localhosts
 
 class ActionType(Enum):
     """Placeholder for action types"""
@@ -106,3 +107,81 @@ def export_client_definition(client_ip):
 
     return client_data
 
+def upload_client_definition(ip_address, client_data, machine_id):
+    """
+    Upload a single client definition to the classification API.
+    
+    Args:
+        ip_address (str): IP address of the client
+        client_data (dict): Client definition data to upload
+        machine_id (str): Unique identifier for this machine
+        
+    Returns:
+        bool: True if upload successful, False otherwise
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Construct API endpoint URL
+        api_url = f"http://api.homelab.com/api/classification/{machine_id}/{ip_address}"
+        
+        # Upload client definition
+        response = requests.put(
+            api_url,
+            json=client_data,
+            headers={
+                'Content-Type': 'application/json',
+                'User-Agent': 'NetFlowIPS-Client/1.0'
+            },
+            timeout=30
+        )
+        
+        if response.status_code in (200, 201, 204):
+            log_info(logger, f"[INFO] Successfully uploaded client definition for {ip_address}")
+            return True
+        else:
+            log_error(logger, f"[ERROR] Failed to upload {ip_address}: HTTP {response.status_code}")
+            return False
+            
+    except requests.RequestException as e:
+        log_error(logger, f"[ERROR] Request failed for {ip_address}: {str(e)}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Processing failed for {ip_address}: {str(e)}")
+        return False
+
+def upload_all_client_definitions():
+    """
+    Get all IP addresses using get_localhosts(), generate client definitions,
+    and upload them to the classification API endpoint.
+    """
+    logger = logging.getLogger(__name__)
+    machine_id = get_machine_unique_identifier_from_db()
+    
+    try:
+        localhosts = get_localhosts()
+        success_count = 0
+        error_count = 0
+        
+        for host in localhosts:
+            ip_address = host['ip_address']
+            try:
+                client_data = export_client_definition(ip_address)
+                
+                if not client_data:
+                    log_warn(logger, f"[WARN] No client data generated for {ip_address}")
+                    continue
+                
+                if upload_client_definition(ip_address, client_data, machine_id):
+                    success_count += 1
+                else:
+                    error_count += 1
+                    
+            except Exception as e:
+                error_count += 1
+                log_error(logger, f"[ERROR] Processing failed for {ip_address}: {str(e)}")
+                
+        log_info(logger, f"[INFO] Upload complete. Success: {success_count}, Errors: {error_count}")
+        
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error: {str(e)}")
