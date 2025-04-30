@@ -42,7 +42,7 @@ def main():
             if config_dict.get('TorFlowDetection',0) > 0:
                 log_info(logger, "[INFO] Fetching and updating Tor node list...")
                 update_tor_nodes(config_dict)
-                log_info(logger, "[INFO] Tor node list updated successfully.")
+                log_info(logger, "[INFO] Tor node list update finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 
@@ -50,7 +50,7 @@ def main():
             if config_dict.get('GeolocationFlowsDetection',0) > 0:
                 log_info(logger, "[INFO] Fetching and updating geolocation data..")
                 create_geolocation_db()
-                log_info(logger, "[INFO] Geolocation data updated successfully.")
+                log_info(logger, "[INFO] Geolocation update finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 
@@ -58,7 +58,7 @@ def main():
             if config_dict.get('ReputationListDetection', 0) > 0:
                 log_info(logger, "[INFO] Fetching and updating reputation list...")
                 import_reputation_list(config_dict)
-                log_info(logger, "[INFO] Reputation list updated successfully.")
+                log_info(logger, "[INFO] Reputation list update finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 
@@ -66,15 +66,15 @@ def main():
             if config_dict.get('StorePiHoleDnsQueryHistory', 0) > 0:
                 log_info(logger, "[INFO] Fetching pihole dns query history...")
                 get_pihole_ftl_logs(10000,config_dict)
-                log_info(logger, "[INFO] Pihole dns query history updated successfully.")
+                log_info(logger, "[INFO] Pihole dns query history finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 
         try: 
             if config_dict.get('SendDeviceClassificationsToHomelabApi', 0) > 0:
                 log_info(logger, "[INFO] Sending device classifications to Homelab API...")
-                upload_all_client_definitions
-                log_info(logger, "[INFO] Device classifications sent successfully.")
+                upload_all_client_definitions()
+                log_info(logger, "[INFO] Device classification upload finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 

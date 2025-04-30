@@ -123,7 +123,7 @@ def upload_client_definition(ip_address, client_data, machine_id):
     
     try:
         # Construct API endpoint URL
-        api_url = f"http://api.homelab.com/api/classification/{machine_id}/{ip_address}"
+        api_url = f"http://api.homelabids.com:8044/api/classification/{machine_id}/{ip_address}"
         
         # Upload client definition
         response = requests.put(
@@ -151,20 +151,20 @@ def upload_client_definition(ip_address, client_data, machine_id):
         return False
 
 def upload_all_client_definitions():
-    """
-    Get all IP addresses using get_localhosts(), generate client definitions,
-    and upload them to the classification API endpoint.
-    """
+    """Get all IP addresses and upload client definitions"""
     logger = logging.getLogger(__name__)
     machine_id = get_machine_unique_identifier_from_db()
     
     try:
-        localhosts = get_localhosts()
+        # Get IPs as a set from get_localhosts()
+        ip_addresses = get_localhosts()  
         success_count = 0
         error_count = 0
         
-        for host in localhosts:
-            ip_address = host['ip_address']
+        # Debug log to verify data structure
+        log_info(logger, f"[DEBUG] Number of IP addresses to process: {len(ip_addresses)}")
+        
+        for ip_address in ip_addresses:
             try:
                 client_data = export_client_definition(ip_address)
                 
