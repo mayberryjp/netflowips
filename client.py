@@ -137,10 +137,10 @@ def upload_client_definition(ip_address, client_data, machine_id):
         )
         
         if response.status_code in (200, 201, 204):
-            log_info(logger, f"[INFO] Successfully uploaded client definition for {ip_address}")
+            #log_info(logger, f"[INFO] Successfully uploaded client definition for {ip_address}")
             return True
         else:
-            log_error(logger, f"[ERROR] Failed to upload {ip_address}: HTTP {response.status_code}")
+            #log_error(logger, f"[ERROR] Failed to upload {ip_address}: HTTP {response.status_code}")
             return False
             
     except requests.RequestException as e:
@@ -179,7 +179,7 @@ def upload_all_client_definitions():
                     
             except Exception as e:
                 error_count += 1
-                log_error(logger, f"[ERROR] Processing failed for {ip_address}: {str(e)}")
+                #log_error(logger, f"[ERROR] Processing failed for {ip_address}: {str(e)}")
                 
         log_info(logger, f"[INFO] Upload complete. Success: {success_count}, Errors: {error_count}")
         
