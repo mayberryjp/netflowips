@@ -95,7 +95,7 @@ def export_client_definition(client_ip):
             for row in flows_cursor.fetchall()
         ]
         
-        log_info(logger, f"[INFO] Exported client definition for {client_ip}")
+       # log_info(logger, f"[INFO] Exported client definition for {client_ip}")
         
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to export client definition for {client_ip}: {e}")
