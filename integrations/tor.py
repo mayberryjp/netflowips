@@ -24,9 +24,12 @@ def update_tor_nodes(config_dict):
         # Use delete_all_records to clear the tornodes table
         delete_all_records(CONST_GEOLOCATION_DB, "tornodes")
 
-        # Download new list
-        response = requests.get(tor_nodes_url, 
-                                headers={'User-Agent': 'HomelabIDS TorNode Checker (homelabids.com)'})
+        # Download new list with timeout
+        response = requests.get(
+            tor_nodes_url, 
+            headers={'User-Agent': 'HomelabIDS TorNode Checker (homelabids.com)'},
+            timeout=30  # 30 second timeout
+        )
         if response.status_code != 200:
             log_error(logger, f"[ERROR] Failed to download Tor node list: {response.status_code}")
             return
