@@ -24,6 +24,7 @@ def update_tor_nodes(config_dict):
         # Use delete_all_records to clear the tornodes table
         delete_all_records(CONST_GEOLOCATION_DB, "tornodes")
 
+        log_info(logger,"[INFO] About to request tor node list from dan.me.uk")
         # Download new list with timeout
         response = requests.get(
             tor_nodes_url, 
@@ -33,7 +34,7 @@ def update_tor_nodes(config_dict):
         if response.status_code != 200:
             log_error(logger, f"[ERROR] Failed to download Tor node list: {response.status_code}")
             return
-            
+        log_info(logger, "[INFO] Successfully downloaded Tor node list")
         # Parse IPs (one per line)
         tor_nodes = set(ip.strip() for ip in response.text.split('\n') if ip.strip())
         
