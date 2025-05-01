@@ -44,7 +44,8 @@ def update_localhosts(data_object):
         put_url = f"{api_endpoint}/api/localhosts/{ip_address}"
         json_body = {
             "local_description": local_description,
-            "icon": category  # Use the category as the icon
+            "icon": category,  # Use the category as the icon
+            "acknowledged": 1
         }
 
         try:

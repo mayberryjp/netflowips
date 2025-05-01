@@ -316,11 +316,12 @@ def modify_localhost(ip_address):
         data = request.json
         local_description = data.get('local_description')
         icon = data.get('icon')
+        acknowledged = data.get('acknowledged')
 
         try:
             cursor.execute("""
                 UPDATE localhosts
-                SET local_description = ?, icon = ?
+                SET local_description = ?, icon = ?, acknowledged = 1
                 WHERE ip_address = ?
             """, (local_description, icon, ip_address))
             conn.commit()
