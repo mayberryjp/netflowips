@@ -1,0 +1,45 @@
+{
+    "ip_address": "192.168.50.113",
+    "export_date": "2025-05-02T00:56:58.965354",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.113",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "coway",
+        "icon": "AIR_PURIFIER",
+        "local_description": "Coway Air Purifier"
+    },
+    "dns_queries": [
+        "airjpf4l.coway.co.kr"
+    ],
+    "flows": [
+        {
+            "destination": "15.165.85.129",
+            "port": 9090,
+            "protocol": 6
+        },
+        {
+            "destination": "3.34.10.242",
+            "port": 9090,
+            "protocol": 6
+        },
+        {
+            "destination": "13.125.7.228",
+            "port": 9090,
+            "protocol": 6
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 17
+        },
+        {
+            "destination": "13.124.139.5",
+            "port": 9090,
+            "protocol": 6
+        }
+    ]
+}

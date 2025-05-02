@@ -1,0 +1,67 @@
+{
+    "ip_address": "192.168.50.101",
+    "export_date": "2025-05-02T00:56:57.422080",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.101",
+        "mac_address": "7c:66:ef:cb:69:e4",
+        "mac_vendor": "Hon Hai Precision IND.CO.,LTD",
+        "dhcp_hostname": "refrigerator.832-5.com",
+        "os_fingerprint": "2N_embedded_None_95",
+        "lease_hostname": "refrigerator",
+        "icon": "REFRIGERATOR",
+        "local_description": "Sharp Refrigerator"
+    },
+    "dns_queries": [
+        "cpush-hms.cloudlabs.sharp.co.jp",
+        "cpush-ssl-01.cloudlabs.sharp.co.jp",
+        "hms.cloudlabs.sharp.co.jp"
+    ],
+    "flows": [
+        {
+            "destination": "61.214.248.212",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "121.119.209.38",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "121.119.209.37",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "121.119.209.36",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "61.214.248.219",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "61.214.248.211",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "61.214.248.218",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "61.214.248.217",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "61.214.248.214",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

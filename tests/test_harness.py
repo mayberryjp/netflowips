@@ -55,7 +55,7 @@ from database import (
     update_allflows,
     delete_database,
     create_database,
-    init_configurations,
+    init_configurations_from_sitepy,
     get_row_count,
     get_alerts_summary,
     import_whitelists,
@@ -227,7 +227,7 @@ def main():
     create_database(CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL)
     create_database(CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL)
 
-    init_configurations()
+    init_configurations_from_sitepy()
 
     config_dict = get_config_settings()
     

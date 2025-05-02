@@ -1,0 +1,37 @@
+{
+    "ip_address": "192.168.50.65",
+    "export_date": "2025-05-02T00:56:59.084224",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.65",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "garminscale2",
+        "icon": "SCALE",
+        "local_description": "Garmin Scale"
+    },
+    "dns_queries": [
+        "api.gcs.garmin.com",
+        "gold.garmin.com",
+        "time.google.com"
+    ],
+    "flows": [
+        {
+            "destination": "104.16.8.45",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "104.17.76.100",
+            "port": 80,
+            "protocol": 6
+        },
+        {
+            "destination": "216.239.35.12",
+            "port": 123,
+            "protocol": 17
+        }
+    ]
+}

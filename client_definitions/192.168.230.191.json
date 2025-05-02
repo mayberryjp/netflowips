@@ -1,0 +1,63 @@
+{
+    "ip_address": "192.168.230.191",
+    "export_date": "2025-05-02T00:56:48.919776",
+    "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
+    "host_info": {
+        "ip_address": "192.168.230.191",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "battery_charger",
+        "icon": "BATTERY_CHARGER",
+        "local_description": "Tuya Battery Charger Relay"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "255.255.255.255",
+            "port": 6667,
+            "protocol": 17
+        },
+        {
+            "destination": "54.212.163.173",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "34.218.147.23",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "35.161.158.54",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "54.69.37.156",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.35.54.49",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "100.20.212.253",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "35.164.57.66",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.187.112.38",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 from utils import log_info, log_error, get_machine_unique_identifier  # Assuming log_info is defined in utils
-from const import CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER, CONST_LOCALHOSTS_DB
+from const import CONST_INSTALL_CONFIGS, CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER, CONST_LOCALHOSTS_DB
 import ipaddress
 import os
 from datetime import datetime
@@ -100,9 +100,9 @@ def delete_all_records(db_name, table_name='flows'):
         finally:
             conn.close()
 
-def init_configurations():
+def init_configurations_from_sitepy():
     """
-    Inserts default configurations into the CONST_CONFIG_DB database and returns a configuration dictionary.
+    Inserts default configurations from file in /database into the CONST_CONFIG_DB database and returns a configuration dictionary.
 
     Returns:
         dict: A dictionary containing the configuration settings.
@@ -127,6 +127,49 @@ def init_configurations():
 
         # Insert default configurations into the database
         for key, value in config.CONST_DEFAULT_CONFIGS:
+            cursor.execute("""
+                INSERT OR IGNORE INTO configuration (key, value)
+                VALUES (?, ?)
+            """, (key, value))
+        conn.commit()
+
+        # Fetch all configurations into a dictionary
+        cursor.execute("SELECT key, value FROM configuration")
+        config_dict = dict(cursor.fetchall())
+
+        log_info(logger, f"[INFO] Default configurations initialized successfully.")
+        conn.close()
+    except sqlite3.Error as e:
+        logger.error(f"[ERROR] Error initializing default configurations: {e}")
+    except Exception as e:
+        logger.error(f"[ERROR] Unexpected error: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
+
+    return config_dict
+
+
+def init_configurations_from_variable():
+    """
+    Inserts default configurations into the CONST_CONFIG_DB database and returns a configuration dictionary.
+
+    Returns:
+        dict: A dictionary containing the configuration settings.
+    """
+    logger = logging.getLogger(__name__)
+    config_dict = {}
+
+    try:
+        conn = connect_to_db(CONST_CONFIG_DB)
+        if not conn:
+            logger.error("[ERROR] Unable to connect to configuration database")
+            return config_dict
+
+        cursor = conn.cursor()
+
+        # Insert default configurations into the database
+        for key, value in CONST_INSTALL_CONFIGS:
             cursor.execute("""
                 INSERT OR IGNORE INTO configuration (key, value)
                 VALUES (?, ?)

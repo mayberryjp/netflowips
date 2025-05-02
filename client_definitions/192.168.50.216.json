@@ -1,0 +1,61 @@
+{
+    "ip_address": "192.168.50.216",
+    "export_date": "2025-05-02T00:56:56.999571",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.216",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "NodeMCU_embedded_None_92",
+        "lease_hostname": "Outdoorlighting",
+        "icon": "LIGHT_CONTROLLER",
+        "local_description": "Sunvie Outdoor Lighting Controller with Tuya Zigbee Relay"
+    },
+    "dns_queries": [
+        "a3.tuyaus.com",
+        "m2.tuyaus.com"
+    ],
+    "flows": [
+        {
+            "destination": "44.240.74.103",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "34.211.189.2",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "54.212.163.173",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "54.69.37.156",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "52.12.196.80",
+            "port": 8886,
+            "protocol": 6
+        },
+        {
+            "destination": "255.255.255.255",
+            "port": 6667,
+            "protocol": 17
+        },
+        {
+            "destination": "34.218.147.23",
+            "port": 443,
+            "protocol": 6
+        },
+        {
+            "destination": "54.187.112.38",
+            "port": 443,
+            "protocol": 6
+        }
+    ]
+}

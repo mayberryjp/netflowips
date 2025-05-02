@@ -1,0 +1,40 @@
+{
+    "ip_address": "192.168.50.78",
+    "export_date": "2025-05-02T00:56:58.882951",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.78",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Ocean Signal_embedded_None_91",
+        "lease_hostname": "Presence-Sensor-FP2-5FB5",
+        "icon": "PRESENCE_SENSOR",
+        "local_description": "Aqara FP2"
+    },
+    "dns_queries": [
+        "aiot-coap.aqara.cn"
+    ],
+    "flows": [
+        {
+            "destination": "81.70.175.144",
+            "port": 11111,
+            "protocol": 6
+        },
+        {
+            "destination": "49.232.217.183",
+            "port": 11111,
+            "protocol": 6
+        },
+        {
+            "destination": "49.233.237.221",
+            "port": 5050,
+            "protocol": 6
+        },
+        {
+            "destination": "101.42.246.140",
+            "port": 11111,
+            "protocol": 6
+        }
+    ]
+}

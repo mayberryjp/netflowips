@@ -1,0 +1,41 @@
+{
+    "ip_address": "192.168.50.35",
+    "export_date": "2025-05-02T00:56:58.346654",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.35",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "os_fingerprint": "Xerox_embedded_None_88",
+        "lease_hostname": "racio",
+        "icon": "SPRINKLER_CONTROLLER",
+        "local_description": "Rachio Sprinkler Controller"
+    },
+    "dns_queries": [
+        "a3bmbcwe3hybwy.iot.us-west-2.amazonaws.com",
+        "pool.ntp.org"
+    ],
+    "flows": [
+        {
+            "destination": "54.185.180.211",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "52.32.168.173",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "54.244.141.196",
+            "port": 8883,
+            "protocol": 6
+        },
+        {
+            "destination": "44.238.62.233",
+            "port": 8883,
+            "protocol": 6
+        }
+    ]
+}
