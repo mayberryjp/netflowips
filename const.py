@@ -12,7 +12,7 @@ CONST_CONFIG_DB="/database/config.db"
 CONST_ALERTS_DB="/database/alerts.db"
 CONST_WHITELIST_DB = '/database/whitelist.db'
 #CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','/database/test_source_2.db']
-CONST_TEST_SOURCE_DB = ['/database/test_source_1.db']
+CONST_TEST_SOURCE_DB = ['/database/test_source_2.db']
 CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'TEST'
 CONST_REINITIALIZE_DB = 0
@@ -29,6 +29,7 @@ CONST_CREATE_NEWFLOWS_SQL='''
         flow_end TEXT,
         last_seen TEXT,
         times_seen INTEGER,
+        tags TEXT,
         PRIMARY KEY (src_ip, dst_ip, src_port, dst_port, protocol)
     )'''
 

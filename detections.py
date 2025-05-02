@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int, calculate_broadcast  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB, CONST_GEOLOCATION_DB # Assuming constants are defined in const
-from database import connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
+from database import get_whitelist,connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
 from notifications import send_telegram_message  # Import notification functions
 import logging
 import requests
@@ -612,44 +612,6 @@ def detect_incorrect_ntp_stratum(rows, config_dict):
                 log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
                                 alert_id, False)
     log_info(logger,"[INFO] Finished detecting local NTP servers using unauthorized stratum NTP destinations")
-
-def remove_whitelist(rows, whitelist_entries):
-    """
-    Remove rows that match whitelist entries.
-    
-    Args:
-        rows: List of flow records
-        whitelist_entries: List of whitelist entries from database
-        
-    Returns:
-        list: Filtered rows with whitelisted entries removed
-    """
-    logger = logging.getLogger(__name__)
-    log_info(logger,"[INFO] Started removing whitelisted flows")
-
-    if not whitelist_entries:
-        return rows
-
-    filtered_rows = []
-    for row in rows:
-        src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
-        is_whitelisted = False
-        
-        for whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol in whitelist_entries:
-            # Check if the flow matches any whitelist entry
-            src_match = (whitelist_src_ip == src_ip or whitelist_src_ip == dst_ip)
-            dst_match = (whitelist_dst_ip == dst_ip or whitelist_dst_ip == src_ip)
-            port_match = (int(whitelist_dst_port) in (src_port, dst_port))
-            protocol_match = (int(whitelist_protocol) == protocol)
-            
-            if src_match and dst_match and port_match and protocol_match:
-                is_whitelisted = True
-    
-        if not is_whitelisted:
-            filtered_rows.append(row)
-    
-    log_info(logger, f"[INFO] Removed {len(rows) - len(filtered_rows)} whitelisted flows")
-    return filtered_rows
 
 
 def remove_broadcast_flows(rows, config_dict):

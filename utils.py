@@ -7,9 +7,13 @@ from datetime import datetime
 from ipaddress import IPv4Network
 import sys
 import os
+import traceback
 import uuid
 import hashlib
+from const import IS_CONTAINER, CONST_SITE
 
+if (IS_CONTAINER):
+    SITE = os.getenv("SITE", CONST_SITE)
 
 def log_info(logger, message):
 
@@ -24,9 +28,21 @@ def log_error(logger, message):
     """Log a message and print it to the console with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     script_name = os.path.basename(sys.argv[0])
-    formatted_message = f"[{timestamp}] {script_name} {message}"
+    # Get the current line number from the traceback
+    tb = traceback.extract_tb(sys.exc_info()[2])
+    if tb:
+        # Get the last frame in the traceback (where the error occurred)
+        last_frame = tb[-1]
+        file_name = os.path.basename(last_frame.filename)
+        line_number = last_frame.lineno
+    else:
+        file_name = script_name
+        line_number = "N/A"
+    formatted_message = f"[{timestamp}] {script_name}[/{file_name}/{line_number}] {message}"
     print(formatted_message)
     logger.error(formatted_message)
+    if SITE == 'TEST':
+        exit(1)
 
 def log_warn(logger, message):
     """Log a message and print it to the console with timestamp."""

@@ -60,6 +60,9 @@ from database import (
     get_alerts_summary,
     import_whitelists,
 )
+
+from tags import apply_tags
+
 from detections import (
     update_local_hosts,
     detect_new_outbound_connections,
@@ -67,7 +70,6 @@ from detections import (
     foreign_flows_detection,
     local_flows_detection,
     detect_geolocation_flows,
-    remove_whitelist,
     detect_dead_connections,
     detect_unauthorized_ntp,
     detect_unauthorized_dns,
@@ -115,8 +117,8 @@ def copy_flows_to_newflows():
             for row in rows:
                 newflows_cursor.execute('''
         INSERT INTO flows (
-            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
         DO UPDATE SET 
             packets = packets + excluded.packets,
@@ -130,7 +132,7 @@ def copy_flows_to_newflows():
             log_info(logger, f"[INFO] Copied {len(rows)} flows from {source_db}")
             
         except sqlite3.Error as e:
-            log_info(logger, f"[ERROR] Database error processing {source_db}: {e}")
+            log_error(logger, f"[ERROR] Database error processing {source_db}: {e}")
         finally:
             if 'source_conn' in locals():
                 source_conn.close()
@@ -238,20 +240,21 @@ def main():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM flows")
     rows = cursor.fetchall()
+    rows = [list(row) for row in rows]
 
     log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_NEWFLOWS_DB}")
 
-    update_allflows(rows, config_dict)
-
     import_whitelists(config_dict)
 
-    update_tor_nodes(config_dict)
-
     whitelist_entries = get_whitelist()
-    log_info(logger, f"[INFO] Fetched {len(whitelist_entries)} whitelist entries from the database.")
-    filtered_rows = remove_whitelist(rows, whitelist_entries)
 
-    filtered_rows = remove_broadcast_flows(rows, config_dict)
+    tagged_rows = apply_tags(rows, whitelist_entries)
+
+    update_allflows(tagged_rows, config_dict)
+
+    filtered_rows = [row for row in tagged_rows if 'whitelist' not in str(row[11]).lower()]
+
+    filtered_rows = remove_broadcast_flows(filtered_rows, config_dict)
 
     # Dictionary to store durations for each detection function
     detection_durations = {}
@@ -318,7 +321,7 @@ def main():
     detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    detect_tor_traffic(filtered_rows, config_dict)
+    #detect_tor_traffic(filtered_rows, config_dict)
     detection_durations['detect_tor_traffic'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()

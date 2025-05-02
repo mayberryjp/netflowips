@@ -50,14 +50,14 @@ def update_localhosts(data_object):
 
         try:
             # Perform the PUT request
-            logger.info(f"Updating local host: {ip_address} at {put_url}")
+            logger.info(f"[INFO] Updating local host: {ip_address} at {put_url}")
             put_response = requests.put(put_url, json=json_body, timeout=10)
             put_response.raise_for_status()
 
             if put_response.status_code == 200:
-                logger.info(f"Successfully updated local host: {ip_address}")
+                logger.info(f"[INFO] Successfully updated local host: {ip_address}")
             else:
-                logger.error(f"Failed to update local host: {ip_address}, Status Code: {put_response.status_code}")
+                logger.error(f"[ERROR] Failed to update local host: {ip_address}, Status Code: {put_response.status_code}")
                 continue
 
             # Perform the GET request to fetch the entire host list

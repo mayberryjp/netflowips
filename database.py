@@ -19,7 +19,7 @@ def delete_database(db_path):
         else:
             log_info(logger, f"[INFO] {db_path} does not exist, skipping deletion.")
     except Exception as e:
-        logger.error(f"[ERROR] Error deleting {db_path}: {e}")
+        log_error(logger,f"[ERROR] Error deleting {db_path}: {e}")
 
 def connect_to_db(DB_NAME):
     """Establish a connection to the specified database."""
@@ -28,7 +28,7 @@ def connect_to_db(DB_NAME):
         conn = sqlite3.connect(DB_NAME)
         return conn
     except sqlite3.Error as e:
-        logger.error(f"Error connecting to database {DB_NAME}: {e}")
+        log_error(logger,f"[ERROR] Error connecting to database {DB_NAME}: {e}")
         return None
 
 def create_database(db_name, create_table_sql):
@@ -37,7 +37,7 @@ def create_database(db_name, create_table_sql):
     try:
         conn = connect_to_db(db_name)
         if not conn:
-            logger.error(f"[ERROR] Unable to connect to {db_name}")
+            log_error(logger,f"[ERROR] Unable to connect to {db_name}")
             return
 
         cursor = conn.cursor()
@@ -60,15 +60,16 @@ def update_allflows(rows, config_dict):
             allflows_cursor = allflows_conn.cursor()
             for row in rows:
 
-                src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen = row
+                src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags = row
                 total_packets = total_packets + packets
                 total_bytes = total_bytes + bytes_
 
+                #log_info(logger, f"[INFO] Processing row: {row}")
                 now = datetime.utcnow().isoformat()
                 allflows_cursor.execute("""
                     INSERT INTO allflows (
                         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, times_seen, last_seen, tags
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, "")
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
                     ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
                     DO UPDATE SET
                         packets = packets + excluded.packets,
@@ -76,11 +77,11 @@ def update_allflows(rows, config_dict):
                         flow_end = excluded.flow_end,
                         times_seen = times_seen + 1,
                         last_seen = excluded.last_seen
-                """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now))
+                """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now, tags))
             allflows_conn.commit()
             log_info(logger, f"[INFO] Updated {CONST_ALLFLOWS_DB} with {len(rows)} rows.")
         except sqlite3.Error as e:
-            logger.error(f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
+            log_error(logger,f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
         finally:
             allflows_conn.close()
         log_info(logger,f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
@@ -96,7 +97,7 @@ def delete_all_records(db_name, table_name='flows'):
             conn.commit()
             log_info(logger, f"[INFO] All records deleted from {db_name}.{table_name}")
         except sqlite3.Error as e:
-            logger.error(f"[ERROR] Error deleting records from {db_name}: {e}")
+            log_error(logger,f"[ERROR] Error deleting records from {db_name}: {e}")
         finally:
             conn.close()
 
@@ -113,7 +114,7 @@ def init_configurations_from_sitepy():
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
-            logger.error("[ERROR] Unable to connect to configuration database")
+            log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
 
         if IS_CONTAINER:
@@ -140,9 +141,9 @@ def init_configurations_from_sitepy():
         log_info(logger, f"[INFO] Default configurations initialized successfully.")
         conn.close()
     except sqlite3.Error as e:
-        logger.error(f"[ERROR] Error initializing default configurations: {e}")
+        log_error(logger,f"[ERROR] Error initializing default configurations: {e}")
     except Exception as e:
-        logger.error(f"[ERROR] Unexpected error: {e}")
+        log_error(logger,f"[ERROR] Unexpected error: {e}")
     finally:
         if 'conn' in locals() and conn:
             conn.close()
@@ -163,7 +164,7 @@ def init_configurations_from_variable():
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
-            logger.error("[ERROR] Unable to connect to configuration database")
+            log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
 
         cursor = conn.cursor()
@@ -183,9 +184,9 @@ def init_configurations_from_variable():
         log_info(logger, f"[INFO] Default configurations initialized successfully.")
         conn.close()
     except sqlite3.Error as e:
-        logger.error(f"[ERROR] Error initializing default configurations: {e}")
+        log_error(logger,f"[ERROR] Error initializing default configurations: {e}")
     except Exception as e:
-        logger.error(f"[ERROR] Unexpected error: {e}")
+        log_error(logger,f"[ERROR] Unexpected error: {e}")
     finally:
         if 'conn' in locals() and conn:
             conn.close()
@@ -198,7 +199,7 @@ def get_config_settings():
     try:
         conn = connect_to_db(CONST_CONFIG_DB)
         if not conn:
-            logger.error("[ERROR] Unable to connect to configuration database")
+            log_error(logger,"[ERROR] Unable to connect to configuration database")
             return None
 
         cursor = conn.cursor()
@@ -208,7 +209,7 @@ def get_config_settings():
         log_info(logger, f"[INFO] Successfully loaded {len(config_dict)} configuration settings")
         return config_dict
     except sqlite3.Error as e:
-        logger.error(f"[ERROR] Error reading configuration database: {e}")
+        log_error(logger,f"[ERROR] Error reading configuration database: {e}")
         return None
 
 def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
@@ -229,7 +230,7 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
         conn.close()
         log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
-        logger.error(f"[ERROR] Error logging alert to database: {e}")
+        log_error(logger,f"[ERROR] Error logging alert to database: {e}")
 
 def get_whitelist():
     """
@@ -243,7 +244,7 @@ def get_whitelist():
     try:
         conn = connect_to_db(CONST_WHITELIST_DB)
         if not conn:
-            log_info(logger, "[ERROR] Unable to connect to whitelist database")
+            log_error(logger, "[ERROR] Unable to connect to whitelist database")
             return None
 
         cursor = conn.cursor()
@@ -363,13 +364,13 @@ def import_whitelists(config_dict):
 
         # Insert whitelist entries into the database if they don't already exist
         for entry in whitelist_entries:
-            src_ip, dst_ip, dst_port, protocol = entry
+            whitelist_id, src_ip, dst_ip, dst_port, protocol = entry
 
             # Check if the whitelist entry already exists
             cursor.execute("""
                 SELECT COUNT(*) FROM whitelist
-                WHERE whitelist_src_ip = ? AND whitelist_dst_ip = ? AND whitelist_dst_port = ? AND whitelist_protocol = ?
-            """, (src_ip, dst_ip, dst_port, protocol))
+                WHERE whitelist_id = ? AND whitelist_src_ip = ? AND whitelist_dst_ip = ? AND whitelist_dst_port = ? AND whitelist_protocol = ?
+            """, (whitelist_id, src_ip, dst_ip, dst_port, protocol))
             exists = cursor.fetchone()[0]
 
             if exists:
@@ -379,9 +380,9 @@ def import_whitelists(config_dict):
             # Insert the new whitelist entry
             cursor.execute("""
                 INSERT INTO whitelist (
-                    whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
-                ) VALUES (?, ?, ?, ?, 1)
-            """, (src_ip, dst_ip, dst_port, protocol))
+                    whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
+                ) VALUES (?, ?, ?, ?, ?, 1)
+            """, (whitelist_id, src_ip, dst_ip, dst_port, protocol))
 
         conn.commit()
         log_info(logger, f"[INFO] Imported {len(whitelist_entries)} whitelist entries into the database.")

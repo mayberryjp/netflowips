@@ -5,7 +5,8 @@ import os
 from utils import log_info, log_warn, log_error
 import logging
 from datetime import datetime, timezone
-from database import connect_to_db
+from database import connect_to_db, get_whitelist
+from tags import apply_tags
 
 if (IS_CONTAINER):
     COLLECTOR_LISTEN_ADDRESS=os.getenv("COLLECTOR_LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
@@ -13,15 +14,15 @@ if (IS_CONTAINER):
 
 
 # Update or insert flow in the DB
-def update_newflow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end):
+def update_newflow(record):
     conn = connect_to_db(CONST_NEWFLOWS_DB)
     c = conn.cursor()
     now = datetime.now(timezone.utc).isoformat()
 
     c.execute('''
         INSERT INTO flows (
-            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1,?)
         ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
         DO UPDATE SET 
             packets = packets + excluded.packets,
@@ -29,7 +30,7 @@ def update_newflow(src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_
             flow_end = excluded.flow_end,
             last_seen = excluded.last_seen,
             times_seen = times_seen + 1
-    ''', (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now))
+    ''', (record['src_ip'], record['dst_ip'], record['src_port'], record['dst_port'],record['protocol'], record['packets'], record['bytes'], record['flow_start'], record['flow_end'], now,  record['tags']))
 
     conn.commit()
     conn.close()
@@ -62,6 +63,9 @@ def parse_netflow_v5_record(data, offset):
         'dst_as': fields[15],
         'src_mask': fields[16],
         'dst_mask': fields[17],
+        'tags': None,
+        'last_seen': datetime.now().isoformat(),
+        'times_seen': 1
     }
 
 
@@ -74,6 +78,7 @@ def handle_netflow_v5():
         log_info(logger, f"[INFO] NetFlow v5 collector listening on {COLLECTOR_LISTEN_ADDRESS}:{COLLECTOR_LISTEN_PORT}")
 
         while True:
+            whitelist = get_whitelist()
             flow_count = 0  # Initialize a counter for the number of flows processed
             data, addr = s.recvfrom(8192)
             try:
@@ -94,6 +99,7 @@ def handle_netflow_v5():
                         break
 
                     record = parse_netflow_v5_record(data, offset)
+
                     offset += 48
 
                     # Convert flow times to UTC with timezone awareness
@@ -106,18 +112,10 @@ def handle_netflow_v5():
                         unix_secs - ((sys_uptime - record['end_time']) / 1000),
                         tz=timezone.utc
                     ).isoformat()
+                    
+                    record = apply_tags(record, whitelist)
 
-                    update_newflow(
-                        record['src_ip'],
-                        record['dst_ip'],
-                        record['src_port'],
-                        record['dst_port'],
-                        record['protocol'],
-                        record['packets'],
-                        record['bytes'],
-                        flow_start,
-                        flow_end
-                    )
+                    update_newflow(record)
 
                     flow_count += 1  # Increment the flow counter
 
