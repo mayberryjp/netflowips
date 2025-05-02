@@ -1,4 +1,4 @@
-VERSION="v0.1.7"
+VERSION="v0.1.9"
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
 CONST_API_LISTEN_PORT=8044
@@ -45,7 +45,7 @@ CONST_CREATE_ALLFLOWS_SQL='''
         flow_start TEXT,
         flow_end TEXT,
         times_seen INTEGER DEFAULT 1,
-        last_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+        last_seen TEXT,
         tags TEXT,
         PRIMARY KEY (src_ip, dst_ip, src_port, dst_port, protocol)
     )'''
@@ -59,10 +59,11 @@ CONST_CREATE_ALERTS_SQL='''
         alert_enrichment_1 TEXT,
         alert_enrichment_2 TEXT,
         times_seen INTEGER DEFAULT 0,
-        first_seen TEXT DEFAULT CURRENT_TIMESTAMP,
-        last_seen TEXT DEFAULT CURRENT_TIMESTAMP,
+        first_seen TEXT,
+        last_seen TEXT,
         acknowledged INTEGER DEFAULT 0
-    )'''
+    )
+'''
 
 CONST_CREATE_WHITELIST_SQL='''
     CREATE TABLE IF NOT EXISTS whitelist (
@@ -71,10 +72,10 @@ CONST_CREATE_WHITELIST_SQL='''
         whitelist_dst_ip TEXT,
         whitelist_dst_port INTEGER,
         whitelist_protocol INTEGER,
-        whitelist_insert_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        whitelist_insert_date TEXT,
         whitelist_enabled INTEGER DEFAULT 1,
         whitelist_description TEXT,
-        whitelist_added TEXT DEFAULT CURRENT_TIMESTAMP
+        whitelist_added TEXT
     )'''
 
 CONST_CREATE_CONFIG_SQL='''
@@ -124,7 +125,7 @@ CONST_CREATE_REPUTATIONLIST_SQL="""
 CONST_CREATE_TORNODES_SQL = '''
     CREATE TABLE IF NOT EXISTS tornodes (
         ip_address TEXT PRIMARY KEY,
-        import_date TEXT DEFAULT CURRENT_TIMESTAMP
+        import_date TEXT
     )
 '''
 
@@ -132,8 +133,8 @@ CONST_CREATE_PIHOLE_SQL = '''
     CREATE TABLE IF NOT EXISTS pihole (
         client_ip TEXT,
         times_seen INTEGER DEFAULT 0,
-        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TEXT,
+        first_seen TEXT,
         type TEXT,
         domain TEXT,
         PRIMARY KEY (client_ip, domain, type)

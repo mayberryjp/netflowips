@@ -59,32 +59,30 @@ def update_allflows(rows, config_dict):
         try:
             allflows_cursor = allflows_conn.cursor()
             for row in rows:
-
                 src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags = row
-                total_packets = total_packets + packets
-                total_bytes = total_bytes + bytes_
+                total_packets += packets
+                total_bytes += bytes_
 
-                #log_info(logger, f"[INFO] Processing row: {row}")
-                now = datetime.utcnow().isoformat()
+                # Use datetime('now', 'localtime') for the current timestamp
                 allflows_cursor.execute("""
                     INSERT INTO allflows (
                         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, times_seen, last_seen, tags
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), ?)
                     ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
                     DO UPDATE SET
                         packets = packets + excluded.packets,
                         bytes = bytes + excluded.bytes,
                         flow_end = excluded.flow_end,
                         times_seen = times_seen + 1,
-                        last_seen = excluded.last_seen
-                """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, now, tags))
+                        last_seen = datetime('now', 'localtime')
+                """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, tags))
             allflows_conn.commit()
             log_info(logger, f"[INFO] Updated {CONST_ALLFLOWS_DB} with {len(rows)} rows.")
         except sqlite3.Error as e:
-            log_error(logger,f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
+            log_error(logger, f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
         finally:
             allflows_conn.close()
-        log_info(logger,f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
+        log_info(logger, f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
@@ -220,17 +218,17 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen, acknowledged)
-            VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0)
+            VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), datetime('now', 'localtime'), 0)
             ON CONFLICT(id)
             DO UPDATE SET
                 times_seen = times_seen + 1,
-                last_seen = CURRENT_TIMESTAMP
+                last_seen = datetime('now', 'localtime')
         """, (alert_id_hash, ip_address, json.dumps(flow), category, alert_enrichment_1, alert_enrichment_2))
         conn.commit()
         conn.close()
         log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
-        log_error(logger,f"[ERROR] Error logging alert to database: {e}")
+        log_error(logger, f"[ERROR] Error logging alert to database: {e}")
 
 def get_whitelist():
     """
@@ -380,8 +378,8 @@ def import_whitelists(config_dict):
             # Insert the new whitelist entry
             cursor.execute("""
                 INSERT INTO whitelist (
-                    whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled
-                ) VALUES (?, ?, ?, ?, ?, 1)
+                    whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled, whitelist_added, whitelist_insert_date
+                ) VALUES (?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), datetime('now', 'localtime'))
             """, (whitelist_id, src_ip, dst_ip, dst_port, protocol))
 
         conn.commit()

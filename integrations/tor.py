@@ -41,7 +41,7 @@ def update_tor_nodes(config_dict):
         # Update database with new Tor nodes
         cursor.executemany("""
             INSERT INTO tornodes (ip_address, import_date) 
-            VALUES (?, CURRENT_TIMESTAMP)
+            VALUES (?, datetime('now', 'localtime'))
         """, [(ip,) for ip in tor_nodes])
         
         conn.commit()

@@ -50,7 +50,7 @@ def authenticate_pihole(pihole_url, api_token):
         log_error(logger, f"[ERROR] Pihole Authentication failed: {e}")
         return None
     except ValueError:
-        log_error(logger, "[ERROR] Pihole Failed to parse authentication response")
+        log_error(logger, f"[ERROR] Pihole Failed to parse authentication response")
         return None
 
 
@@ -154,10 +154,10 @@ def get_pihole_ftl_logs(page_size, config_dict):
                 try:
                     cursor.execute("""
                         INSERT INTO pihole (client_ip, domain, type, times_seen, first_seen, last_seen)
-                        VALUES (?, ?, 'A', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                        VALUES (?, ?, 'A', ?, datetime('now', 'localtime'), datetime('now', 'localtime'))
                         ON CONFLICT(client_ip, domain, type)
                         DO UPDATE SET
-                            last_seen = CURRENT_TIMESTAMP,
+                            last_seen = datetime('now', 'localtime'),
                             times_seen = times_seen + excluded.times_seen
                     """, (client_ip, domain, times_seen))
                 except sqlite3.Error as e:

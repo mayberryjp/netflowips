@@ -7,6 +7,7 @@ from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LO
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
 from pathlib import Path
+from datetime import datetime, timedelta
 
 # Initialize the Bottle app
 app = Bottle()
@@ -127,7 +128,7 @@ def alerts():
             conn.close()
             set_json_response()
             log_info(logger, "Fetched all alerts successfully.")
-            return json.dumps([{"id": row[0], "message": row[1], "timestamp": row[2]} for row in rows])
+            return json.dumps([{"id": row[0], "ip_address": row[1], "category": row[3], "last_seen": row[8], "acknowledged": row[9]} for row in rows])
         except sqlite3.Error as e:
             conn.close()
             log_error(logger, f"Error fetching alerts: {e}")
@@ -163,6 +164,87 @@ def modify_alert(id):
             response.status = 500
             return {"error": str(e)}
 
+@app.route('/api/alerts/summary', method=['GET'])
+def summarize_alerts():
+    """
+    API endpoint to summarize alerts by IP address over the last 12 hours in one-hour increments.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        summary = summarize_alerts_by_ip()
+        set_json_response()
+        #log_info(logger, "[INFO] Summarized alerts successfully.")
+        return json.dumps(summary)
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to summarize alerts: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
+def summarize_alerts_by_ip():
+    """
+    Summarize alerts by IP address over the last 12 hours in one-hour increments.
+
+    Returns:
+        dict: A dictionary where the main key is the IP address, and the value is another dictionary
+              with the key "alert_intervals" containing an array of 12 values representing the count
+              of alerts for each one-hour interval, sorted from oldest to most recent.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    intervals = 12
+
+    try:
+        # Get the current time and calculate the start time (12 hours ago)
+        now = datetime.now()
+        start_time = now - timedelta(hours=intervals)
+
+        # Query to fetch alerts within the last 12 hours
+        cursor.execute("""
+            SELECT ip_address, strftime('%Y-%m-%d %H:00:00', last_seen) as hour, COUNT(*)
+            FROM alerts
+            WHERE last_seen >= ?
+            GROUP BY ip_address, hour
+            ORDER BY ip_address, hour
+        """, (start_time.strftime('%Y-%m-%d %H:%M:%S'),))
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        # Initialize the result dictionary
+        result = {}
+
+        # Process the rows to build the summary
+        for row in rows:
+            ip_address = row[0]
+            hour = datetime.strptime(row[1], '%Y-%m-%d %H:00:00')
+            count = row[2]
+
+            if ip_address not in result:
+                # Initialize the alert_intervals array with 12 zeros
+                result[ip_address] = {"alert_intervals": [0] * intervals}
+
+            # Calculate the index for the hour interval
+            hour_diff = int((now - hour).total_seconds() // 3600)
+            if 0 <= hour_diff < intervals:
+                # Reverse the index to place the most recent at the last position
+                result[ip_address]["alert_intervals"][intervals - 1 - hour_diff] = count
+
+        return result
+
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"Error summarizing alerts: {e}")
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"Unexpected error: {e}")
+        return {"error": str(e)}
 
 # API for CONST_WHITELIST_DB
 @app.route('/api/whitelist', method=['GET', 'POST'])
@@ -371,6 +453,22 @@ def get_database_counts():
         response.status = 500
         return {"error": str(e)}
     
+@app.route('/api/quickstats', method=['GET'])
+def get_database_counts():
+    """
+    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Call the function to collect database counts
+        counts = collect_database_counts()
+        set_json_response()
+        log_info(logger, "[INFO] Fetched database counts successfully.")
+        return json.dumps(counts)
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to fetch database counts: {e}")
+        response.status = 500
+        return {"error": str(e)}
 
 @app.route('/api/client/<ip_address>', method=['GET'])
 def get_client_info(ip_address):
@@ -401,6 +499,8 @@ def get_client_info(ip_address):
         log_error(logger, f"[ERROR] Failed to get client info for {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
+
+
 
 
 # Run the Bottle app
