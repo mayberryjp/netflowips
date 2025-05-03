@@ -41,7 +41,7 @@ def log_error(logger, message):
     formatted_message = f"[{timestamp}] {script_name}[/{file_name}/{line_number}] {message}"
     print(formatted_message)
     logger.error(formatted_message)
-    if SITE == 'TEST':
+    if SITE == 'TESTPPE':
         exit(1)
 
 def log_warn(logger, message):
