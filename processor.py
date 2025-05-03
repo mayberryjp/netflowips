@@ -1,6 +1,6 @@
 import sqlite3  # Import the sqlite3 module
 from database import get_whitelist, connect_to_db, update_allflows, delete_all_records, create_database, get_config_settings, delete_database, import_whitelists  # Import from database.py
-from detections import detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, remove_broadcast_flows, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
+from detections import detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import create_geolocation_db, load_geolocation_data
 from integrations.reputation import import_reputation_list, load_reputation_data
