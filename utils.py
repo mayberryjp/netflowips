@@ -185,7 +185,7 @@ def calculate_broadcast(network_cidr):
         network = ipaddress.IPv4Network(network_cidr, strict=False)
         broadcast = str(network.broadcast_address)
         
-        log_info(logger, f"[INFO] Calculated broadcast {broadcast} for network {network_cidr}")
+        #log_info(logger, f"[INFO] Calculated broadcast {broadcast} for network {network_cidr}")
         return broadcast
         
     except ValueError as e:

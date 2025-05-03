@@ -77,7 +77,6 @@ from detections import (
     detect_incorrect_ntp_stratum,
     detect_reputation_flows,
     detect_vpn_traffic, detect_high_risk_ports,
-    remove_broadcast_flows,
     detect_many_destinations,
     detect_port_scanning,
     detect_tor_traffic,
@@ -252,9 +251,10 @@ def main():
 
     update_allflows(tagged_rows, config_dict)
 
-    filtered_rows = [row for row in tagged_rows if 'whitelist' not in str(row[11]).lower()]
+    filtered_rows = [row for row in tagged_rows if 'Whitelist' not in str(row[11])]
+    filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]
 
-    filtered_rows = remove_broadcast_flows(filtered_rows, config_dict)
+    #filtered_rows = remove_broadcast_flows(filtered_rows, config_dict)
 
     # Dictionary to store durations for each detection function
     detection_durations = {}

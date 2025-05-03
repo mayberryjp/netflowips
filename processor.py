@@ -52,12 +52,14 @@ def process_data():
                 if config_dict.get('ReputationListDetection', 0) > 0:
                     reputation_data = load_reputation_data(config_dict)
                 
+                log_info(logger,f"Started removing IgnoreList flows")
                 # process whitelisted entries and remove from detection rows
                 filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11])]
+                log_info(logger,f"Finished removing IgnoreList flows")
 
-                log_info(logger, f"[INFO] After filtering IgnoreList we're left with {len(filtered_rows)} rows.")
                 if config_dict.get('RemoveBroadcastFlows', 0) >0:
-                    remove_broadcast_flows(filtered_rows, config_dict)
+                    filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]
+
 
                 # Proper way to check config values with default of 0
                 if config_dict.get("NewHostsDetection", 0) > 0:
@@ -150,7 +152,7 @@ if __name__ == "__main__":
     # Initialize all required databases
     create_database(CONST_ALLFLOWS_DB, CONST_CREATE_ALLFLOWS_SQL)
     create_database(CONST_ALERTS_DB, CONST_CREATE_ALERTS_SQL)
-    create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
+    #create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
     #create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
     create_database(CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL)
 

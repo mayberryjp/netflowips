@@ -2,16 +2,21 @@ import socket
 import struct
 from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
 import os
-from utils import log_info, log_warn, log_error
+from utils import log_info, log_warn, log_error, calculate_broadcast
 import logging
 from datetime import datetime, timezone
-from database import connect_to_db, get_whitelist
+from database import connect_to_db, get_whitelist, get_config_settings
 from tags import apply_tags
+from queue import Queue
+import threading
+import time
 
 if (IS_CONTAINER):
     COLLECTOR_LISTEN_ADDRESS=os.getenv("COLLECTOR_LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
     COLLECTOR_LISTEN_PORT=os.getenv("COLLECTOR_LISTEN_PORT", CONST_COLLECTOR_LISTEN_PORT) 
 
+# Create global queue for netflow packets
+netflow_queue = Queue()
 
 # Update or insert flow in the DB
 def update_newflow(record):
@@ -68,61 +73,100 @@ def parse_netflow_v5_record(data, offset):
         'times_seen': 1
     }
 
-
-# Main NetFlow v5 processing loop
-def handle_netflow_v5():
+def collect_netflow_packets(listen_address, listen_port):
+    """Collect packets and add them to queue"""
     logger = logging.getLogger(__name__)
-
+    
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        s.bind((COLLECTOR_LISTEN_ADDRESS, COLLECTOR_LISTEN_PORT))
-        log_info(logger, f"[INFO] NetFlow v5 collector listening on {COLLECTOR_LISTEN_ADDRESS}:{COLLECTOR_LISTEN_PORT}")
-
+        s.bind((listen_address, listen_port))
+        log_info(logger, f"[INFO] NetFlow v5 collector listening on {listen_address}:{listen_port}")
+        
         while True:
-            whitelist = get_whitelist()
-            flow_count = 0  # Initialize a counter for the number of flows processed
-            data, addr = s.recvfrom(8192)
             try:
-                if len(data) < 24:
-                    log_warn(logger, "[WARN] Packet too short for NetFlow v5 header")
-                    continue
-
-                # Parse NetFlow v5 header
-                version, count, sys_uptime, unix_secs, unix_nsecs, flow_sequence, engine_type, engine_id, sampling_interval = parse_netflow_v5_header(data)
-
-                if version != 5:
-                    log_warn(logger, f"[WARN] Unsupported NetFlow version: {version}")
-                    continue
-
-                offset = 24
-                for _ in range(count):
-                    if offset + 48 > len(data):
-                        break
-
-                    record = parse_netflow_v5_record(data, offset)
-
-                    offset += 48
-
-                    # Convert flow times to UTC with timezone awareness
-                    flow_start = datetime.fromtimestamp(
-                        unix_secs - ((sys_uptime - record['start_time']) / 1000),
-                        tz=timezone.utc
-                    ).isoformat()
-                    
-                    flow_end = datetime.fromtimestamp(
-                        unix_secs - ((sys_uptime - record['end_time']) / 1000),
-                        tz=timezone.utc
-                    ).isoformat()
-
-                    #log_info(logger, f"[INFO] Flow record: {record}")
-                    
-                    record = apply_tags(record, whitelist)
-
-                    update_newflow(record)
-
-                    flow_count += 1  # Increment the flow counter
-
-                # Log the number of flows processed in this packet
-                log_info(logger, f"[INFO] Processed {count} flows from packet. Total flows processed: {flow_count}")
-
+                data, addr = s.recvfrom(8192)
+                netflow_queue.put((data, addr))
             except Exception as e:
-                log_error(logger, f"[ERROR] Failed to process NetFlow v5 packet: {e}")
+                log_error(logger, f"[ERROR] Socket error: {e}")
+                time.sleep(1)
+
+def process_netflow_packets():
+    """Process queued packets at fixed interval"""
+    logger = logging.getLogger(__name__)
+    
+    while True:
+        try:
+            whitelist = get_whitelist()
+            config_dict = get_config_settings()
+
+            if not config_dict:
+                log_error(logger, "[ERROR] Failed to load configuration settings")
+                time.sleep(60)  # Wait before retry
+                continue
+
+            LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+            
+            # Calculate broadcast addresses for all local networks
+            broadcast_addresses = set()
+            for network in LOCAL_NETWORKS:
+                broadcast_ip = calculate_broadcast(network)
+                if broadcast_ip:
+                    broadcast_addresses.add(broadcast_ip)
+                    #log_info(logger, f"[INFO] Found broadcast address {broadcast_ip} for network {network}")
+            
+            # Add global broadcast address
+            broadcast_addresses.add('255.255.255.255')
+            
+            packets = []
+            # Collect all available packets
+            while not netflow_queue.empty():
+                packets.append(netflow_queue.get())
+                
+            if packets:
+                log_info(logger, f"[INFO] Processing {len(packets)} queued packets")
+                total_flows = 0
+                
+                for data, addr in packets:
+                    if len(data) < 24:
+                        continue
+                        
+                    version, count, *header_fields = parse_netflow_v5_header(data)
+                    if version != 5:
+                        continue
+                        
+                    offset = 24
+                    for _ in range(count):
+                        if offset + 48 > len(data):
+                            break
+                            
+                        record = parse_netflow_v5_record(data, offset)
+                        offset += 48
+                        
+                        # Apply tags and update flow database
+                        record = apply_tags(record, whitelist, broadcast_addresses)
+                        update_newflow(record)
+                        total_flows += 1
+                        
+                log_info(logger, f"[INFO] Processed {total_flows} flows from {len(packets)} packets")
+                
+            # Wait for next processing interval
+            interval = int(config_dict.get('CollectorProcessingInterval', 60))
+            time.sleep(interval)
+            
+        except Exception as e:
+            log_error(logger, f"[ERROR] Failed to process NetFlow packets: {e}")
+            time.sleep(60)  # Wait before retry
+
+def handle_netflow_v5():
+    """Start collector and processor threads"""
+    logger = logging.getLogger(__name__)
+    
+    # Start collector thread
+    collector = threading.Thread(
+        target=collect_netflow_packets,
+        args=(COLLECTOR_LISTEN_ADDRESS, COLLECTOR_LISTEN_PORT),
+        daemon=True
+    )
+    collector.start()
+    
+    # Run processor in main thread
+    process_netflow_packets()

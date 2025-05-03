@@ -613,52 +613,6 @@ def detect_incorrect_ntp_stratum(rows, config_dict):
                                 alert_id, False)
     log_info(logger,"[INFO] Finished detecting local NTP servers using unauthorized stratum NTP destinations")
 
-
-def remove_broadcast_flows(rows, config_dict):
-    """
-    Remove flows where the destination IP matches broadcast addresses of LOCAL_NETWORKS.
-    
-    Args:
-        rows: List of flow records
-        config_dict: Dictionary containing configuration settings
-        
-    Returns:
-        list: Filtered rows with broadcast destination addresses removed
-    """
-    logger = logging.getLogger(__name__)
-    log_info(logger,"[INFO] Started removing broadcast flows")   
-    # Get local networks
-    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
-    
-    # Calculate broadcast addresses for all local networks
-    broadcast_addresses = set()
-    for network in LOCAL_NETWORKS:
-        broadcast_ip = calculate_broadcast(network)
-        if broadcast_ip:
-            broadcast_addresses.add(broadcast_ip)
-            log_info(logger, f"[INFO] Found broadcast address {broadcast_ip} for network {network}")
-    
-    if not broadcast_addresses:
-        log_warn(logger, "[WARN] No broadcast addresses found for LOCAL_NETWORKS")
-        return rows
-    
-    # Filter out flows with broadcast destinations
-    filtered_rows = []
-    broadcast_count = 0
-    
-    for row in rows:
-        dst_ip = row[1]  # Destination IP is second field
-        if dst_ip not in broadcast_addresses:
-            filtered_rows.append(row)
-        else:
-            broadcast_count += 1
-    
-    if broadcast_count > 0:
-        log_info(logger, f"[INFO] Removed {broadcast_count} broadcast flows")
-    
-    return filtered_rows
-
-
 def detect_dead_connections(config_dict):
     """
     Detect dead connections by finding flows with:
@@ -1329,10 +1283,15 @@ def detect_high_bandwidth_flows(rows, config_dict):
 
     # Dictionary to track totals for each src_ip and dst_ip
     traffic_stats = {}
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
 
     # First pass: Aggregate traffic by src_ip and dst_ip
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
+
+
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
 
         # Initialize stats for src_ip
         if src_ip not in traffic_stats:

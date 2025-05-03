@@ -1,4 +1,4 @@
-from utils import log_info, log_error, dump_json
+from utils import log_info, log_error, dump_json, log_warn, calculate_broadcast
 import logging
 
 
@@ -40,7 +40,57 @@ def tag_whitelist(record, whitelist_entries):
     #log_info(logger, "[INFO] Row is not whitelisted")
     return None
 
-def apply_tags(record, whitelist_entries):
+def tag_broadcast(record, broadcast_addresses):
+    """
+    Remove flows where the destination IP matches broadcast addresses of LOCAL_NETWORKS.
+    
+    Args:
+        rows: List of flow records
+        config_dict: Dictionary containing configuration settings
+        
+    Returns:
+        list: Filtered rows with broadcast destination addresses removed
+    """
+    logger = logging.getLogger(__name__)
+
+    if not broadcast_addresses:
+        log_warn(logger, "[WARN] No broadcast addresses found for LOCAL_NETWORKS")
+        return None
+
+    if record["dst_ip"] not in broadcast_addresses:
+        return None
+    else:
+        return "Broadcast;"
+    
+
+def tag_multicast(record, broadcast_addresses):
+    """
+    Tag flows where the destination IP is in multicast range (224.0.0.0 to 239.255.255.255).
+    
+    Args:
+        record: Flow record to check
+        broadcast_addresses: List of broadcast addresses (not used but kept for consistency)
+        
+    Returns:
+        str: "Multicast;" if destination IP is multicast, None otherwise
+    """
+    logger = logging.getLogger(__name__)
+
+    try:
+        # Get first octet of destination IP
+        first_octet = int(record["dst_ip"].split('.')[0])
+        
+        # Check if in multicast range (224-239)
+        if 224 <= first_octet <= 239:
+            return "Multicast;"
+        return None
+        
+    except (ValueError, IndexError) as e:
+        log_error(logger, f"[ERROR] Invalid IP address format in record: {e}")
+        return None
+    
+
+def apply_tags(record, whitelist_entries, broadcast_addresses):
     """
     Apply multiple tagging functions to one or more rows. For each row, append the tag to the tags position.
 
@@ -52,8 +102,12 @@ def apply_tags(record, whitelist_entries):
         list: The same number of rows as input, with tags appended to the tags position of each row.
     """
 
-    tag = tag_whitelist(record, whitelist_entries)
-    if tag:
-        record['tags'] += f"{tag}"
+    whitelist_tag = tag_whitelist(record, whitelist_entries)
+    if whitelist_tag:
+        record['tags'] += f"{whitelist_tag}"
+
+    broadcast_tag = tag_broadcast(record, broadcast_addresses)
+    if broadcast_tag:
+        record['tags'] += f"{broadcast_tag}"
 
     return record
