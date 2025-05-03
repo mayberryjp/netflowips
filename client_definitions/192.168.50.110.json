@@ -1,30 +1,91 @@
 {
     "ip_address": "192.168.50.110",
-    "export_date": "2025-05-02T00:56:57.933829",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-03T11:49:32.201256",
     "host_info": {
-        "ip_address": "192.168.50.110",
+        "first_seen": "2025-04-25 08:55:20",
+        "last_seen": "[\"192.168.50.110\", \"239.254.127.63\", 48000, 48000, 17, 1, 116, \"2025-04-25T08:49:27.853000+00:00\", \"2025-04-25T08:49:27.853000+00:00\", \"2025-04-25T08:54:40.123934+00:00\", 1]",
+        "times_seen": null,
+        "original_flow": null,
         "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
-        "os_fingerprint": "Linux_Linux_2.6.X_96",
-        "lease_hostname": null,
-        "icon": "WIFI_ACCESS_POINT",
+        "mac_vendor": "NXDOMAIN",
+        "dhcp_hostname": "Linux_Linux_2.6.X_96",
         "local_description": "Unifi U6 Pro AP"
     },
     "dns_queries": [
-        "ping.ui.com"
+        {
+            "domain": "ping.ui.com",
+            "times_queried": 42,
+            "first_query": "2025-05-03 06:08:46",
+            "last_query": "2025-04-27 12:48:15"
+        },
+        {
+            "domain": "trace.svc.ui.com",
+            "times_queried": 2,
+            "first_query": "2025-05-02 11:17:00",
+            "last_query": "2025-05-02 11:17:00"
+        }
     ],
     "flows": [
         {
-            "destination": "192.168.50.220",
-            "port": 8080,
-            "protocol": 6
+            "destination": "239.254.127.63",
+            "port": 48000,
+            "protocol": 17,
+            "flow_count": 429,
+            "total_packets": 1528,
+            "total_bytes": 169792,
+            "first_seen": "2025-05-03 10:17:48",
+            "last_seen": "2025-04-23T11:37:01.917000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 10001,
-            "protocol": 17
+            "protocol": 17,
+            "flow_count": 16,
+            "total_packets": 16,
+            "total_bytes": 5600,
+            "first_seen": "2025-05-02T11:01:16.200096",
+            "last_seen": "2025-04-25T06:09:05.627000+00:00"
+        },
+        {
+            "destination": "1.1.1.1",
+            "port": 2048,
+            "protocol": 1,
+            "flow_count": 22,
+            "total_packets": 44,
+            "total_bytes": 3696,
+            "first_seen": "2025-05-02T18:03:36.145635",
+            "last_seen": "2025-04-23T11:57:25.594000+00:00"
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 2048,
+            "protocol": 1,
+            "flow_count": 18,
+            "total_packets": 36,
+            "total_bytes": 3024,
+            "first_seen": "2025-05-03 06:03:27",
+            "last_seen": "2025-04-24T11:57:25.985000+00:00"
+        },
+        {
+            "destination": "224.0.0.22",
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 2,
+            "total_packets": 7,
+            "total_bytes": 322,
+            "first_seen": "2025-05-02T10:56:41.557699",
+            "last_seen": "2025-04-28T08:12:21.583000+00:00"
+        },
+        {
+            "destination": "192.168.50.220",
+            "port": 8080,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 4,
+            "total_bytes": 240,
+            "first_seen": "2025-04-25T07:09:21.310167",
+            "last_seen": "2025-04-25T06:08:08.833000+00:00"
         }
-    ]
+    ],
+    "actions": []
 }

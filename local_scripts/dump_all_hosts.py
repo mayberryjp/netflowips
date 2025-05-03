@@ -72,8 +72,9 @@ def save_client_data(ip_address, data):
 def main():
     # Array of API base URLs
     api_urls = [
+        "http://192.168.49.80:8044",
         "http://192.168.230.236:8044",
-        "http://192.168.49.80:8044"
+
    #"http://127.0.0.1:8044"
     ]
 

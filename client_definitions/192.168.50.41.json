@@ -1,38 +1,58 @@
 {
     "ip_address": "192.168.50.41",
-    "export_date": "2025-05-02T00:56:57.532928",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-03T11:49:31.815393",
     "host_info": {
-        "ip_address": "192.168.50.41",
+        "first_seen": "2025-04-25 08:24:44",
+        "last_seen": "[\"192.168.50.41\", \"255.255.255.255\", 49154, 6667, 17, 2, 432, \"2025-04-25T08:18:30.936000+00:00\", \"2025-04-25T08:18:35.937000+00:00\", \"2025-04-25T08:23:40.868431+00:00\", 1]",
+        "times_seen": null,
+        "original_flow": null,
         "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
-        "os_fingerprint": "NodeMCU_embedded_None_92",
-        "lease_hostname": "plug2",
-        "icon": "PLUG",
+        "mac_vendor": "plug2.832-5.com.",
+        "dhcp_hostname": "Espressif_embedded_None_92",
         "local_description": "Tuya Smart Plug"
     },
     "dns_queries": [],
     "flows": [
         {
-            "destination": "255.255.255.255",
-            "port": 67,
-            "protocol": 17
+            "destination": "35.162.13.26",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 7,
+            "total_packets": 53414,
+            "total_bytes": 4838639,
+            "first_seen": "2025-05-02T11:52:54.256627",
+            "last_seen": "2025-04-17T02:16:05.501000+00:00"
         },
         {
             "destination": "34.218.147.23",
             "port": 443,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 64,
+            "total_packets": 581,
+            "total_bytes": 71871,
+            "first_seen": "2025-05-02T23:24:46.710882",
+            "last_seen": "2025-04-23T12:13:13.982000+00:00"
+        },
+        {
+            "destination": "255.255.255.255",
+            "port": 67,
+            "protocol": 17,
+            "flow_count": 82,
+            "total_packets": 82,
+            "total_bytes": 27552,
+            "first_seen": "2025-05-03 11:36:26",
+            "last_seen": "2025-04-23T13:53:02.669000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 6667,
-            "protocol": 17
-        },
-        {
-            "destination": "35.162.13.26",
-            "port": 8886,
-            "protocol": 6
+            "protocol": 17,
+            "flow_count": 9,
+            "total_packets": 16,
+            "total_bytes": 3456,
+            "first_seen": "2025-04-30T00:06:13.266821",
+            "last_seen": "2025-04-25T00:26:06.269000+00:00"
         }
-    ]
+    ],
+    "actions": []
 }

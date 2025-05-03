@@ -34,6 +34,7 @@ def export_client_definition(client_ip):
         client_data = {
             "ip_address": client_ip,
             "export_date": datetime.now().isoformat(),
+            "instance_identifier": get_machine_unique_identifier_from_db(),
             "host_info": None,
             "dns_queries": [],
             "flows": [],
@@ -50,13 +51,14 @@ def export_client_definition(client_ip):
         host_record = localhosts_cursor.fetchone()
         if host_record:
             client_data["host_info"] = {
-                "first_seen": host_record[1],
-                "last_seen": host_record[2],
-                "times_seen": host_record[3],
-                "original_flow": host_record[4],
-                "mac_address": host_record[5],
-                "mac_vendor": host_record[6],
-                "dhcp_hostname": host_record[7],
+                "ip_address": host_record[0],
+                "mac_address": host_record[3],
+                "mac_vendor": host_record[4],
+                "dhcp_hostname": host_record[5],
+                "dns_hostname": host_record[6],
+                "os_fingerprint": host_record[7],
+                "lease_hostname": host_record[9],
+                "icon": host_record[12],
                 "local_description": host_record[8]
             }
         

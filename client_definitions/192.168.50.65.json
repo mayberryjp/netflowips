@@ -1,37 +1,67 @@
 {
     "ip_address": "192.168.50.65",
-    "export_date": "2025-05-02T00:56:59.084224",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-03T11:49:33.530669",
     "host_info": {
-        "ip_address": "192.168.50.65",
+        "first_seen": "2025-05-01 16:51:59",
+        "last_seen": "[\"192.168.50.65\", \"216.239.35.12\", 60766, 123, 17, 1, 76, \"2025-05-01T16:46:33.470000+00:00\", \"2025-05-01T16:46:33.560000+00:00\", \"2025-05-01T16:51:40.098904+00:00\", 1]",
+        "times_seen": null,
+        "original_flow": null,
         "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
-        "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": "garminscale2",
-        "icon": "SCALE",
+        "mac_vendor": "NXDOMAIN",
+        "dhcp_hostname": "No OS fingerprint detected",
         "local_description": "Garmin Scale"
     },
     "dns_queries": [
-        "api.gcs.garmin.com",
-        "gold.garmin.com",
-        "time.google.com"
+        {
+            "domain": "api.gcs.garmin.com",
+            "times_queried": 2,
+            "first_query": "2025-05-01 16:46:58",
+            "last_query": "2025-05-01 16:46:58"
+        },
+        {
+            "domain": "gold.garmin.com",
+            "times_queried": 2,
+            "first_query": "2025-05-01 16:46:58",
+            "last_query": "2025-05-01 16:46:58"
+        },
+        {
+            "domain": "time.google.com",
+            "times_queried": 1,
+            "first_query": "2025-05-01 16:46:58",
+            "last_query": "2025-05-01 16:46:58"
+        }
     ],
     "flows": [
         {
             "destination": "104.16.8.45",
             "port": 443,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 16,
+            "total_bytes": 3301,
+            "first_seen": "2025-05-01T16:51:59.215600",
+            "last_seen": "2025-05-01T16:46:35.706000+00:00"
         },
         {
             "destination": "104.17.76.100",
             "port": 80,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 12,
+            "total_bytes": 938,
+            "first_seen": "2025-05-01T16:51:59.215492",
+            "last_seen": "2025-05-01T16:46:33.874000+00:00"
         },
         {
             "destination": "216.239.35.12",
             "port": 123,
-            "protocol": 17
+            "protocol": 17,
+            "flow_count": 1,
+            "total_packets": 1,
+            "total_bytes": 76,
+            "first_seen": "2025-05-01T16:51:59.214434",
+            "last_seen": "2025-05-01T16:46:33.470000+00:00"
         }
-    ]
+    ],
+    "actions": []
 }

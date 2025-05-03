@@ -1,33 +1,68 @@
 {
     "ip_address": "192.168.50.76",
-    "export_date": "2025-05-02T00:56:58.658211",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-03T11:49:33.288908",
     "host_info": {
-        "ip_address": "192.168.50.76",
+        "first_seen": "2025-04-26 10:51:36",
+        "last_seen": "[\"49.233.251.124\", \"192.168.50.76\", 11111, 63244, 6, 8142, 833791, \"2025-04-25T03:21:49.667000+00:00\", \"2025-04-26T10:48:49.973000+00:00\", \"2025-04-26T10:50:40.790696+00:00\", 1]",
+        "times_seen": null,
+        "original_flow": null,
         "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
-        "os_fingerprint": "Enlogic_embedded_None_92",
-        "lease_hostname": "Presence-Sensor-FP2-45D3",
-        "icon": "PRESENCE_SENSOR",
+        "mac_vendor": "Presence-Sensor-FP2-45D3.832-5.com.",
+        "dhcp_hostname": "Enlogic_embedded_None_92",
         "local_description": "Aqara FP2"
     },
     "dns_queries": [],
     "flows": [
         {
+            "destination": "49.233.251.124",
+            "port": 11111,
+            "protocol": 6,
+            "flow_count": 20,
+            "total_packets": 123954,
+            "total_bytes": 20685963,
+            "first_seen": "2025-05-02T14:14:46.909423",
+            "last_seen": "2025-04-21T12:50:00.085000+00:00"
+        },
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17,
+            "flow_count": 91,
+            "total_packets": 2266,
+            "total_bytes": 594512,
+            "first_seen": "2025-05-03 04:49:28",
+            "last_seen": "2025-04-23T10:42:07.418000+00:00"
+        },
+        {
+            "destination": "230.0.0.1",
+            "port": 10008,
+            "protocol": 17,
+            "flow_count": 108,
+            "total_packets": 924,
+            "total_bytes": 188496,
+            "first_seen": "2025-05-03 04:49:28",
+            "last_seen": "2025-04-23T10:41:19.610000+00:00"
+        },
+        {
             "destination": "49.233.237.221",
             "port": 5050,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 19,
+            "total_packets": 152,
+            "total_bytes": 9176,
+            "first_seen": "2025-04-28T17:35:57.405991",
+            "last_seen": "2025-04-28T16:30:07.639000+00:00"
         },
         {
             "destination": "49.232.217.183",
             "port": 11111,
-            "protocol": 6
-        },
-        {
-            "destination": "49.233.251.124",
-            "port": 11111,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 11,
+            "total_packets": 30,
+            "total_bytes": 3878,
+            "first_seen": "2025-04-28T16:38:37.141417",
+            "last_seen": "2025-04-28T16:31:18.350000+00:00"
         }
-    ]
+    ],
+    "actions": []
 }

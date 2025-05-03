@@ -1,40 +1,105 @@
 {
     "ip_address": "192.168.50.77",
-    "export_date": "2025-05-02T00:56:57.975965",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-03T11:49:32.243880",
     "host_info": {
-        "ip_address": "192.168.50.77",
+        "first_seen": "2025-04-25 08:59:32",
+        "last_seen": "[\"192.168.50.77\", \"224.0.0.251\", 0, 0, 2, 2, 92, \"2025-04-25T08:57:50.136000+00:00\", \"2025-04-25T08:57:50.223000+00:00\", \"2025-04-25T08:58:40.474547+00:00\", 1]",
+        "times_seen": null,
+        "original_flow": null,
         "mac_address": null,
-        "mac_vendor": null,
-        "dhcp_hostname": null,
-        "os_fingerprint": "Enlogic_embedded_None_92",
-        "lease_hostname": "Presence-Sensor-FP2-4749",
-        "icon": "PRESENCE_SENSOR",
+        "mac_vendor": "Presence-Sensor-FP2-4749.832-5.com.",
+        "dhcp_hostname": "Enlogic_embedded_None_92",
         "local_description": "Aqara FP2"
     },
     "dns_queries": [
-        "aiot-coap.aqara.cn"
+        {
+            "domain": "aiot-coap.aqara.cn",
+            "times_queried": 3,
+            "first_query": "2025-04-28 17:18:40",
+            "last_query": "2025-04-28 17:18:40"
+        }
     ],
     "flows": [
         {
-            "destination": "101.42.246.140",
+            "destination": "49.233.251.124",
             "port": 11111,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 5,
+            "total_packets": 116308,
+            "total_bytes": 20089911,
+            "first_seen": "2025-05-02T19:18:01.298432",
+            "last_seen": "2025-04-19T12:57:41.745000+00:00"
         },
         {
             "destination": "101.43.143.15",
             "port": 11111,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 17,
+            "total_packets": 34231,
+            "total_bytes": 5946966,
+            "first_seen": "2025-04-28T16:40:50.667632",
+            "last_seen": "2025-04-25T01:57:48.020000+00:00"
+        },
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17,
+            "flow_count": 82,
+            "total_packets": 16207,
+            "total_bytes": 4267649,
+            "first_seen": "2025-05-03 04:49:28",
+            "last_seen": "2025-04-23T10:42:07.400000+00:00"
+        },
+        {
+            "destination": "101.42.246.140",
+            "port": 11111,
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 11936,
+            "total_bytes": 2050890,
+            "first_seen": "2025-04-26T07:33:40.314221",
+            "last_seen": "2025-04-24T22:20:11.239000+00:00"
+        },
+        {
+            "destination": "230.0.0.1",
+            "port": 10008,
+            "protocol": 17,
+            "flow_count": 109,
+            "total_packets": 922,
+            "total_bytes": 188088,
+            "first_seen": "2025-05-03 04:49:28",
+            "last_seen": "2025-04-23T10:41:41.787000+00:00"
         },
         {
             "destination": "49.233.237.221",
             "port": 5050,
-            "protocol": 6
+            "protocol": 6,
+            "flow_count": 52,
+            "total_packets": 445,
+            "total_bytes": 25202,
+            "first_seen": "2025-04-28T17:57:57.878872",
+            "last_seen": "2025-04-24T22:20:11.807000+00:00"
         },
         {
-            "destination": "49.233.251.124",
-            "port": 11111,
-            "protocol": 6
+            "destination": "230.0.0.1",
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 4,
+            "total_packets": 8,
+            "total_bytes": 368,
+            "first_seen": "2025-04-26T06:34:30.120001",
+            "last_seen": "2025-04-24T22:20:11.728000+00:00"
+        },
+        {
+            "destination": "224.0.0.251",
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 4,
+            "total_packets": 7,
+            "total_bytes": 322,
+            "first_seen": "2025-04-26T06:34:30.120102",
+            "last_seen": "2025-04-24T22:20:12.114000+00:00"
         }
-    ]
+    ],
+    "actions": []
 }
