@@ -40,6 +40,7 @@ def os_fingerprint(ip_addresses, config_dict):
     results = []
 
     for ip in ip_addresses:
+        log_info(logger, f"[INFO] Scanning IP: {ip}")
         try:
             # Perform OS detection
             scan_result = scanner.scan(ip, arguments='-O')  # '-O' enables OS detection
