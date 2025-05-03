@@ -64,7 +64,7 @@ def export_client_definition(client_ip):
         dns_conn = sqlite3.connect(CONST_DNSQUERIES_DB)
         dns_cursor = dns_conn.cursor()
         dns_cursor.execute("""
-            SELECT domain, COUNT(*) as query_count, 
+            SELECT domain, sum(times_seen) as query_count, 
                    MAX(last_seen) as last_query,
                    MIN(first_seen) as first_query
             FROM pihole 
@@ -88,7 +88,7 @@ def export_client_definition(client_ip):
         flows_cursor = flows_conn.cursor()
         flows_cursor.execute("""
             SELECT dst_ip, dst_port, protocol,
-                   COUNT(*) as flow_count,
+                   sum(times_seen) as flow_count,
                    SUM(packets) as total_packets,
                    SUM(bytes) as total_bytes,
                    MAX(last_seen) as last_flow,
