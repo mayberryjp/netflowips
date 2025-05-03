@@ -246,6 +246,64 @@ def summarize_alerts_by_ip():
         log_error(logger, f"Unexpected error: {e}")
         return {"error": str(e)}
 
+@app.route('/api/alerts/recent', method=['GET'])
+def get_recent_alerts():
+    """
+    API endpoint to get the 100 most recent alerts.
+    Returns alerts sorted by last_seen timestamp in descending order.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+    
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Fetch 100 most recent alerts
+        cursor.execute("""
+            SELECT id, ip_address, flow, category, 
+                   alert_enrichment_1, alert_enrichment_2,
+                   times_seen, first_seen, last_seen, acknowledged
+            FROM alerts 
+            ORDER BY last_seen DESC 
+            LIMIT 100
+        """)
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        # Format the response
+        alerts = [{
+            "id": row[0],
+            "ip_address": row[1],
+            "flow": row[2],
+            "category": row[3],
+            "enrichment_1": row[4],
+            "enrichment_2": row[5],
+            "times_seen": row[6],
+            "first_seen": row[7],
+            "last_seen": row[8],
+            "acknowledged": bool(row[9])
+        } for row in rows]
+        
+        set_json_response()
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts")
+        return json.dumps(alerts, indent=2)
+        
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Database error fetching recent alerts: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get recent alerts: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
 # API for CONST_WHITELIST_DB
 @app.route('/api/whitelist', method=['GET', 'POST'])
 def whitelist():
