@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.54",
-    "export_date": "2025-05-03T11:49:31.627945",
+    "export_date": "2025-05-03T13:01:16.323456",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:21:31",
-        "last_seen": "[\"192.168.50.54\", \"224.0.23.0\", 2959, 3610, 17, 1, 46, \"2025-04-25T08:15:48.097000+00:00\", \"2025-04-25T08:15:48.097000+00:00\", \"2025-04-25T08:20:41.452459+00:00\", 1]",
-        "times_seen": "74:7a:90:bb:de:0c",
-        "original_flow": "Murata Manufacturing Co., Ltd.",
-        "mac_address": "rinnai.832-5.com",
-        "mac_vendor": "rinnai.832-5.com.",
-        "dhcp_hostname": "ZyXEL_ZyNOS_2.X_87",
+        "ip_address": "192.168.50.54",
+        "mac_address": "74:7a:90:bb:de:0c",
+        "mac_vendor": "Murata Manufacturing Co., Ltd.",
+        "dhcp_hostname": "rinnai.832-5.com",
+        "dns_hostname": "rinnai.832-5.com.",
+        "os_fingerprint": "ZyXEL_ZyNOS_2.X_87",
+        "lease_hostname": "rinnai",
+        "icon": "WATER_HEATER",
         "local_description": "Rinnai Water Heater"
     },
     "dns_queries": [
@@ -162,10 +164,10 @@
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 5490,
-            "total_packets": 5490,
-            "total_bytes": 253600,
-            "first_seen": "2025-05-03 11:48:01",
+            "flow_count": 5496,
+            "total_packets": 5496,
+            "total_bytes": 253876,
+            "first_seen": "2025-05-03 12:58:29",
             "last_seen": "2025-04-23T11:22:09.902000+00:00"
         },
         {

@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.173",
-    "export_date": "2025-05-03T11:49:26.067396",
+    "export_date": "2025-05-03T13:01:10.861614",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:15:55",
-        "last_seen": "[\"23.39.160.23\", \"192.168.50.173\", 443, 60850, 17, 16, 8796, \"2025-04-25T08:09:30.814000+00:00\", \"2025-04-25T08:10:01.135000+00:00\", \"2025-04-25T08:15:39.638089+00:00\", 1]",
-        "times_seen": "2c:7b:a0:da:f6:60",
-        "original_flow": "Intel Corporate",
-        "mac_address": "jrdesktop.832-5.com",
-        "mac_vendor": "jrdesktop.832-5.com.",
-        "dhcp_hostname": "No OS fingerprint detected",
+        "ip_address": "192.168.50.173",
+        "mac_address": "2c:7b:a0:da:f6:60",
+        "mac_vendor": "Intel Corporate",
+        "dhcp_hostname": "jrdesktop.832-5.com",
+        "dns_hostname": "jrdesktop.832-5.com.",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "jrdesktop",
+        "icon": "DESKTOP_COMPUTER",
         "local_description": "Windows HP Desktop Computer"
     },
     "dns_queries": [

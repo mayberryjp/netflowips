@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.51.255",
-    "export_date": "2025-05-03T11:49:32.063749",
+    "export_date": "2025-05-03T13:01:16.690949",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:24:51",
-        "last_seen": "[\"192.168.50.149\", \"192.168.51.255\", 138, 138, 17, 1, 229, \"2025-04-25T08:19:00.292000+00:00\", \"2025-04-25T08:19:00.292000+00:00\", \"2025-04-25T08:23:41.374263+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.51.255",
         "mac_address": null,
-        "mac_vendor": "NXDOMAIN",
-        "dhcp_hostname": "No OS fingerprint detected",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "NXDOMAIN",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null,
+        "icon": "BROADCAST_ADDRESS",
         "local_description": "Broadcast Address for 192.168.48.0/22"
     },
     "dns_queries": [],
@@ -235,6 +237,16 @@
         },
         {
             "destination": "192.168.49.80",
+            "port": 56140,
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 2,
+            "total_bytes": 80,
+            "first_seen": "2025-05-03 12:58:29",
+            "last_seen": "33310598"
+        },
+        {
+            "destination": "192.168.49.80",
             "port": 58022,
             "protocol": 6,
             "flow_count": 2,
@@ -312,6 +324,16 @@
             "total_bytes": 80,
             "first_seen": "2025-04-29T23:58:22.787230",
             "last_seen": "2025-04-29T23:55:02.831000+00:00"
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 63315,
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 2,
+            "total_bytes": 80,
+            "first_seen": "2025-05-03 11:57:16",
+            "last_seen": "29660745"
         },
         {
             "destination": "192.168.49.80",

@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.49",
-    "export_date": "2025-05-03T11:49:31.729169",
+    "export_date": "2025-05-03T13:01:16.430847",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:24:42",
-        "last_seen": "[\"192.168.50.49\", \"216.239.35.12\", 62405, 123, 17, 1, 76, \"2025-04-25T08:18:09.768000+00:00\", \"2025-04-25T08:18:09.846000+00:00\", \"2025-04-25T08:23:40.342262+00:00\", 1]",
-        "times_seen": "94:e6:86:6b:fd:34",
-        "original_flow": "Espressif Inc.",
-        "mac_address": "emporiavue.832-5.com",
-        "mac_vendor": "emporiavue.832-5.com.",
-        "dhcp_hostname": "Garmin_embedded_None_95",
+        "ip_address": "192.168.50.49",
+        "mac_address": "94:e6:86:6b:fd:34",
+        "mac_vendor": "Espressif Inc.",
+        "dhcp_hostname": "emporiavue.832-5.com",
+        "dns_hostname": "emporiavue.832-5.com.",
+        "os_fingerprint": "Garmin_embedded_None_95",
+        "lease_hostname": "emporiavue",
+        "icon": "ENERGY_MONITOR",
         "local_description": "Emporia Vue Gen 2"
     },
     "dns_queries": [
@@ -20,8 +22,8 @@
         },
         {
             "domain": "time.google.com",
-            "times_queried": 87,
-            "first_query": "2025-05-03 11:34:07",
+            "times_queried": 89,
+            "first_query": "2025-05-03 12:39:47",
             "last_query": "2025-04-27 13:49:31"
         },
         {
@@ -96,10 +98,10 @@
             "destination": "216.239.35.8",
             "port": 123,
             "protocol": 17,
-            "flow_count": 168,
-            "total_packets": 169,
-            "total_bytes": 12844,
-            "first_seen": "2025-05-03 11:41:05",
+            "flow_count": 171,
+            "total_packets": 172,
+            "total_bytes": 13072,
+            "first_seen": "2025-05-03 12:27:19",
             "last_seen": "2025-04-24T02:16:27.308000+00:00"
         },
         {
@@ -126,10 +128,10 @@
             "destination": "216.239.35.4",
             "port": 123,
             "protocol": 17,
-            "flow_count": 139,
-            "total_packets": 139,
-            "total_bytes": 10564,
-            "first_seen": "2025-05-03 05:41:40",
+            "flow_count": 141,
+            "total_packets": 141,
+            "total_bytes": 10716,
+            "first_seen": "2025-05-03 12:56:10",
             "last_seen": "2025-04-23T16:15:22.727000+00:00"
         },
         {

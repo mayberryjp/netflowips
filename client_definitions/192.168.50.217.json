@@ -1,21 +1,23 @@
 {
     "ip_address": "192.168.50.217",
-    "export_date": "2025-05-03T11:49:32.320386",
+    "export_date": "2025-05-03T13:01:16.946028",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 09:20:01",
-        "last_seen": "[\"192.168.50.217\", \"224.0.0.251\", 5353, 5353, 17, 1, 313, \"2025-04-25T09:14:59.515000+00:00\", \"2025-04-25T09:14:59.515000+00:00\", \"2025-04-25T09:19:40.987899+00:00\", 1]",
-        "times_seen": "fc:e8:c0:f8:78:a3",
-        "original_flow": "Espressif Inc.",
-        "mac_address": "slzb-06p7.local",
-        "mac_vendor": "slzb-06p7.local.",
-        "dhcp_hostname": "Garmin_embedded_None_88",
+        "ip_address": "192.168.50.217",
+        "mac_address": "fc:e8:c0:f8:78:a3",
+        "mac_vendor": "Espressif Inc.",
+        "dhcp_hostname": "slzb-06p7.local",
+        "dns_hostname": "slzb-06p7.local.",
+        "os_fingerprint": "Garmin_embedded_None_88",
+        "lease_hostname": "slzb-06p7",
+        "icon": "ZIGBEE_RADIO",
         "local_description": "SLZB-06P7 POE Adapter"
     },
     "dns_queries": [
         {
             "domain": "google.com",
-            "times_queried": 540,
-            "first_query": "2025-05-03 11:34:07",
+            "times_queried": 548,
+            "first_query": "2025-05-03 12:39:47",
             "last_query": "2025-04-27 11:46:58"
         },
         {
@@ -30,10 +32,10 @@
             "destination": "224.0.0.251",
             "port": 5353,
             "protocol": 17,
-            "flow_count": 239,
-            "total_packets": 294,
-            "total_bytes": 88821,
-            "first_seen": "2025-05-03 10:54:52",
+            "flow_count": 241,
+            "total_packets": 296,
+            "total_bytes": 89447,
+            "first_seen": "2025-05-03 12:47:54",
             "last_seen": "2025-04-23T11:45:40.802000+00:00"
         },
         {

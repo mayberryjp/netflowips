@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.49.100",
-    "export_date": "2025-05-03T11:49:33.497089",
+    "export_date": "2025-05-03T13:01:18.153254",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-29 13:11:34",
-        "last_seen": "[\"13.227.62.74\", \"192.168.49.100\", 443, 32966, 6, 29, 8363, \"2025-04-29T13:04:29.842000+00:00\", \"2025-04-29T13:08:30.210000+00:00\", \"2025-04-29T13:10:40.651731+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.49.100",
         "mac_address": null,
-        "mac_vendor": "NXDOMAIN",
-        "dhcp_hostname": "Linux_Linux_4.X_96",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "NXDOMAIN",
+        "os_fingerprint": "Linux_Linux_4.X_96",
+        "lease_hostname": null,
+        "icon": "SWITCH",
         "local_description": "QNAP QSW-M2116P-2T2S"
     },
     "dns_queries": [

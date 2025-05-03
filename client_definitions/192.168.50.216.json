@@ -1,21 +1,23 @@
 {
     "ip_address": "192.168.50.216",
-    "export_date": "2025-05-03T11:49:31.168545",
+    "export_date": "2025-05-03T13:01:15.866575",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:18:17",
-        "last_seen": "[\"54.69.37.156\", \"192.168.50.216\", 443, 53626, 6, 12, 1270, \"2025-04-25T08:15:37.347000+00:00\", \"2025-04-25T08:15:39.759000+00:00\", \"2025-04-25T08:17:40.196848+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.216",
         "mac_address": null,
-        "mac_vendor": "Outdoorlighting.832-5.com.",
-        "dhcp_hostname": "NodeMCU_embedded_None_92",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "Outdoorlighting.832-5.com.",
+        "os_fingerprint": "Grandstream_embedded_None_92",
+        "lease_hostname": "Outdoorlighting",
+        "icon": "LIGHT_CONTROLLER",
         "local_description": "Sunvie Outdoor Lighting Controller with Tuya Zigbee Relay"
     },
     "dns_queries": [
         {
             "domain": "a3.tuyaus.com",
-            "times_queried": 4,
-            "first_query": "2025-05-02 12:19:01",
+            "times_queried": 6,
+            "first_query": "2025-05-03 12:39:47",
             "last_query": "2025-04-27 23:01:13"
         },
         {
@@ -70,10 +72,10 @@
             "destination": "54.187.112.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 304,
-            "total_packets": 3083,
-            "total_bytes": 379290,
-            "first_seen": "2025-05-02T11:35:39.457635",
+            "flow_count": 307,
+            "total_packets": 3114,
+            "total_bytes": 382994,
+            "first_seen": "2025-05-03 12:36:36",
             "last_seen": "2025-04-23T11:38:51.924000+00:00"
         },
         {
@@ -85,6 +87,16 @@
             "total_bytes": 366927,
             "first_seen": "2025-05-03T00:05:16.996834",
             "last_seen": "10971875"
+        },
+        {
+            "destination": "35.161.158.54",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 994,
+            "total_bytes": 78581,
+            "first_seen": "2025-05-03 11:56:06",
+            "last_seen": "5365"
         },
         {
             "destination": "34.218.147.23",

@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.65",
-    "export_date": "2025-05-03T11:49:33.530669",
+    "export_date": "2025-05-03T13:01:18.198986",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-05-01 16:51:59",
-        "last_seen": "[\"192.168.50.65\", \"216.239.35.12\", 60766, 123, 17, 1, 76, \"2025-05-01T16:46:33.470000+00:00\", \"2025-05-01T16:46:33.560000+00:00\", \"2025-05-01T16:51:40.098904+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.65",
         "mac_address": null,
-        "mac_vendor": "NXDOMAIN",
-        "dhcp_hostname": "No OS fingerprint detected",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "NXDOMAIN",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "garminscale2",
+        "icon": "SCALE",
         "local_description": "Garmin Scale"
     },
     "dns_queries": [

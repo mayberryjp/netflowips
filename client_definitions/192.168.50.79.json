@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.79",
-    "export_date": "2025-05-03T11:49:33.389333",
+    "export_date": "2025-05-03T13:01:18.019934",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-27 22:44:32",
-        "last_seen": "[\"43.138.77.31\", \"192.168.50.79\", 11111, 64293, 6, 9906, 1249025, \"2025-04-25T03:21:49.927000+00:00\", \"2025-04-27T22:41:21.999000+00:00\", \"2025-04-27T22:43:40.027563+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.79",
         "mac_address": null,
-        "mac_vendor": "Presence-Sensor-FP2-83FF.832-5.com.",
-        "dhcp_hostname": "Enlogic_embedded_None_92",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "Presence-Sensor-FP2-83FF.832-5.com.",
+        "os_fingerprint": "Enlogic_embedded_None_92",
+        "lease_hostname": "Presence-Sensor-FP2-83FF",
+        "icon": "PRESENCE_SENSOR",
         "local_description": "Aqara FP2"
     },
     "dns_queries": [
@@ -34,11 +36,11 @@
             "destination": "101.42.246.140",
             "port": 11111,
             "protocol": 6,
-            "flow_count": 2,
-            "total_packets": 29804,
-            "total_bytes": 4613231,
-            "first_seen": "2025-05-02T11:52:54.251654",
-            "last_seen": "2025-04-28T16:43:07.365000+00:00"
+            "flow_count": 3,
+            "total_packets": 32111,
+            "total_bytes": 4958918,
+            "first_seen": "2025-05-03 11:56:06",
+            "last_seen": "11247"
         },
         {
             "destination": "224.0.0.251",

@@ -1,21 +1,23 @@
 {
     "ip_address": "192.168.50.35",
-    "export_date": "2025-05-03T11:49:32.799401",
+    "export_date": "2025-05-03T13:01:17.421895",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 10:01:56",
-        "last_seen": "[\"162.159.200.1\", \"192.168.50.35\", 123, 123, 17, 1, 76, \"2025-04-25T09:56:28.941000+00:00\", \"2025-04-25T09:56:29.034000+00:00\", \"2025-04-25T10:01:40.358186+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.35",
         "mac_address": null,
-        "mac_vendor": "racio.832-5.com.",
-        "dhcp_hostname": "Xerox_embedded_None_88",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "racio.832-5.com.",
+        "os_fingerprint": "Xerox_embedded_None_88",
+        "lease_hostname": "racio",
+        "icon": "SPRINKLER_CONTROLLER",
         "local_description": "Rachio Sprinkler Controller"
     },
     "dns_queries": [
         {
             "domain": "pool.ntp.org",
-            "times_queried": 79,
-            "first_query": "2025-05-03 10:15:50",
+            "times_queried": 81,
+            "first_query": "2025-05-03 12:39:47",
             "last_query": "2025-04-27 12:48:15"
         },
         {
@@ -70,10 +72,10 @@
             "destination": "162.159.200.123",
             "port": 123,
             "protocol": 17,
-            "flow_count": 36,
-            "total_packets": 38,
-            "total_bytes": 2888,
-            "first_seen": "2025-05-03 04:06:38",
+            "flow_count": 37,
+            "total_packets": 39,
+            "total_bytes": 2964,
+            "first_seen": "2025-05-03 12:06:30",
             "last_seen": "2025-04-24T07:56:07.280000+00:00"
         },
         {

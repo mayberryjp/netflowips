@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.40",
-    "export_date": "2025-05-03T11:49:31.994593",
+    "export_date": "2025-05-03T13:01:16.599486",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:24:46",
-        "last_seen": "[\"192.168.50.40\", \"255.255.255.255\", 49154, 6667, 17, 2, 432, \"2025-04-25T08:18:34.499000+00:00\", \"2025-04-25T08:18:39.472000+00:00\", \"2025-04-25T08:23:41.039186+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.40",
         "mac_address": null,
-        "mac_vendor": "plug1.832-5.com.",
-        "dhcp_hostname": "NodeMCU_embedded_None_92",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "plug1.832-5.com.",
+        "os_fingerprint": "NodeMCU_embedded_None_92",
+        "lease_hostname": "plug1",
+        "icon": "PLUG",
         "local_description": "Tuya Smart Plug"
     },
     "dns_queries": [],

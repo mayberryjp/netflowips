@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.107",
-    "export_date": "2025-05-03T11:49:29.453517",
+    "export_date": "2025-05-03T13:01:14.168596",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-25 08:16:04",
-        "last_seen": "[\"17.253.69.204\", \"192.168.50.107\", 443, 55446, 6, 13, 7319, \"2025-04-25T08:11:18.398000+00:00\", \"2025-04-25T08:13:14.875000+00:00\", \"2025-04-25T08:15:39.758608+00:00\", 1]",
-        "times_seen": "c4:52:4f:a8:f5:33",
-        "original_flow": "Apple, Inc.",
-        "mac_address": "thao-iphone.832-5.com",
-        "mac_vendor": "thao-iphone.832-5.com.",
-        "dhcp_hostname": "Apple_OS X_10.11.X_97",
+        "ip_address": "192.168.50.107",
+        "mac_address": "c4:52:4f:a8:f5:33",
+        "mac_vendor": "Apple, Inc.",
+        "dhcp_hostname": "thao-iphone.832-5.com",
+        "dns_hostname": "thao-iphone.832-5.com.",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "thao-iphone",
+        "icon": "MOBILE_PHONE",
         "local_description": "Thao's iPhone"
     },
     "dns_queries": [

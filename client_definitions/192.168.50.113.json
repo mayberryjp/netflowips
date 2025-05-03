@@ -1,14 +1,16 @@
 {
     "ip_address": "192.168.50.113",
-    "export_date": "2025-05-03T11:49:33.461214",
+    "export_date": "2025-05-03T13:01:18.113609",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
-        "first_seen": "2025-04-27 22:45:39",
-        "last_seen": "[\"13.124.139.5\", \"192.168.50.113\", 9090, 38316, 6, 4845, 680270, \"2025-04-25T03:22:17.205000+00:00\", \"2025-04-27T22:42:10.337000+00:00\", \"2025-04-27T22:44:40.600832+00:00\", 1]",
-        "times_seen": null,
-        "original_flow": null,
+        "ip_address": "192.168.50.113",
         "mac_address": null,
-        "mac_vendor": "NXDOMAIN",
-        "dhcp_hostname": "No OS fingerprint detected",
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "NXDOMAIN",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "coway",
+        "icon": "AIR_PURIFIER",
         "local_description": "Coway Air Purifier"
     },
     "dns_queries": [
