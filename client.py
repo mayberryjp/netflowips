@@ -19,93 +19,110 @@ class ActionType(Enum):
 
 def export_client_definition(client_ip):
     """
-    Export client information to a JSON file.
+    Export client information to JSON format.
+    Includes:
+    - Host information
+    - DNS query history with counts
+    - Flow statistics with aggregated bytes/packets
     
     Args:
-        client_ip (str): IP address of the client to export
-        
-    Creates a JSON file with:
-    - Local host information
-    - DNS queries history
-    - Network flow history
-    - Recommended actions
+        client_ip (str): IP address of the client
     """
     logger = logging.getLogger(__name__)
-
-    instance_identifier = get_machine_unique_identifier_from_db()
-
     
     try:
-        # Create output directory if it doesn't exist
-        
-        # Initialize the client data structure
         client_data = {
             "ip_address": client_ip,
             "export_date": datetime.now().isoformat(),
-            "instance_identifier": instance_identifier
+            "host_info": None,
+            "dns_queries": [],
+            "flows": [],
+            "actions": []
         }
         
         # Get host information from localhosts.db
         localhosts_conn = sqlite3.connect(CONST_LOCALHOSTS_DB)
         localhosts_cursor = localhosts_conn.cursor()
         localhosts_cursor.execute(
-            "SELECT ip_address,mac_address,mac_vendor,dhcp_hostname, os_fingerprint, lease_hostname, icon, local_description FROM localhosts WHERE ip_address = ?", 
+            "SELECT * FROM localhosts WHERE ip_address = ?", 
             (client_ip,)
         )
         host_record = localhosts_cursor.fetchone()
         if host_record:
             client_data["host_info"] = {
-                "ip_address": host_record[0],
-                "mac_address": host_record[1],
-                "mac_vendor": host_record[2],
-                "dhcp_hostname": host_record[3],
-                "os_fingerprint": host_record[4],
-                "lease_hostname": host_record[5],
-                "icon": host_record[6],
-                "local_description": host_record[7]
+                "first_seen": host_record[1],
+                "last_seen": host_record[2],
+                "times_seen": host_record[3],
+                "original_flow": host_record[4],
+                "mac_address": host_record[5],
+                "mac_vendor": host_record[6],
+                "dhcp_hostname": host_record[7],
+                "local_description": host_record[8]
             }
         
-        # Get DNS queries from dnsqueries.db
+        # Get DNS queries with counts from dnsqueries.db
         dns_conn = sqlite3.connect(CONST_DNSQUERIES_DB)
         dns_cursor = dns_conn.cursor()
         dns_cursor.execute("""
-            SELECT domain 
+            SELECT domain, COUNT(*) as query_count, 
+                   MAX(last_seen) as last_query,
+                   MIN(first_seen) as first_query
             FROM pihole 
-            WHERE client_ip = ? 
+            WHERE client_ip = ?
             GROUP BY domain
+            ORDER BY query_count DESC
         """, (client_ip,))
-        client_data["dns_queries"] = [row[0] for row in dns_cursor.fetchall()]
         
-        # Get flows from allflows.db
+        client_data["dns_queries"] = [
+            {
+                "domain": row[0],
+                "times_queried": row[1],
+                "first_query": row[2],
+                "last_query": row[3]
+            }
+            for row in dns_cursor.fetchall()
+        ]
+        
+        # Get flows with aggregated statistics from allflows.db
         flows_conn = sqlite3.connect(CONST_ALLFLOWS_DB)
         flows_cursor = flows_conn.cursor()
         flows_cursor.execute("""
-            SELECT DISTINCT dst_ip, dst_port, protocol
+            SELECT dst_ip, dst_port, protocol,
+                   COUNT(*) as flow_count,
+                   SUM(packets) as total_packets,
+                   SUM(bytes) as total_bytes,
+                   MAX(last_seen) as last_flow,
+                   MIN(flow_start) as first_flow
             FROM allflows 
             WHERE src_ip = ?
-            and dst_port < src_port
-            ORDER BY last_seen DESC
+            GROUP BY dst_ip, dst_port, protocol
+            ORDER BY total_bytes DESC
         """, (client_ip,))
+        
         client_data["flows"] = [
             {
                 "destination": row[0],
                 "port": row[1],
-                "protocol": row[2]
+                "protocol": row[2],
+                "flow_count": row[3],
+                "total_packets": row[4],
+                "total_bytes": row[5],
+                "first_seen": row[6],
+                "last_seen": row[7]
             }
             for row in flows_cursor.fetchall()
         ]
         
-       # log_info(logger, f"[INFO] Exported client definition for {client_ip}")
+        return client_data
         
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to export client definition for {client_ip}: {e}")
+        return None
     finally:
         # Close all database connections
         for conn in [localhosts_conn, dns_conn, flows_conn]:
             if 'conn' in locals() and conn:
                 conn.close()
-
-    return client_data
 
 def upload_client_definition(ip_address, client_data, machine_id):
     """
