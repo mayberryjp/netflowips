@@ -65,7 +65,7 @@ def main():
         try: 
             if config_dict.get('StorePiHoleDnsQueryHistory', 0) > 0:
                 log_info(logger, "[INFO] Fetching pihole dns query history...")
-                get_pihole_ftl_logs(10000,config_dict)
+                get_pihole_ftl_logs(20000,config_dict)
                 log_info(logger, "[INFO] Pihole dns query history finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
