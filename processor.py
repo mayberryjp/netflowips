@@ -52,7 +52,7 @@ def process_data():
                     reputation_data = load_reputation_data(config_dict)
                 
                 # process whitelisted entries and remove from detection rows
-                filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11]).lower()]
+                filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11])]
 
                 log_info(logger, f"[INFO] After filtering IgnoreList we're left with {len(filtered_rows)} rows.")
                 if config_dict.get('RemoveBroadcastFlows', 0) >0:
