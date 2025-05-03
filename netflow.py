@@ -30,7 +30,7 @@ def update_newflow(record):
             flow_end = excluded.flow_end,
             last_seen = excluded.last_seen,
             times_seen = times_seen + 1
-    ''', (record['src_ip'], record['dst_ip'], record['src_port'], record['dst_port'],record['protocol'], record['packets'], record['bytes'], record['flow_start'], record['flow_end'], now,  record['tags']))
+    ''', (record['src_ip'], record['dst_ip'], record['src_port'], record['dst_port'],record['protocol'], record['packets'], record['bytes'], record['start_time'], record['end_time'], now,  record['tags']))
 
     conn.commit()
     conn.close()
@@ -112,6 +112,8 @@ def handle_netflow_v5():
                         unix_secs - ((sys_uptime - record['end_time']) / 1000),
                         tz=timezone.utc
                     ).isoformat()
+
+                    #log_info(logger, f"[INFO] Flow record: {record}")
                     
                     record = apply_tags(record, whitelist)
 

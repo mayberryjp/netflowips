@@ -253,7 +253,7 @@ def get_whitelist():
         """)
         whitelist = cursor.fetchall()
 
-        log_info(logger, f"[INFO] Retrieved {len(whitelist)} active whitelist entries")
+        #log_info(logger, f"[INFO] Retrieved {len(whitelist)} active whitelist entries")
         
         return whitelist
 
