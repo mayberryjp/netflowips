@@ -74,7 +74,8 @@ def update_allflows(rows, config_dict):
                         bytes = bytes + excluded.bytes,
                         flow_end = excluded.flow_end,
                         times_seen = times_seen + 1,
-                        last_seen = datetime('now', 'localtime')
+                        last_seen = datetime('now', 'localtime'),
+                        tags = excluded.tags
                 """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, tags))
             allflows_conn.commit()
             log_info(logger, f"[INFO] Updated {CONST_ALLFLOWS_DB} with {len(rows)} rows.")

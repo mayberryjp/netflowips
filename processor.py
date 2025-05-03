@@ -40,6 +40,8 @@ def process_data():
                 if (config_dict['CleanNewFlows'] == 1):
                     delete_all_records(CONST_NEWFLOWS_DB)
 
+                log_info(logger,f"[INFO] Processing {len(rows)} rows.")
+
                 # Pass the rows to update_all_flows
                 update_allflows(rows, config_dict)
 
@@ -50,8 +52,9 @@ def process_data():
                     reputation_data = load_reputation_data(config_dict)
                 
                 # process whitelisted entries and remove from detection rows
-                filtered_rows = [row for row in rows if 'whitelist' not in str(row[11]).lower()]
+                filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11]).lower()]
 
+                log_info(logger, f"[INFO] After filtering IgnoreList we're left with {len(filtered_rows)} rows.")
                 if config_dict.get('RemoveBroadcastFlows', 0) >0:
                     remove_broadcast_flows(filtered_rows, config_dict)
 

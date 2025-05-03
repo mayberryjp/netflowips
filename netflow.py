@@ -63,7 +63,7 @@ def parse_netflow_v5_record(data, offset):
         'dst_as': fields[15],
         'src_mask': fields[16],
         'dst_mask': fields[17],
-        'tags': None,
+        'tags': "",
         'last_seen': datetime.now().isoformat(),
         'times_seen': 1
     }

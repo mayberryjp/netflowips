@@ -35,7 +35,7 @@ def tag_whitelist(record, whitelist_entries):
 
         if src_match and dst_match and port_match and protocol_match:
             #log_info(logger, f"[INFO] Row is whitelisted with ID: {whitelist_id}")
-            return f"whitelist;whitelist_{whitelist_id}"
+            return f"IgnoreList;IgnoreList_{whitelist_id};"
     
     #log_info(logger, "[INFO] Row is not whitelisted")
     return None
@@ -54,6 +54,6 @@ def apply_tags(record, whitelist_entries):
 
     tag = tag_whitelist(record, whitelist_entries)
     if tag:
-        record['tags'] += f";{tag}"
+        record['tags'] += f"{tag}"
 
     return record
