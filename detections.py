@@ -1329,7 +1329,7 @@ def detect_high_bandwidth_flows(rows, config_dict):
                 send_telegram_message(message, stats["flows"])
                 log_alert_to_db(
                     ip,
-                    stats["flows"],
+                    stats["flows"][-1],
                     "High Bandwidth Flow Detected",
                     "Aggregate",
                     f"Packets: {total_packets}, Bytes: {total_bytes}",
@@ -1339,7 +1339,7 @@ def detect_high_bandwidth_flows(rows, config_dict):
             elif config_dict.get("HighBandwidthFlowDetection") == 1:
                 log_alert_to_db(
                     ip,
-                    stats["flows"],
+                    stats["flows"][-1],
                     "High Bandwidth Flow Detected",
                     "Aggregate",
                     f"Packets: {total_packets}, Bytes: {total_bytes}",
