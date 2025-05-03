@@ -11,6 +11,7 @@ import traceback
 import uuid
 import hashlib
 from const import IS_CONTAINER, CONST_SITE
+from config import get_config_settings_detached
 
 if (IS_CONTAINER):
     SITE = os.getenv("SITE", CONST_SITE)
@@ -41,6 +42,31 @@ def log_error(logger, message):
     formatted_message = f"[{timestamp}] {script_name}[/{file_name}/{line_number}] {message}"
     print(formatted_message)
     logger.error(formatted_message)
+
+    config_dict = get_config_settings_detached()
+
+    if config_dict['SendErrorsToCloudApi']  == 1:
+        # Send the error message to the cloud API
+        try:
+            import requests
+            url = f"https://api.homelabids.com/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
+            payload = {
+                "error_message": message,
+                "script_name": script_name,
+                "file_name": file_name,
+                "timestamp": timestamp,
+                "site": SITE,
+                "line_number": line_number,
+                "machine_unique_identiifer": config_dict['MachineUniqueIdentifier']
+            }
+            response = requests.post(url, json=payload)
+            if response.status_code == 200:
+                log_info(logger, "[INFO] Error reported to cloud API successfully.")
+            else:
+                log_warn(logger, f"[WARN] Failed to report error to cloud API: {response.status_code}")
+        except Exception as e:
+            log_warn(logger, f"[WARN] Failed to send error report to cloud API: {e}")
+
     if SITE == 'TESTPPE':
         exit(1)
 

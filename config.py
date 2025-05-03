@@ -1,0 +1,27 @@
+import sqlite3
+from const import CONST_CONFIG_DB, CONST_LOCALHOSTS_DB, CONST_DNSQUERIES_DB, CONST_ALLFLOWS_DB
+import logging
+
+def get_config_settings_detached():
+    """Read configuration settings from the configuration database into a dictionary."""
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db_detached(CONST_CONFIG_DB)
+        if not conn:
+            return None
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM configuration")
+        config_dict = dict(cursor.fetchall())
+        conn.close()
+        return config_dict
+    except sqlite3.Error as e:
+        return None
+    
+def connect_to_db_detached(DB_NAME):
+    """Establish a connection to the specified database."""
+    logger = logging.getLogger(__name__)
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        return conn
+    except sqlite3.Error as e:
+        return None

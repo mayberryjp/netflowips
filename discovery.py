@@ -11,7 +11,6 @@ from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_d
 from integrations.nmap_fingerprint import os_fingerprint
 from utils import get_usable_ips
 
-
 def do_discovery():
     logger = logging.getLogger(__name__)
 
