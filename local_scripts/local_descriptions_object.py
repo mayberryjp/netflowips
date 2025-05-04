@@ -219,7 +219,7 @@ LOCAL_DESCRIPTIONS = [
         "api_endpoint": "http://192.168.49.80:8044",
         "ip_address": "192.168.50.81",
         "category": "BLUETOOTH_RADIO",
-        "local_description": "192.168.50.81"
+        "local_description": "ESP32 Bluetooth Proxy"
     },
     {
         "api_endpoint": "http://192.168.49.80:8044",
