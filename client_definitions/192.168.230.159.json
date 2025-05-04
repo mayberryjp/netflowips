@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.159",
-    "export_date": "2025-05-03T13:20:38.277002",
+    "export_date": "2025-05-04T06:54:50.431098",
     "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
     "host_info": {
         "ip_address": "192.168.230.159",
@@ -8,7 +8,7 @@
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "electricity_meter.832-5.com.",
-        "os_fingerprint": "NodeMCU_embedded_None_92",
+        "os_fingerprint": "Espressif_embedded_None_92",
         "lease_hostname": "electricity_meter",
         "icon": "ENERGY_MONITOR",
         "local_description": "Tuya Electricity Meter"
@@ -19,10 +19,10 @@
             "destination": "255.255.255.255",
             "port": 6667,
             "protocol": 17,
-            "flow_count": 787,
-            "total_packets": 130709,
-            "total_bytes": 30324488,
-            "first_seen": "2025-05-03 12:30:53",
+            "flow_count": 846,
+            "total_packets": 140888,
+            "total_bytes": 32686016,
+            "first_seen": "2025-05-04 05:59:52",
             "last_seen": "2025-04-23T12:09:49.407000+00:00"
         },
         {
@@ -46,6 +46,16 @@
             "last_seen": "2025-04-27T18:09:33.578000+00:00"
         },
         {
+            "destination": "34.213.103.51",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 22786,
+            "total_bytes": 2585795,
+            "first_seen": "2025-05-03 18:17:31",
+            "last_seen": "1238011174"
+        },
+        {
             "destination": "35.161.158.54",
             "port": 8886,
             "protocol": 6,
@@ -59,9 +69,9 @@
             "destination": "54.69.37.156",
             "port": 443,
             "protocol": 6,
-            "flow_count": 311,
-            "total_packets": 3439,
-            "total_bytes": 400432,
+            "flow_count": 324,
+            "total_packets": 3576,
+            "total_bytes": 416824,
             "first_seen": "2025-05-03T03:27:07.016999",
             "last_seen": "1448189540"
         },
@@ -69,31 +79,31 @@
             "destination": "54.187.112.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 237,
-            "total_packets": 2575,
-            "total_bytes": 303004,
-            "first_seen": "2025-04-30T17:58:59.967964",
-            "last_seen": "2025-04-23T11:54:53.700000+00:00"
+            "flow_count": 269,
+            "total_packets": 2919,
+            "total_bytes": 343756,
+            "first_seen": "2025-05-04 06:51:39",
+            "last_seen": "1497706975"
         },
         {
             "destination": "52.35.54.49",
             "port": 443,
             "protocol": 6,
-            "flow_count": 5,
-            "total_packets": 59,
-            "total_bytes": 5204,
-            "first_seen": "2025-04-30T18:14:37.838692",
-            "last_seen": "2025-04-24T18:08:42.500000+00:00"
+            "flow_count": 6,
+            "total_packets": 73,
+            "total_bytes": 6346,
+            "first_seen": "2025-05-03 18:14:22",
+            "last_seen": "1497244887"
         },
         {
             "destination": "35.164.57.66",
             "port": 443,
             "protocol": 6,
-            "flow_count": 1,
-            "total_packets": 13,
-            "total_bytes": 1096,
-            "first_seen": "2025-04-24T18:28:08.229118",
-            "last_seen": "2025-04-24T18:24:08.740000+00:00"
+            "flow_count": 2,
+            "total_packets": 23,
+            "total_bytes": 2054,
+            "first_seen": "2025-05-03 18:23:48",
+            "last_seen": "1497705978"
         }
     ],
     "actions": []

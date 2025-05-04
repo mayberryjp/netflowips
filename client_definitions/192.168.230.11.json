@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.11",
-    "export_date": "2025-05-03T13:20:40.281251",
+    "export_date": "2025-05-04T06:54:53.930375",
     "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
     "host_info": {
         "ip_address": "192.168.230.11",
@@ -16,14 +16,14 @@
     "dns_queries": [
         {
             "domain": "google.com",
-            "times_queried": 325,
-            "first_query": "2025-05-03 13:00:56",
+            "times_queried": 394,
+            "first_query": "2025-05-04 06:27:41",
             "last_query": "2025-04-27 12:05:27"
         },
         {
             "domain": "updates.smlight.tech",
-            "times_queried": 4,
-            "first_query": "2025-05-02 14:24:57",
+            "times_queried": 5,
+            "first_query": "2025-05-03 15:03:46",
             "last_query": "2025-04-27 14:08:08"
         }
     ],
@@ -32,11 +32,11 @@
             "destination": "45.83.192.98",
             "port": 443,
             "protocol": 6,
-            "flow_count": 10,
-            "total_packets": 1853,
-            "total_bytes": 91823,
-            "first_seen": "2025-05-02T14:22:03.759546",
-            "last_seen": "2025-04-23T13:27:05.403000+00:00"
+            "flow_count": 11,
+            "total_packets": 1866,
+            "total_bytes": 93047,
+            "first_seen": "2025-05-03 14:23:47",
+            "last_seen": "1483295235"
         },
         {
             "destination": "192.168.10.2",

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.77",
-    "export_date": "2025-05-03T13:01:16.870273",
+    "export_date": "2025-05-04T06:46:32.934884",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.77",
@@ -8,7 +8,7 @@
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "Presence-Sensor-FP2-4749.832-5.com.",
-        "os_fingerprint": "Ocean Signal_embedded_None_91",
+        "os_fingerprint": "Enlogic_embedded_None_92",
         "lease_hostname": "Presence-Sensor-FP2-4749",
         "icon": "PRESENCE_SENSOR",
         "local_description": "Aqara FP2"
@@ -46,10 +46,10 @@
             "destination": "224.0.0.251",
             "port": 5353,
             "protocol": 17,
-            "flow_count": 82,
-            "total_packets": 16207,
-            "total_bytes": 4267649,
-            "first_seen": "2025-05-03 04:49:28",
+            "flow_count": 83,
+            "total_packets": 18461,
+            "total_bytes": 4865917,
+            "first_seen": "2025-05-03 21:38:45",
             "last_seen": "2025-04-23T10:42:07.400000+00:00"
         },
         {

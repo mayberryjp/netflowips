@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.111",
-    "export_date": "2025-05-03T13:01:16.905412",
+    "export_date": "2025-05-04T06:46:32.948867",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.111",
@@ -16,14 +16,14 @@
     "dns_queries": [
         {
             "domain": "ping.ui.com",
-            "times_queried": 46,
-            "first_query": "2025-05-03 12:39:47",
+            "times_queried": 52,
+            "first_query": "2025-05-04 06:10:14",
             "last_query": "2025-04-27 12:48:15"
         },
         {
             "domain": "trace.svc.ui.com",
-            "times_queried": 4,
-            "first_query": "2025-04-29 23:02:33",
+            "times_queried": 6,
+            "first_query": "2025-05-03 21:55:47",
             "last_query": "2025-04-29 19:58:28"
         }
     ],
@@ -32,40 +32,40 @@
             "destination": "239.254.127.63",
             "port": 48000,
             "protocol": 17,
-            "flow_count": 416,
-            "total_packets": 1311,
-            "total_bytes": 144588,
-            "first_seen": "2025-05-03 12:19:12",
+            "flow_count": 443,
+            "total_packets": 1416,
+            "total_bytes": 156192,
+            "first_seen": "2025-05-04 06:29:22",
             "last_seen": "2025-04-23T11:37:01.931000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 10001,
             "protocol": 17,
-            "flow_count": 18,
-            "total_packets": 18,
-            "total_bytes": 6228,
-            "first_seen": "2025-05-02T12:28:52.302484",
+            "flow_count": 19,
+            "total_packets": 19,
+            "total_bytes": 6574,
+            "first_seen": "2025-05-03 21:42:13",
             "last_seen": "2025-04-25T06:09:05.455000+00:00"
         },
         {
             "destination": "1.1.1.1",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 22,
-            "total_packets": 44,
-            "total_bytes": 3696,
-            "first_seen": "2025-05-02T18:03:36.145856",
+            "flow_count": 23,
+            "total_packets": 46,
+            "total_bytes": 3864,
+            "first_seen": "2025-05-04 06:03:46",
             "last_seen": "2025-04-23T11:57:27.636000+00:00"
         },
         {
             "destination": "8.8.8.8",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 19,
-            "total_packets": 38,
-            "total_bytes": 3192,
-            "first_seen": "2025-05-03 12:04:11",
+            "flow_count": 21,
+            "total_packets": 42,
+            "total_bytes": 3528,
+            "first_seen": "2025-05-04 00:03:49",
             "last_seen": "2025-04-24T11:57:28.020000+00:00"
         },
         {
@@ -82,10 +82,10 @@
             "destination": "224.0.0.22",
             "port": 0,
             "protocol": 2,
-            "flow_count": 4,
-            "total_packets": 15,
-            "total_bytes": 690,
-            "first_seen": "2025-05-02T12:25:17.630747",
+            "flow_count": 5,
+            "total_packets": 19,
+            "total_bytes": 874,
+            "first_seen": "2025-05-03 21:38:45",
             "last_seen": "2025-04-28T08:12:08.557000+00:00"
         },
         {

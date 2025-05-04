@@ -365,4 +365,10 @@ LOCAL_DESCRIPTIONS = [
         "category": "SCALE",
         "local_description": "Garmin Scale"
     },
+    {
+        "api_endpoint": "http://192.168.49.80:8044",
+        "ip_address": "192.168.50.31",
+        "category": "PRINTER",
+        "local_description": "Canon Printer"
+    },
 ]

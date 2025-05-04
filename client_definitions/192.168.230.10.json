@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.10",
-    "export_date": "2025-05-03T13:20:41.206334",
+    "export_date": "2025-05-04T06:54:54.461641",
     "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
     "host_info": {
         "ip_address": "192.168.230.10",
@@ -8,7 +8,7 @@
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "NXDOMAIN",
-        "os_fingerprint": "Microsoft_Windows_Vista_96",
+        "os_fingerprint": "HP_embedded_None_94",
         "lease_hostname": null,
         "icon": "SWITCH",
         "local_description": "Netgear GS308EPP POE Switch"

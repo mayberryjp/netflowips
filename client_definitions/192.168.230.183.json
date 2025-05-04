@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.183",
-    "export_date": "2025-05-03T13:20:38.652703",
+    "export_date": "2025-05-04T06:54:50.663698",
     "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
     "host_info": {
         "ip_address": "192.168.230.183",
@@ -16,8 +16,8 @@
     "dns_queries": [
         {
             "domain": "ping.ui.com",
-            "times_queried": 15,
-            "first_query": "2025-05-03 09:22:14",
+            "times_queried": 19,
+            "first_query": "2025-05-04 03:22:16",
             "last_query": "2025-04-27 15:09:33"
         }
     ],
@@ -26,30 +26,30 @@
             "destination": "239.254.127.63",
             "port": 48000,
             "protocol": 17,
-            "flow_count": 223,
-            "total_packets": 807,
-            "total_bytes": 87788,
-            "first_seen": "2025-05-03 10:40:17",
+            "flow_count": 239,
+            "total_packets": 873,
+            "total_bytes": 94996,
+            "first_seen": "2025-05-04 05:56:42",
             "last_seen": "2025-04-23T12:33:34.622000+00:00"
         },
         {
             "destination": "8.8.8.8",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 21,
-            "total_packets": 42,
-            "total_bytes": 3528,
-            "first_seen": "2025-05-03 09:05:16",
+            "flow_count": 22,
+            "total_packets": 44,
+            "total_bytes": 3696,
+            "first_seen": "2025-05-03 21:05:39",
             "last_seen": "2025-04-23T14:58:32.922000+00:00"
         },
         {
             "destination": "1.1.1.1",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 16,
-            "total_packets": 32,
-            "total_bytes": 2688,
-            "first_seen": "2025-05-02T21:04:53.761935",
+            "flow_count": 17,
+            "total_packets": 34,
+            "total_bytes": 2856,
+            "first_seen": "2025-05-04 03:05:27",
             "last_seen": "2025-04-24T20:58:31.836000+00:00"
         }
     ],

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.15",
-    "export_date": "2025-05-03T13:01:15.819619",
+    "export_date": "2025-05-04T06:46:32.339902",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.15",
@@ -16,14 +16,14 @@
     "dns_queries": [
         {
             "domain": "afus.apc.panasonic.com",
-            "times_queried": 7,
-            "first_query": "2025-05-02 13:21:10",
+            "times_queried": 8,
+            "first_query": "2025-05-03 13:41:50",
             "last_query": "2025-04-28 13:13:31"
         },
         {
             "domain": "ldcws.pcpf.panasonic.com",
-            "times_queried": 7,
-            "first_query": "2025-05-02 12:19:01",
+            "times_queried": 8,
+            "first_query": "2025-05-03 14:43:47",
             "last_query": "2025-04-27 23:01:13"
         }
     ],
@@ -32,40 +32,40 @@
             "destination": "20.191.171.212",
             "port": 443,
             "protocol": 6,
-            "flow_count": 9,
-            "total_packets": 114049,
-            "total_bytes": 18991222,
-            "first_seen": "2025-05-02T11:52:54.259130",
-            "last_seen": "2025-04-20T03:28:25.487000+00:00"
+            "flow_count": 11,
+            "total_packets": 117919,
+            "total_bytes": 19639656,
+            "first_seen": "2025-05-03 13:49:20",
+            "last_seen": "1171"
         },
         {
             "destination": "224.0.23.0",
             "port": 0,
             "protocol": 2,
-            "flow_count": 2905,
-            "total_packets": 17360,
-            "total_bytes": 798560,
-            "first_seen": "2025-05-03 13:00:48",
+            "flow_count": 3111,
+            "total_packets": 18667,
+            "total_bytes": 858682,
+            "first_seen": "2025-05-04 06:39:50",
             "last_seen": "2025-04-23T11:12:13.131000+00:00"
         },
         {
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 4733,
-            "total_packets": 4733,
-            "total_bytes": 217718,
-            "first_seen": "2025-05-03T00:16:49.334634",
+            "flow_count": 5091,
+            "total_packets": 5091,
+            "total_bytes": 234186,
+            "first_seen": "2025-05-04 06:44:59",
             "last_seen": "10010849"
         },
         {
             "destination": "20.27.125.158",
             "port": 443,
             "protocol": 6,
-            "flow_count": 8,
-            "total_packets": 137,
-            "total_bytes": 21570,
-            "first_seen": "2025-05-02T13:14:59.748039",
+            "flow_count": 9,
+            "total_packets": 156,
+            "total_bytes": 24439,
+            "first_seen": "2025-05-03 13:16:59",
             "last_seen": "2025-04-23T12:10:03.130000+00:00"
         }
     ],

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.13",
-    "export_date": "2025-05-03T13:01:14.125182",
+    "export_date": "2025-05-04T06:46:31.052780",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.13",
@@ -16,8 +16,8 @@
     "dns_queries": [
         {
             "domain": "jp-ldcws.pcpf.panasonic.com",
-            "times_queried": 11,
-            "first_query": "2025-05-03 12:39:47",
+            "times_queried": 12,
+            "first_query": "2025-05-03 14:43:47",
             "last_query": "2025-04-27 23:01:13"
         },
         {
@@ -28,8 +28,8 @@
         },
         {
             "domain": "ntp.anshin-home.jp",
-            "times_queried": 6,
-            "first_query": "2025-05-03 03:43:36",
+            "times_queried": 7,
+            "first_query": "2025-05-04 03:04:27",
             "last_query": "2025-04-28 03:06:20"
         }
     ],
@@ -38,30 +38,30 @@
             "destination": "20.210.59.191",
             "port": 443,
             "protocol": 6,
-            "flow_count": 12,
-            "total_packets": 55194,
-            "total_bytes": 6686002,
-            "first_seen": "2025-05-03 11:56:06",
+            "flow_count": 13,
+            "total_packets": 55489,
+            "total_bytes": 6722690,
+            "first_seen": "2025-05-03 13:49:20",
             "last_seen": "1000"
         },
         {
             "destination": "239.255.255.250",
             "port": 1900,
             "protocol": 17,
-            "flow_count": 506,
-            "total_packets": 4048,
-            "total_bytes": 1385428,
-            "first_seen": "2025-05-03 12:51:22",
+            "flow_count": 544,
+            "total_packets": 4352,
+            "total_bytes": 1489472,
+            "first_seen": "2025-05-04 06:35:11",
             "last_seen": "2025-04-23T11:00:00.548000+00:00"
         },
         {
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 409,
-            "total_packets": 409,
-            "total_bytes": 25159,
-            "first_seen": "2025-05-03T00:02:59.463549",
+            "flow_count": 432,
+            "total_packets": 432,
+            "total_bytes": 26703,
+            "first_seen": "2025-05-04 06:04:56",
             "last_seen": "11874754"
         },
         {
@@ -78,10 +78,10 @@
             "destination": "13.115.31.26",
             "port": 123,
             "protocol": 17,
-            "flow_count": 10,
-            "total_packets": 10,
-            "total_bytes": 760,
-            "first_seen": "2025-05-02T03:03:41.818937",
+            "flow_count": 11,
+            "total_packets": 11,
+            "total_bytes": 836,
+            "first_seen": "2025-05-04 03:03:26",
             "last_seen": "2025-04-25T00:57:08.735000+00:00"
         }
     ],

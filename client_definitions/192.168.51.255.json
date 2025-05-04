@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.51.255",
-    "export_date": "2025-05-03T13:01:16.690949",
+    "export_date": "2025-05-04T06:46:32.860835",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.51.255",
@@ -8,7 +8,7 @@
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "NXDOMAIN",
-        "os_fingerprint": "No OS fingerprint detected",
+        "os_fingerprint": "Canon_embedded_None_91",
         "lease_hostname": null,
         "icon": "BROADCAST_ADDRESS",
         "local_description": "Broadcast Address for 192.168.48.0/22"
@@ -24,6 +24,16 @@
             "total_bytes": 80,
             "first_seen": "2025-05-03 04:24:00",
             "last_seen": "2581590"
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 34734,
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 2,
+            "total_bytes": 80,
+            "first_seen": "2025-05-03 21:23:44",
+            "last_seen": "63599270"
         },
         {
             "destination": "192.168.49.80",
@@ -74,6 +84,26 @@
             "total_bytes": 80,
             "first_seen": "2025-04-30T08:18:06.529758",
             "last_seen": "2025-04-30T08:15:55.073000+00:00"
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 41571,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 2,
+            "total_bytes": 80,
+            "first_seen": "2025-05-04 05:45:18",
+            "last_seen": "93767635"
+        },
+        {
+            "destination": "192.168.49.80",
+            "port": 41573,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 2,
+            "total_bytes": 80,
+            "first_seen": "2025-05-04 05:45:18",
+            "last_seen": "93767686"
         },
         {
             "destination": "192.168.49.80",

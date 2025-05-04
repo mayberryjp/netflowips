@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.230.3",
-    "export_date": "2025-05-03T13:20:41.516342",
+    "export_date": "2025-05-04T06:54:54.715933",
     "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
     "host_info": {
         "ip_address": "192.168.230.3",
@@ -8,7 +8,7 @@
         "mac_vendor": "Reolink Innovation Limited",
         "dhcp_hostname": null,
         "dns_hostname": "NXDOMAIN",
-        "os_fingerprint": "Linux_Linux_2.6.X_96",
+        "os_fingerprint": "Linux_Linux_3.X_99",
         "lease_hostname": null,
         "icon": "IP_CAMERA",
         "local_description": "Reolink RLC-811A"
@@ -16,15 +16,21 @@
     "dns_queries": [
         {
             "domain": "devices-apis.reolink.com",
-            "times_queried": 9,
-            "first_query": "2025-05-03 05:15:07",
+            "times_queried": 12,
+            "first_query": "2025-05-04 05:25:54",
             "last_query": "2025-04-27 14:08:08"
         },
         {
             "domain": "pool.ntp.org",
-            "times_queried": 4,
-            "first_query": "2025-05-02 17:30:06",
+            "times_queried": 5,
+            "first_query": "2025-05-03 17:06:39",
             "last_query": "2025-04-27 17:12:15"
+        },
+        {
+            "domain": "homeassistant.farm.mayberry.farm",
+            "times_queried": 1,
+            "first_query": "2025-05-03 17:06:39",
+            "last_query": "2025-05-03 17:06:39"
         }
     ],
     "flows": [
@@ -37,6 +43,16 @@
             "total_bytes": 10900,
             "first_seen": "2025-05-03 13:11:29",
             "last_seen": "1479044018"
+        },
+        {
+            "destination": "54.87.149.120",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 4,
+            "total_packets": 56,
+            "total_bytes": 6192,
+            "first_seen": "2025-05-04 04:45:04",
+            "last_seen": "1448604299"
         },
         {
             "destination": "34.202.215.67",
@@ -59,6 +75,16 @@
             "last_seen": "2025-04-29T16:39:26.216000+00:00"
         },
         {
+            "destination": "239.255.255.250",
+            "port": 3702,
+            "protocol": 17,
+            "flow_count": 3,
+            "total_packets": 3,
+            "total_bytes": 3598,
+            "first_seen": "2025-05-03 17:06:25",
+            "last_seen": "1492986586"
+        },
+        {
             "destination": "18.214.169.145",
             "port": 443,
             "protocol": 6,
@@ -77,26 +103,6 @@
             "total_bytes": 3096,
             "first_seen": "2025-04-26T16:42:29.004020",
             "last_seen": "2025-04-26T04:38:56.966000+00:00"
-        },
-        {
-            "destination": "54.87.149.120",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 2,
-            "total_packets": 28,
-            "total_bytes": 3096,
-            "first_seen": "2025-05-03 04:42:48",
-            "last_seen": "1448604299"
-        },
-        {
-            "destination": "239.255.255.250",
-            "port": 3702,
-            "protocol": 17,
-            "flow_count": 2,
-            "total_packets": 2,
-            "total_bytes": 2549,
-            "first_seen": "2025-04-26T17:05:59.307200",
-            "last_seen": "2025-04-26T16:59:44.870000+00:00"
         },
         {
             "destination": "239.255.255.250",

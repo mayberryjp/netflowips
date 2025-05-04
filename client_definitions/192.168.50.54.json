@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.54",
-    "export_date": "2025-05-03T13:01:16.323456",
+    "export_date": "2025-05-04T06:46:32.660562",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.54",
@@ -16,26 +16,26 @@
     "dns_queries": [
         {
             "domain": "a2rui5814dkneb-ats.iot.ap-northeast-1.amazonaws.com",
-            "times_queried": 12,
-            "first_query": "2025-05-02 17:28:22",
+            "times_queried": 15,
+            "first_query": "2025-05-03 23:59:07",
             "last_query": "2025-04-27 17:54:38"
         },
         {
             "domain": "remocon-device-apigw.iot.rinnaijapan.cloud",
-            "times_queried": 8,
-            "first_query": "2025-05-02 17:28:22",
+            "times_queried": 9,
+            "first_query": "2025-05-03 17:49:08",
             "last_query": "2025-04-27 17:54:38"
         },
         {
             "domain": "ntp.nict.jp",
-            "times_queried": 7,
-            "first_query": "2025-05-02 17:28:22",
+            "times_queried": 8,
+            "first_query": "2025-05-03 17:49:08",
             "last_query": "2025-04-27 17:54:38"
         },
         {
             "domain": "devicesoft-version-cf.iot.rinnaijapan.cloud",
-            "times_queried": 6,
-            "first_query": "2025-05-02 17:28:22",
+            "times_queried": 7,
+            "first_query": "2025-05-03 17:49:08",
             "last_query": "2025-04-27 17:54:38"
         }
     ],
@@ -114,10 +114,10 @@
             "destination": "3.112.187.131",
             "port": 8883,
             "protocol": 6,
-            "flow_count": 1,
-            "total_packets": 9869,
-            "total_bytes": 971857,
-            "first_seen": "2025-05-02T11:52:54.249166",
+            "flow_count": 2,
+            "total_packets": 11440,
+            "total_bytes": 1106017,
+            "first_seen": "2025-05-03 17:18:16",
             "last_seen": "2025-05-01T17:12:37.750000+00:00"
         },
         {
@@ -141,6 +141,16 @@
             "last_seen": "2025-04-25T03:21:32.165000+00:00"
         },
         {
+            "destination": "35.75.42.242",
+            "port": 8883,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 5369,
+            "total_bytes": 541868,
+            "first_seen": "2025-05-03 13:49:20",
+            "last_seen": "525"
+        },
+        {
             "destination": "52.192.41.214",
             "port": 8883,
             "protocol": 6,
@@ -149,6 +159,16 @@
             "total_bytes": 369955,
             "first_seen": "2025-05-02T17:17:50.536720",
             "last_seen": "2025-05-02T11:50:06.953000+00:00"
+        },
+        {
+            "destination": "35.72.243.167",
+            "port": 8883,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 3482,
+            "total_bytes": 317385,
+            "first_seen": "2025-05-04 00:01:30",
+            "last_seen": "48751819"
         },
         {
             "destination": "18.181.103.139",
@@ -164,10 +184,10 @@
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 5496,
-            "total_packets": 5496,
-            "total_bytes": 253876,
-            "first_seen": "2025-05-03 12:58:29",
+            "flow_count": 5761,
+            "total_packets": 5761,
+            "total_bytes": 266172,
+            "first_seen": "2025-05-04 06:38:40",
             "last_seen": "2025-04-23T11:22:09.902000+00:00"
         },
         {
@@ -194,10 +214,10 @@
             "destination": "18.65.100.114",
             "port": 443,
             "protocol": 6,
-            "flow_count": 3,
-            "total_packets": 52,
-            "total_bytes": 4546,
-            "first_seen": "2025-05-01T17:14:41.088363",
+            "flow_count": 4,
+            "total_packets": 70,
+            "total_bytes": 6092,
+            "first_seen": "2025-05-03 17:15:58",
             "last_seen": "2025-04-26T17:12:11.206000+00:00"
         },
         {
@@ -291,6 +311,16 @@
             "last_seen": "2025-04-25T17:15:38.624000+00:00"
         },
         {
+            "destination": "35.78.32.64",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 19,
+            "total_bytes": 1908,
+            "first_seen": "2025-05-03 17:21:43",
+            "last_seen": "48931958"
+        },
+        {
             "destination": "18.65.207.65",
             "port": 443,
             "protocol": 6,
@@ -304,10 +334,10 @@
             "destination": "224.0.23.0",
             "port": 0,
             "protocol": 2,
-            "flow_count": 10,
-            "total_packets": 27,
-            "total_bytes": 1242,
-            "first_seen": "2025-05-02T17:14:24.112936",
+            "flow_count": 11,
+            "total_packets": 29,
+            "total_bytes": 1334,
+            "first_seen": "2025-05-03 17:14:49",
             "last_seen": "2025-04-23T17:12:11.090000+00:00"
         },
         {
@@ -341,6 +371,16 @@
             "last_seen": "2025-04-25T17:12:30.120000+00:00"
         },
         {
+            "destination": "133.243.238.163",
+            "port": 123,
+            "protocol": 17,
+            "flow_count": 2,
+            "total_packets": 2,
+            "total_bytes": 152,
+            "first_seen": "2025-05-03 17:18:16",
+            "last_seen": "2025-04-28T17:13:18.114000+00:00"
+        },
+        {
             "destination": "133.243.238.243",
             "port": 123,
             "protocol": 17,
@@ -359,16 +399,6 @@
             "total_bytes": 93,
             "first_seen": "2025-04-25T03:24:38.114372",
             "last_seen": "2025-04-25T03:21:31.917000+00:00"
-        },
-        {
-            "destination": "133.243.238.163",
-            "port": 123,
-            "protocol": 17,
-            "flow_count": 1,
-            "total_packets": 1,
-            "total_bytes": 76,
-            "first_seen": "2025-04-28T17:19:20.806270",
-            "last_seen": "2025-04-28T17:13:18.114000+00:00"
         }
     ],
     "actions": []

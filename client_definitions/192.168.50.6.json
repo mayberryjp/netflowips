@@ -1,13 +1,13 @@
 {
     "ip_address": "192.168.50.6",
-    "export_date": "2025-05-03T13:01:17.944821",
+    "export_date": "2025-05-04T06:46:33.775350",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.6",
         "mac_address": "72:dd:8b:77:23:57",
         "mac_vendor": "",
         "dhcp_hostname": "galaxy-tab.832-5.com",
-        "dns_hostname": "galaxy-tab.832-5.com.",
+        "dns_hostname": "NXDOMAIN",
         "os_fingerprint": "No OS fingerprint detected",
         "lease_hostname": "galaxy-tab",
         "icon": "TABLET",

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.101",
-    "export_date": "2025-05-03T13:01:16.377898",
+    "export_date": "2025-05-04T06:46:32.706326",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.101",
@@ -16,8 +16,8 @@
     "dns_queries": [
         {
             "domain": "hms.cloudlabs.sharp.co.jp",
-            "times_queried": 391,
-            "first_query": "2025-05-03 12:39:47",
+            "times_queried": 418,
+            "first_query": "2025-05-04 06:10:14",
             "last_query": "2025-04-27 11:46:58"
         },
         {
@@ -38,30 +38,30 @@
             "destination": "121.119.209.37",
             "port": 443,
             "protocol": 6,
-            "flow_count": 675,
-            "total_packets": 19578,
-            "total_bytes": 14418057,
-            "first_seen": "2025-05-03 10:53:42",
+            "flow_count": 691,
+            "total_packets": 20001,
+            "total_bytes": 14694375,
+            "first_seen": "2025-05-04 06:31:42",
             "last_seen": "2025-04-23T11:22:23.345000+00:00"
         },
         {
             "destination": "121.119.209.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 601,
-            "total_packets": 14099,
-            "total_bytes": 7717806,
-            "first_seen": "2025-05-03 12:53:41",
+            "flow_count": 688,
+            "total_packets": 16411,
+            "total_bytes": 8873781,
+            "first_seen": "2025-05-04 06:46:09",
             "last_seen": "11324164"
         },
         {
             "destination": "121.119.209.36",
             "port": 443,
             "protocol": 6,
-            "flow_count": 679,
-            "total_packets": 14492,
-            "total_bytes": 6810627,
-            "first_seen": "2025-05-03 11:00:38",
+            "flow_count": 708,
+            "total_packets": 15092,
+            "total_bytes": 7119128,
+            "first_seen": "2025-05-04 06:30:32",
             "last_seen": "2025-04-23T11:22:02.801000+00:00"
         },
         {
@@ -128,10 +128,10 @@
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 133,
-            "total_packets": 351,
-            "total_bytes": 24541,
-            "first_seen": "2025-05-03 12:36:36",
+            "flow_count": 139,
+            "total_packets": 381,
+            "total_bytes": 26585,
+            "first_seen": "2025-05-04 06:46:09",
             "last_seen": "2025-04-23T11:22:02.676000+00:00"
         },
         {
