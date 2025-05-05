@@ -57,7 +57,7 @@ def log_error(logger, message):
                 "timestamp": timestamp,
                 "site": SITE,
                 "line_number": line_number,
-                "machine_unique_identiifer": config_dict['MachineUniqueIdentifier']
+                "machine_unique_identifier": config_dict['MachineUniqueIdentifier']
             }
             response = requests.post(url, json=payload)
             if response.status_code == 200:
