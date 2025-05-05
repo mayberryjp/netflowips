@@ -164,6 +164,46 @@ def modify_alert(id):
             response.status = 500
             return {"error": str(e)}
 
+@app.route('/api/alerts/<id>', method=['DELETE'])
+def delete_alert(id):
+    """
+    API endpoint to delete an alert by its ID.
+
+    Args:
+        id: The ID of the alert to delete.
+
+    Returns:
+        JSON object indicating success or failure.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Delete the alert with the specified ID
+        cursor.execute("DELETE FROM alerts WHERE id = ?", (id,))
+        conn.commit()
+        conn.close()
+
+        set_json_response()
+        log_info(logger, f"[INFO] Deleted alert with ID: {id}")
+        return {"message": f"Alert with ID {id} deleted successfully"}
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Error deleting alert with ID {id}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error deleting alert with ID {id}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
 @app.route('/api/alerts/summary', method=['GET'])
 def summarize_alerts():
     """
@@ -304,6 +344,69 @@ def get_recent_alerts():
         response.status = 500
         return {"error": str(e)}
 
+@app.route('/api/alerts/<ip_address>', method=['GET'])
+def get_alerts_by_ip(ip_address):
+    """
+    API endpoint to get alerts for a specific IP address.
+    
+    Args:
+        ip_address: The IP address to filter alerts by.
+    
+    Returns:
+        JSON object containing all alerts for the specified IP address.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+    
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Fetch alerts for the specified IP address
+        cursor.execute("""
+            SELECT id, ip_address, flow, category, 
+                   alert_enrichment_1, alert_enrichment_2,
+                   times_seen, first_seen, last_seen, acknowledged
+            FROM alerts 
+            WHERE ip_address = ?
+            ORDER BY last_seen DESC
+        """, (ip_address,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        # Format the response
+        alerts = [{
+            "id": row[0],
+            "ip_address": row[1],
+            "flow": row[2],
+            "category": row[3],
+            "enrichment_1": row[4],
+            "enrichment_2": row[5],
+            "times_seen": row[6],
+            "first_seen": row[7],
+            "last_seen": row[8],
+            "acknowledged": bool(row[9])
+        } for row in rows]
+        
+        set_json_response()
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts for IP address {ip_address}")
+        return json.dumps(alerts, indent=2)
+        
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Database error fetching alerts for IP {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get alerts for IP {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
 # API for CONST_WHITELIST_DB
 @app.route('/api/whitelist', method=['GET', 'POST'])
 def whitelist():
@@ -323,7 +426,7 @@ def whitelist():
             conn.close()
             set_json_response()
             log_info(logger, "Fetched all whitelist entries successfully.")
-            return json.dumps([{"id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
+            return json.dumps([{"whitelist_id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
         except sqlite3.Error as e:
             conn.close()
             log_error(logger, f"Error fetching whitelist entries: {e}")
@@ -333,17 +436,18 @@ def whitelist():
     elif request.method == 'POST':
         # Add a new whitelist entry
         data = request.json
+        whitelist_id = data.get("whitelist_id")
         src_ip = data.get('src_ip')
         dst_ip = data.get('dst_ip')
         dst_port = data.get('dst_port')
         protocol = data.get('protocol')
         try:
-            cursor.execute("INSERT INTO whitelist (src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
-                           (src_ip, dst_ip, dst_port, protocol))
+            cursor.execute("INSERT INTO whitelist (whitelist_id, src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
+                           (whitelist_id, src_ip, dst_ip, dst_port, protocol))
             conn.commit()
             conn.close()
             set_json_response()
-            log_info(logger, f"Added new whitelist entry: {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
+            log_info(logger, f"Added new whitelist entry: {whitelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
             return {"message": "Whitelist entry added successfully"}
         except sqlite3.Error as e:
             conn.close()
