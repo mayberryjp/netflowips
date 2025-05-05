@@ -49,7 +49,7 @@ def log_error(logger, message):
         # Send the error message to the cloud API
         try:
             import requests
-            url = f"http://api.homelabids.com:8044/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
+            url = f"http://api.homelabids.com:8044/api/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
             payload = {
                 "error_message": message,
                 "script_name": script_name,
@@ -63,9 +63,9 @@ def log_error(logger, message):
             if response.status_code == 200:
                 log_info(logger, "[INFO] Error reported to cloud API successfully.")
             else:
-                log_warn(logger, f"[WARN] Failed to report error to cloud API: {response.status_code}")
+                log_warn(logger, f"[WARN] Failed to report error to cloud API: {response.status_code} {url}")
         except Exception as e:
-            log_warn(logger, f"[WARN] Failed to send error report to cloud API: {e}")
+            log_warn(logger, f"[WARN] Failed to send error report to cloud API {url}: {e}")
 
     if SITE == 'TESTPPE':
         exit(1)

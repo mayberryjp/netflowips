@@ -53,5 +53,6 @@ CONST_DEFAULT_CONFIGS = [
     ('MaxBytes',3000000),
     ('StorePiHoleDnsQueryHistory','0'),
     ('SendDeviceClassificationsToHomelabApi','0')
-
+    ('CollectorProcessingInterval','60'),
+    ('SendErrorsToCloudApi','0')
 ]
