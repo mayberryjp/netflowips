@@ -55,11 +55,11 @@ def process_data():
                 log_info(logger,f"Started removing IgnoreList flows")
                 # process whitelisted entries and remove from detection rows
                 filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11])]
-                log_info(logger,f"Finished removing IgnoreList flows")
+                log_info(logger,f"Finished removing IgnoreList flows - processing flow count is {filtered_rows}")
 
                 if config_dict.get('RemoveBroadcastFlows', 0) >0:
                     filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]
-
+                    log_info(logger,f"Finished removing Broadcast flows - processing flow count is {filtered_rows}")
 
                 # Proper way to check config values with default of 0
                 if config_dict.get("NewHostsDetection", 0) > 0:

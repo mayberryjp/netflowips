@@ -633,7 +633,10 @@ def detect_dead_connections(config_dict):
             return
 
         cursor = conn.cursor()
-        
+
+        # Get local networks from the configuration
+        LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+
         # Query for dead connections
         cursor.execute("""
                 WITH ConnectionPairs AS (
@@ -680,7 +683,7 @@ def detect_dead_connections(config_dict):
                     f_packets > 2
                     AND r_packets < 1
         """)
-        
+
         dead_connections = cursor.fetchall()
         log_info(logger, f"[INFO] Found {len(dead_connections)} potential dead connections")
 
@@ -690,6 +693,10 @@ def detect_dead_connections(config_dict):
             dst_port = row[2]
             protocol = row[5]
             row_tags = row[6]  # Existing tags for the flow
+
+            # Skip if src_ip is not in LOCAL_NETWORKS
+            if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+                continue
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
             
