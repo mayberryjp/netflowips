@@ -90,18 +90,70 @@ def tag_multicast(record):
         return None
     
 
-def apply_tags(record, whitelist_entries, broadcast_addresses):
+def tag_custom(record, tag_entries):
+    """
+    Apply custom tags to flows based on matching criteria similar to whitelisting.
+    
+    Args:
+        record: Flow record to check
+        tag_entries: List of tag entries in format [tag_name, tag_src_ip, tag_dst_ip, tag_dst_port, tag_protocol]
+        
+    Returns:
+        str: Custom tags to be applied or None if no matches
+    """
+    logger = logging.getLogger(__name__)
+    
+    if not tag_entries:
+        return None
+    
+    applied_tags = []
+    
+    for tag_name, tag_src_ip, tag_dst_ip, tag_dst_port, tag_protocol in tag_entries:
+        try:
+            # Check for matches using wildcard pattern similar to whitelist
+            src_match = (tag_src_ip == record['src_ip'] or tag_src_ip == record['dst_ip'] or tag_src_ip == "*")
+            dst_match = (tag_dst_ip == record['dst_ip'] or tag_dst_ip == record['src_ip'] or tag_dst_ip == "*")
+            
+            # Port check - handle string conversion for wildcard
+            port_match = (tag_dst_port == "*" or 
+                         int(tag_dst_port) in (record['src_port'], record['dst_port']))
+            
+            # Protocol check - handle string conversion for wildcard
+            protocol_match = (tag_protocol == "*" or 
+                             int(tag_protocol) == record['protocol'])
+            
+            # If all criteria match, add the tag
+            if src_match and dst_match and port_match and protocol_match:
+                applied_tags.append(f"{tag_name};")
+                #log_info(logger, f"[INFO] Custom tag '{tag_name}' applied to flow: {record['src_ip']} -> {record['dst_ip']}:{record['dst_port']}")
+                
+        except (ValueError, KeyError, TypeError) as e:
+            log_error(logger, f"[ERROR] Error applying custom tag: {e}")
+    
+    # Return all matched tags as a single string
+    if applied_tags:
+        return "".join(applied_tags)
+    return None
+    
+
+def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries=None):
     """
     Apply multiple tagging functions to one or more rows. For each row, append the tag to the tags position.
 
     Args:
-        rows: A single flow record or a list of flow records.
-        whitelist_entries: List of whitelist entries from the database.
+        record: Flow record to tag
+        whitelist_entries: List of whitelist entries from the database
+        broadcast_addresses: Set of broadcast addresses
+        tag_entries: List of custom tag entries
 
     Returns:
-        list: The same number of rows as input, with tags appended to the tags position of each row.
+        record: Updated record with tags
     """
+    # Initialize tags if not present
+    if 'tags' not in record:
+        record['tags'] = ""
 
+    # Apply existing tags
     whitelist_tag = tag_whitelist(record, whitelist_entries)
     if whitelist_tag:
         record['tags'] += f"{whitelist_tag}"
@@ -113,5 +165,12 @@ def apply_tags(record, whitelist_entries, broadcast_addresses):
     multicast_tag = tag_multicast(record)
     if multicast_tag:
         record['tags'] += f"{multicast_tag}"
+        
+    # Apply custom tags
+    if tag_entries:
+        custom_tags = tag_custom(record, tag_entries)
+        if custom_tags:
+            record['tags'] += custom_tags
 
     return record
+

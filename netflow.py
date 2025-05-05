@@ -10,6 +10,7 @@ from tags import apply_tags
 from queue import Queue
 import threading
 import time
+import json
 
 if (IS_CONTAINER):
     COLLECTOR_LISTEN_ADDRESS=os.getenv("COLLECTOR_LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
@@ -103,6 +104,9 @@ def process_netflow_packets():
                 time.sleep(60)  # Wait before retry
                 continue
 
+            tag_entries_json = config_dict.get("TagEntries", "[]")
+            tag_entries = json.loads(tag_entries_json)
+
             LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
             
             # Calculate broadcast addresses for all local networks
@@ -142,7 +146,7 @@ def process_netflow_packets():
                         offset += 48
                         
                         # Apply tags and update flow database
-                        record = apply_tags(record, whitelist, broadcast_addresses)
+                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries)
                         update_newflow(record)
                         total_flows += 1
                         
