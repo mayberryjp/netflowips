@@ -197,5 +197,6 @@ CONST_INSTALL_CONFIGS = [
     ('StorePiHoleDnsQueryHistory','0'),
     ('SendDeviceClassificationsToHomelabApi','0'),
     ('CollectorProcessingInterval','60'),
-    ('SendErrorsToCloudApi','0')
+    ('SendErrorsToCloudApi','0'),
+    ('RemoveMulticastFlows','1'),
 ]

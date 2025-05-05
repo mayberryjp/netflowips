@@ -63,7 +63,7 @@ def tag_broadcast(record, broadcast_addresses):
         return "Broadcast;"
     
 
-def tag_multicast(record, broadcast_addresses):
+def tag_multicast(record):
     """
     Tag flows where the destination IP is in multicast range (224.0.0.0 to 239.255.255.255).
     
@@ -109,5 +109,9 @@ def apply_tags(record, whitelist_entries, broadcast_addresses):
     broadcast_tag = tag_broadcast(record, broadcast_addresses)
     if broadcast_tag:
         record['tags'] += f"{broadcast_tag}"
+
+    multicast_tag = tag_multicast(record)
+    if multicast_tag:
+        record['tags'] += f"{multicast_tag}"
 
     return record
