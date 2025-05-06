@@ -146,7 +146,7 @@ def process_netflow_packets():
                         offset += 48
                         
                         # Apply tags and update flow database
-                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries)
+                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries, config_dict)
                         update_newflow(record)
                         total_flows += 1
                         

@@ -154,9 +154,10 @@ def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries=None)
         record['tags'] = ""
 
     # Apply existing tags
-    whitelist_tag = tag_whitelist(record, whitelist_entries)
-    if whitelist_tag:
-        record['tags'] += f"{whitelist_tag}"
+    if whitelist_entries:
+        whitelist_tag = tag_whitelist(record, whitelist_entries)
+        if whitelist_tag:
+            record['tags'] += f"{whitelist_tag}"
 
     broadcast_tag = tag_broadcast(record, broadcast_addresses)
     if broadcast_tag:

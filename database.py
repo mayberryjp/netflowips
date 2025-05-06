@@ -515,7 +515,7 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
         existing_tag = result[0] if result and result[0] else ""  # Get the existing tag or default to an empty string
 
         # Append the new tag to the existing tag
-        updated_tag = f"{existing_tag}{tag};" if existing_tag else tag
+        updated_tag = f"{existing_tag}{tag}" if existing_tag else tag
 
         # Update the tag in the database
         cursor.execute(f"""

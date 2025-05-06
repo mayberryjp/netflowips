@@ -708,7 +708,7 @@ def detect_dead_connections(config_dict):
             log_info(logger, f"[INFO] Dead connection detected: {src_ip}->{dst_ip}:{dst_port} {protocol}")
             
             # Add a Tag to the matching row using update_tag
-            if not update_tag_to_allflows("allflows", "DeadConnectionDetection", src_ip, dst_ip, dst_port):
+            if not update_tag_to_allflows("allflows", "DeadConnectionDetection;", src_ip, dst_ip, dst_port):
                 log_error(logger, f"[ERROR] Failed to add tag for flow: {src_ip} -> {dst_ip}:{dst_port}")
 
             # Handle alerts based on configuration
