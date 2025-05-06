@@ -203,6 +203,9 @@ def delete_alert(id):
         log_error(logger, f"[ERROR] Unexpected error deleting alert with ID {id}: {e}")
         response.status = 500
         return {"error": str(e)}
+    
+
+    
 
 @app.route('/api/alerts/summary', method=['GET'])
 def summarize_alerts():
@@ -217,6 +220,138 @@ def summarize_alerts():
         return json.dumps(summary)
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to summarize alerts: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
+@app.route('/api/alerts/recent/<ip_address>', method=['GET'])
+def get_recent_alerts_by_ip(ip_address):
+    """
+    API endpoint to get the most recent alerts for a specific IP address.
+    Returns alerts sorted by last_seen timestamp in descending order.
+
+    Args:
+        ip_address: The IP address to filter alerts by.
+
+    Returns:
+        JSON object containing the most recent alerts for the specified IP address.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+    
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Fetch the most recent alerts for the specified IP address
+        cursor.execute("""
+            SELECT id, ip_address, flow, category, 
+                   alert_enrichment_1, alert_enrichment_2,
+                   times_seen, first_seen, last_seen, acknowledged
+            FROM alerts 
+            WHERE ip_address = ?
+            ORDER BY last_seen DESC 
+            LIMIT 100
+        """, (ip_address,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        # Format the response
+        alerts = [{
+            "id": row[0],
+            "ip_address": row[1],
+            "flow": row[2],
+            "category": row[3],
+            "enrichment_1": row[4],
+            "enrichment_2": row[5],
+            "times_seen": row[6],
+            "first_seen": row[7],
+            "last_seen": row[8],
+            "acknowledged": bool(row[9])
+        } for row in rows]
+        
+        set_json_response()
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts for IP address {ip_address}")
+        return json.dumps(alerts, indent=2)
+        
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Database error fetching recent alerts for IP {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get recent alerts for IP {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
+
+@app.route('/api/alerts/summary/<ip_address>', method=['GET'])
+def summarize_alerts_by_ip_address(ip_address):
+    """
+    API endpoint to summarize recent alerts for a specific IP address.
+
+    Args:
+        ip_address: The IP address to filter alerts by.
+
+    Returns:
+        JSON object containing a summary of alerts for the specified IP address.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_ALERTS_DB
+    conn = connect_to_db(db_name)
+    
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Query to fetch alerts for the specified IP address within the last 12 hours
+        intervals = 48
+        now = datetime.now()
+        start_time = now - timedelta(hours=intervals)
+
+        cursor.execute("""
+            SELECT strftime('%Y-%m-%d %H:00:00', last_seen) as hour, COUNT(*)
+            FROM alerts
+            WHERE ip_address = ? AND last_seen >= ?
+            GROUP BY hour
+            ORDER BY hour
+        """, (ip_address, start_time.strftime('%Y-%m-%d %H:%M:%S')))
+
+        rows = cursor.fetchall()
+        conn.close()
+
+        # Initialize the result dictionary
+        result = {"ip_address": ip_address, "alert_intervals": [0] * intervals}
+
+        # Process the rows to build the summary
+        for row in rows:
+            hour = datetime.strptime(row[0], '%Y-%m-%d %H:00:00')
+            count = row[1]
+
+            # Calculate the index for the hour interval
+            hour_diff = int((now - hour).total_seconds() // 3600)
+            if 0 <= hour_diff < intervals:
+                # Reverse the index to place the most recent at the last position
+                result["alert_intervals"][intervals - 1 - hour_diff] = count
+
+        set_json_response()
+        log_info(logger, f"[INFO] Summarized alerts for IP address {ip_address}")
+        return json.dumps(result, indent=2)
+
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Database error summarizing alerts for IP {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to summarize alerts for IP {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
 
@@ -579,6 +714,106 @@ def modify_localhost(ip_address):
             response.status = 500
             return {"error": str(e)}
 
+@app.route('/api/localhosts/<ip_address>', method=['DELETE'])
+def delete_localhost(ip_address):
+    """
+    API endpoint to delete a local host by its IP address.
+
+    Args:
+        ip_address: The IP address of the local host to delete.
+
+    Returns:
+        JSON object indicating success or failure.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_LOCALHOSTS_DB
+    conn = connect_to_db(db_name)
+
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Delete the local host with the specified IP address
+        cursor.execute("DELETE FROM localhosts WHERE ip_address = ?", (ip_address,))
+        conn.commit()
+        conn.close()
+
+        set_json_response()
+        log_info(logger, f"[INFO] Deleted local host with IP address: {ip_address}")
+        return {"message": f"Local host with IP address {ip_address} deleted successfully"}
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"[ERROR] Error deleting local host with IP address {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error deleting local host with IP address {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    
+
+@app.route('/api/localhosts/<ip_address>', method=['GET'])
+def get_localhost(ip_address):
+    """
+    API endpoint to get information for a single local host by IP address.
+
+    Args:
+        ip_address: The IP address of the local host to retrieve.
+
+    Returns:
+        JSON object containing the local host's details or an error message.
+    """
+    logger = logging.getLogger(__name__)
+    db_name = CONST_LOCALHOSTS_DB
+    conn = connect_to_db(db_name)
+    
+    if not conn:
+        log_error(logger, f"Unable to connect to the database: {db_name}")
+        return {"error": "Unable to connect to the database"}
+
+    cursor = conn.cursor()
+
+    try:
+        # Fetch the local host with the specified IP address
+        cursor.execute("SELECT * FROM localhosts WHERE ip_address = ?", (ip_address,))
+        row = cursor.fetchone()
+        conn.close()
+
+        if row:
+            # Format the response
+            localhost = {
+                "ip_address": row[0],
+                "first_seen": row[1],
+                "original_flow": row[2],
+                "mac_address": row[3],
+                "mac_vendor": row[4],
+                "dhcp_hostname": row[5],
+                "dns_hostname": row[6],
+                "os_fingerprint": row[7],
+                "local_description": row[8],
+                "lease_hostname": row[9],
+                "lease_hwaddr": row[10],
+                "lease_clientid": row[11],
+                "icon": row[12],                # New column
+                "tags": row[13],                # New column
+                "acknowledged": row[14]         # New column
+            }
+            set_json_response()
+            log_info(logger, f"Fetched local host details for IP address: {ip_address}")
+            return json.dumps(localhost, indent=2)
+        else:
+            log_warn(logger, f"No local host found for IP address: {ip_address}")
+            response.status = 404
+            return {"error": f"No local host found for IP address: {ip_address}"}
+
+    except sqlite3.Error as e:
+        conn.close()
+        log_error(logger, f"Error fetching local host for IP address {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
 
 @app.route('/api/homeassistant', method=['GET'])
 def get_database_counts():
