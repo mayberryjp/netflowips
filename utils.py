@@ -67,8 +67,8 @@ def log_error(logger, message):
         except Exception as e:
             log_warn(logger, f"[WARN] Failed to send error report to cloud API {url}: {e}")
 
-    if SITE == 'TESTPPE':
-        exit(1)
+  #  if SITE == 'TESTPPE':
+        #exit(1)
 
 def log_warn(logger, message):
     """Log a message and print it to the console with timestamp."""

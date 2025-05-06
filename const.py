@@ -78,6 +78,19 @@ CONST_CREATE_WHITELIST_SQL='''
         whitelist_added TEXT
     )'''
 
+CONST_CREATE_CUSTOMTAGS_SQL='''
+CREATE TABLE IF NOT EXISTS customtags (
+    tag_id TEXT PRIMARY KEY,
+    src_ip TEXT,
+    dst_ip TEXT,
+    dst_port INTEGER,
+    protocol TEXT,
+    tag_name TEXT,
+    enabled INTEGER DEFAULT 1,
+    added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    insert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)'''
+
 CONST_CREATE_CONFIG_SQL='''
     CREATE TABLE IF NOT EXISTS configuration (
         key TEXT PRIMARY KEY,
@@ -199,4 +212,9 @@ CONST_INSTALL_CONFIGS = [
     ('CollectorProcessingInterval','60'),
     ('SendErrorsToCloudApi','0'),
     ('RemoveMulticastFlows','1'),
+    ('TagEntries', ''),
+    ('AlertOnCustomTagList',''),
+    ('AlertOnCustomTags','0'),
+    ('SendConfigurationToCloudApi','0'),
+    ('ApprovedHighRiskDestinations', '')
 ]

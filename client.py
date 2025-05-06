@@ -11,7 +11,7 @@ from const import (
     CONST_ALLFLOWS_DB
 )
 from utils import log_info, log_error, log_warn
-from database import get_machine_unique_identifier_from_db, get_localhosts
+from database import get_machine_unique_identifier_from_db, get_localhosts, get_config_settings
 
 class ActionType(Enum):
     """Placeholder for action types"""
@@ -204,3 +204,49 @@ def upload_all_client_definitions():
         
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error: {str(e)}")
+
+
+def upload_configuration():
+    """
+    Retrieve the configuration using get_config_settings and post it as JSON
+    to /api/configurations/<instance_identifier>.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Get the instance identifier
+        instance_identifier = get_machine_unique_identifier_from_db()
+
+        # Retrieve the configuration
+        config_dict = get_config_settings()
+        if not config_dict:
+            log_error(logger, "[ERROR] Failed to retrieve configuration settings.")
+            return False
+
+        # Construct the API endpoint URL
+        api_url = f"http://api.homelabids.com:8044/api/configurations/{instance_identifier}"
+
+        # Post the configuration as JSON
+        response = requests.post(
+            api_url,
+            json=config_dict,
+            headers={
+                'Content-Type': 'application/json',
+                'User-Agent': 'NetFlowIPS-Client/1.0'
+            },
+            timeout=30
+        )
+
+        # Check the response status
+        if response.status_code in (200, 201, 204):
+            log_info(logger, f"[INFO] Successfully uploaded configuration for instance {instance_identifier}.")
+            return True
+        else:
+            log_error(logger, f"[ERROR] Failed to upload configuration: HTTP {response.status_code}")
+            return False
+
+    except requests.RequestException as e:
+        log_error(logger, f"[ERROR] Request failed while uploading configuration: {str(e)}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while uploading configuration: {str(e)}")
+        return False

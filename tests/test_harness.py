@@ -22,7 +22,7 @@ from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-from database import get_localhosts, update_localhosts
+from database import get_localhosts, update_localhosts, import_custom_tags, get_custom_tags
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -43,6 +43,7 @@ from const import (
     CONST_CREATE_GEOLOCATION_SQL,
     CONST_GEOLOCATION_DB,
     CONST_CREATE_REPUTATIONLIST_SQL,
+    CONST_CREATE_CUSTOMTAGS_SQL,
     VERSION,
     CONST_DNSQUERIES_DB
 )
@@ -59,6 +60,7 @@ from database import (
     get_row_count,
     get_alerts_summary,
     import_whitelists,
+    store_machine_unique_identifier
 )
 
 from tags import apply_tags
@@ -80,7 +82,8 @@ from detections import (
     detect_many_destinations,
     detect_port_scanning,
     detect_tor_traffic,
-    detect_high_bandwidth_flows
+    detect_high_bandwidth_flows,
+    detect_custom_tag
 )
 
 
@@ -138,7 +141,7 @@ def copy_flows_to_newflows():
             if 'newflows_conn' in locals():
                 newflows_conn.close()
 
-def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, detection_durations):
+def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, detection_durations, tag_distribution):
     """
     Log test execution results to a new JSON file for each test run.
 
@@ -185,6 +188,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "reputationlist": get_row_count(CONST_GEOLOCATION_DB, "reputationlist"),
                 "tornodes": get_row_count(CONST_GEOLOCATION_DB, "tornodes")
             },
+            "tag_distribution": tag_distribution,
             "alert_categories": categories,
             "detection_durations": detection_durations
         }
@@ -227,11 +231,12 @@ def main():
     create_database(CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL)
     create_database(CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL)
     create_database(CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL)
+    create_database(CONST_WHITELIST_DB, CONST_CREATE_CUSTOMTAGS_SQL)
 
     init_configurations_from_sitepy()
 
     config_dict = get_config_settings()
-    
+    store_machine_unique_identifier()
     copy_flows_to_newflows()
 
     conn = connect_to_db(CONST_NEWFLOWS_DB)
@@ -244,8 +249,11 @@ def main():
     log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_NEWFLOWS_DB}")
 
     import_whitelists(config_dict)
+    import_custom_tags(config_dict)
 
     whitelist_entries = get_whitelist()
+    customtag_entries = get_custom_tags()
+
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
 
@@ -265,7 +273,7 @@ def main():
         row['tags'] = ""  # Initialize an empty string for tags
 
     # Apply tags
-    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses) for row in rows_as_dicts]
+    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries) for row in rows_as_dicts]
 
     # Convert back to arrays for use in update_allflows
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]
@@ -273,8 +281,14 @@ def main():
     update_allflows(tagged_rows, config_dict)
 
     filtered_rows = [row for row in tagged_rows if 'Whitelist' not in str(row[11])]
+    log_info(logger, f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
+
     filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]
+    log_info(logger, f"[INFO] Finished removing Broadcast flows - processing flow count is {len(filtered_rows)}")
+
     filtered_rows = [row for row in filtered_rows if 'Multicast' not in str(row[11])]
+    log_info(logger, f"[INFO] Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
+
 
     # Dictionary to store durations for each detection function
     detection_durations = {}
@@ -341,12 +355,17 @@ def main():
     detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
-    #detect_tor_traffic(filtered_rows, config_dict)
+    update_tor_nodes(config_dict)
+    detect_tor_traffic(filtered_rows, config_dict)
     detection_durations['detect_tor_traffic'] = (datetime.now() - start).total_seconds()
 
     start = datetime.now()
     detect_high_bandwidth_flows(filtered_rows, config_dict)
     detection_durations['detect_high_bandwidth_flows'] = (datetime.now() - start).total_seconds()
+
+    start = datetime.now()
+    detect_custom_tag(filtered_rows, config_dict)
+    detection_durations['detect_custom_tag'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     start = datetime.now()
@@ -358,9 +377,6 @@ def main():
     log_info(logger, "[INFO] Preparing to download pihole dns query logs...")
     start = datetime.now()
     get_pihole_ftl_logs(10000,config_dict)
-    create_geolocation_db()
-    geolocation_data = load_geolocation_data()
-    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['retrieve_pihole_dns_query_logs'] = (datetime.now() - start).total_seconds()
 
     log_info(logger, "[INFO] Preparing to detect reputation list flows...")
@@ -428,6 +444,30 @@ def main():
         })
     detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
 
+    # Query to count rows grouped by tags
+    try:
+        conn = connect_to_db(CONST_ALLFLOWS_DB)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT COUNT(*) as count, tags 
+            FROM allflows 
+            GROUP BY tags;
+        """)
+
+        tag_counts = cursor.fetchall()
+        conn.close()
+
+        # Prepare the tags_distribution dictionary
+        tags_distribution = {tag: count for count, tag in tag_counts}
+
+        log_info(logger, f"[INFO] Tags distribution: {tags_distribution}")
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Failed to fetch tag counts from allflows: {e}")
+        tags_distribution = {}
+
+
     for ip, data in combined_results.items():
         update_localhosts(
             ip_address=ip,
@@ -446,7 +486,7 @@ def main():
     duration = (end_time - start_time).total_seconds()
     log_info(logger, f"[INFO] Total execution time: {duration:.2f} seconds")
 
-    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_durations)
+    log_test_results(start_time, end_time, duration, len(rows), len(filtered_rows), detection_durations, tags_distribution)
 
 if __name__ == "__main__":
     main()

@@ -55,5 +55,10 @@ CONST_DEFAULT_CONFIGS = [
     ('SendDeviceClassificationsToHomelabApi','0')
     ('CollectorProcessingInterval','60'),
     ('SendErrorsToCloudApi','0'),
-    ('RemoveMulticastFlows','1')
+    ('RemoveMulticastFlows','1'),
+    ('TagEntries', ''),
+    ('AlertOnCustomTagList',''),
+    ('AlertOnCustomTags','0'),
+    ('SendConfigurationToCloudApi','0'),
+    ('ApprovedHighRiskDestinations', ''),
 ]

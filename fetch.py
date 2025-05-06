@@ -4,7 +4,7 @@ from integrations.tor import update_tor_nodes
 from utils import log_info, log_error
 from database import get_config_settings, delete_database, delete_all_records, create_database
 from integrations.maxmind import create_geolocation_db
-from client import upload_all_client_definitions
+from client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
 from const import CONST_REINITIALIZE_DB, CONST_GEOLOCATION_DB, IS_CONTAINER
@@ -77,6 +77,15 @@ def main():
                 log_info(logger, "[INFO] Device classification upload finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
+
+        try: 
+            if config_dict.get('SendConfigurationToCloudApi', 0) > 0:
+                log_info(logger, "[INFO] Sending instance configuration to Homelab API...")
+                upload_configuration()
+                log_info(logger, "[INFO] Instance configuration upload finished.")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error during data fetch: {e}")
+
 
         # Wait for the next interval
         log_info(logger, f"[INFO] Sleeping for {fetch_interval} seconds before the next fetch.")
