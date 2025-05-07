@@ -31,7 +31,7 @@ def connect_to_db(DB_NAME,table="unknown"):
     try:
         conn = sqlite3.connect(DB_NAME)
         conn.execute("PRAGMA busy_timeout = 5000")
-        log_info(logger, f"[INFO] Connected to database: {DB_NAME} table {table}")
+        #log_info(logger, f"[INFO] Connected to database: {DB_NAME} table {table}")
         return conn
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error connecting to database {DB_NAME} table {table}: {e}")
@@ -48,13 +48,13 @@ def disconnect_from_db(conn):
     try:
         if conn:
             conn.close()
-            log_info(logger, "[INFO] Database connection closed successfully.")
+            #log_info(logger, "[INFO] Database connection closed successfully.")
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error closing database connection: {e}")
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while closing database connection: {e}")
 
-def create_table(db_name, create_table_sql):
+def create_table(db_name, create_table_sql, table="unknown"):
     """Initializes a SQLite database with the specified schema."""
     logger = logging.getLogger(__name__)
     try:
@@ -66,7 +66,7 @@ def create_table(db_name, create_table_sql):
         cursor = conn.cursor()
         cursor.execute(create_table_sql)
         conn.commit()
-        log_info(logger, f"[INFO] {db_name} table initialized successfully.")
+        log_info(logger, f"[INFO] {db_name} table {table} initialized successfully.")
         disconnect_from_db(conn)
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error initializing {db_name}: {e}")
@@ -863,4 +863,55 @@ def get_machine_unique_identifier_from_db():
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
 
+def get_traffic_stats_for_ip(ip_address):
+    """
+    Retrieve all traffic statistics for a specific IP address from the trafficstats table.
 
+    Args:
+        ip_address (str): The IP address to filter data by.
+
+    Returns:
+        list: A list of dictionaries containing all traffic statistics for the specified IP address.
+              Returns an empty list if no data is found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Connect to the consolidated database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "trafficstats")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to trafficstats database.")
+            return []
+
+        cursor = conn.cursor()
+
+        # Query to retrieve all data for the specified IP address
+        cursor.execute("""
+            SELECT ip_address, timestamp, total_packets, total_bytes
+            FROM trafficstats
+            WHERE ip_address = ?
+            ORDER BY timestamp DESC
+        """, (ip_address,))
+
+        rows = cursor.fetchall()
+        disconnect_from_db(conn)
+
+        # Format the results as a list of dictionaries
+        traffic_stats = [{
+            "ip_address": row[0],
+            "timestamp": row[1],
+            "total_packets": row[2],
+            "total_bytes": row[3]
+        } for row in rows]
+
+        log_info(logger, f"[INFO] Retrieved {len(traffic_stats)} traffic stats entries for IP address {ip_address}.")
+        return traffic_stats
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving traffic stats for IP {ip_address}: {e}")
+        return []
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving traffic stats for IP {ip_address}: {e}")
+        return []
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)

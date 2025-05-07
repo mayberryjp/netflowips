@@ -19,7 +19,7 @@ if __name__ == "__main__":
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
         log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")    
         config_dict = init_configurations_from_variable()
 
@@ -27,8 +27,8 @@ if __name__ == "__main__":
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
         delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
         import_whitelists(config_dict)
         import_custom_tags(config_dict)
     else:
@@ -36,19 +36,19 @@ if __name__ == "__main__":
 
     store_machine_unique_identifier()
 
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL< "customtags")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL, "allflows")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL, "newflows")
     delete_all_records(CONST_CONSOLIDATED_DB,"flows")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL, "localhosts")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL, "geolocation")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL, "reputationlist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL, "tornodes")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL, "pihole")
 
     config_dict = get_config_settings()
 
