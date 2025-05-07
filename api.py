@@ -891,9 +891,9 @@ def get_traffic_stats(ip_address):
             log_info(logger, f"[INFO] Successfully retrieved traffic stats for IP address {ip_address}")
             return json.dumps(traffic_stats, indent=2)
         else:
+            set_json_response()
             log_warn(logger, f"[WARN] No traffic stats found for IP address {ip_address}")
-            response.status = 404
-            return {"error": f"No traffic stats found for IP address {ip_address}"}
+            return json.dumps([])  # Return an empty list instead of a 404 error
 
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to get traffic stats for IP address {ip_address}: {e}")
