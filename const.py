@@ -218,5 +218,6 @@ CONST_INSTALL_CONFIGS = [
     ('AlertOnCustomTagList',''),
     ('AlertOnCustomTags','0'),
     ('SendConfigurationToCloudApi','0'),
-    ('ApprovedHighRiskDestinations', '')
+    ('ApprovedHighRiskDestinations', ''),
+    ('WhitelistEntries', '[]'),
 ]

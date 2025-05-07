@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from utils import log_info, log_error
-from database import connect_to_db
+from database import connect_to_db, disconnect_from_db
 
 def import_reputation_list(config_dict):
     """
@@ -65,7 +65,7 @@ def import_reputation_list(config_dict):
         log_info(logger, f"[INFO] Processed {len(processed_networks)} networks from reputation list.")
 
         # Connect to the geolocations.db database
-        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "reputationlist")
         cursor = conn.cursor()
 
         # Insert the processed networks into the reputation table
@@ -84,7 +84,7 @@ def import_reputation_list(config_dict):
         log_error(logger, f"[ERROR] Unexpected error: {e}")
     finally:
         if 'conn' in locals():
-            conn.close()
+            disconnect_from_db(conn)
 
 
 def load_reputation_data(config_dict):
@@ -96,7 +96,7 @@ def load_reputation_data(config_dict):
     """
     logger = logging.getLogger(__name__)
     geolocation_data = []
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "reputationlist")
     if conn:
         try:
             cursor = conn.cursor()
@@ -106,5 +106,5 @@ def load_reputation_data(config_dict):
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error loading reputationlist data: {e}")
         finally:
-            conn.close()
+            disconnect_from_db(conn)
     return geolocation_data

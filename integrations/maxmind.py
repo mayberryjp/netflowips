@@ -2,7 +2,7 @@ import sqlite3
 import csv
 import os
 from utils import log_info, log_error, ip_network_to_range  # Assuming log_info is already defined
-from database import connect_to_db, get_config_settings  # Assuming connect_to_db is already defined
+from database import connect_to_db, get_config_settings, disconnect_from_db  # Assuming connect_to_db is already defined
 import logging
 from const import CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL
 
@@ -46,7 +46,7 @@ def create_geolocation_db(
                 country_name = row.get("country_name", "")
                 locations[geoname_id] = country_name
 
-        conn=connect_to_db(CONST_CONSOLIDATED_DB)
+        conn=connect_to_db(CONST_CONSOLIDATED_DB, "geolocation")
         if conn is None:
             log_error(logger, f"[ERROR] Failed to connect to the database {CONST_CONSOLIDATED_DB}.")
             return
@@ -102,7 +102,7 @@ def create_geolocation_db(
 
         # Commit changes and close the connection
         conn.commit()
-        conn.close()
+        disconnect_from_db(conn)
 
         log_info(logger, f"[INFO] Geolocation database {CONST_CONSOLIDATED_DB} created successfully.")
 
@@ -118,7 +118,7 @@ def load_geolocation_data():
     """
     logger = logging.getLogger(__name__)
     geolocation_data = []
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "geolocation")
     if conn:
         try:
             cursor = conn.cursor()
@@ -128,5 +128,5 @@ def load_geolocation_data():
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error loading geolocation data: {e}")
         finally:
-            conn.close()
+            disconnect_from_db(conn)
     return geolocation_data

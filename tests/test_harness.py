@@ -101,7 +101,7 @@ def copy_flows_to_newflows():
                 continue
 
             # Connect to source database
-            source_conn = sqlite3.connect(source_db)
+            source_conn = connect_to_db(source_db, "flows")
             source_cursor = source_conn.cursor()
 
             log_info(logger, f"[INFO] Copying flows from {source_db} to {CONST_CONSOLIDATED_DB}")       
@@ -112,23 +112,23 @@ def copy_flows_to_newflows():
             
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from {source_db}")
             # Connect to newflows database
-            newflows_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
+            newflows_conn = connect_to_db(CONST_CONSOLIDATED_DB, "newflows")
             newflows_cursor = newflows_conn.cursor()
 
             log_info(logger, f"[INFO] Preparing to insert flows into {CONST_CONSOLIDATED_DB}")
             # Insert flows into newflows
             for row in rows:
                 newflows_cursor.execute('''
-        INSERT INTO flows (
-            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
-        DO UPDATE SET 
-            packets = packets + excluded.packets,
-            bytes = bytes + excluded.bytes,
-            flow_end = excluded.flow_end,
-            last_seen = excluded.last_seen,
-            times_seen = times_seen + 1
+                    INSERT INTO flows (
+                        src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
+                    DO UPDATE SET 
+                        packets = packets + excluded.packets,
+                        bytes = bytes + excluded.bytes,
+                        flow_end = excluded.flow_end,
+                        last_seen = excluded.last_seen,
+                        times_seen = times_seen + 1
                 ''', row)
                 
             newflows_conn.commit()
@@ -157,7 +157,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
     logger = logging.getLogger(__name__)
     try:
         # Get alert categories and counts
-        alerts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        alerts_conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
         alerts_cursor = alerts_conn.cursor()
         alerts_cursor.execute("""
             SELECT category, COUNT(*) as count 
@@ -219,45 +219,47 @@ def main():
 
     SITE = os.getenv("SITE", CONST_SITE)
 
-    site_config_path = os.path.join("/database", f"{SITE}.py")
+    site_config_path = os.path.join("/database/", f"{SITE}.py")
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
         create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
+        log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")
         config_dict = init_configurations_from_variable()
-
+    else:
+        log_info(logger, f"[INFO] Consolidated database found at {CONST_CONSOLIDATED_DB}.")
 
     if os.path.exists(site_config_path):
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
+        delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
         import_whitelists(config_dict)
         import_custom_tags(config_dict)
-    else:
-        log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")
+
 
     store_machine_unique_identifier()
+    config_dict = get_config_settings()
+    print(f"Configuration: {config_dict}")
 
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL)
-    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL)
+    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL)
 
-    init_configurations_from_sitepy()
-
-    config_dict = get_config_settings()
-    store_machine_unique_identifier()
     copy_flows_to_newflows()
 
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
 
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM flows")
@@ -265,9 +267,6 @@ def main():
     rows = [list(row) for row in rows]
 
     log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_CONSOLIDATED_DB}")
-
-    import_whitelists(config_dict)
-    import_custom_tags(config_dict)
 
     whitelist_entries = get_whitelist()
     customtag_entries = get_custom_tags()
@@ -464,7 +463,7 @@ def main():
 
     # Query to count rows grouped by tags
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
         cursor = conn.cursor()
 
         cursor.execute("""

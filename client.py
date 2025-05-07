@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 import requests
 from utils import log_info, log_error, log_warn
-from database import get_machine_unique_identifier_from_db, get_localhosts, get_config_settings
+from database import get_machine_unique_identifier_from_db, get_localhosts, get_config_settings, connect_to_db, disconnect_from_db
 from const import CONST_CONSOLIDATED_DB
 
 class ActionType(Enum):
@@ -38,8 +38,8 @@ def export_client_definition(client_ip):
         }
         
         # Get host information from localhosts.db
-        localhosts_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
-        localhosts_cursor = localhosts_conn.cursor()
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
+        localhosts_cursor = conn.cursor()
         localhosts_cursor.execute(
             "SELECT * FROM localhosts WHERE ip_address = ?", 
             (client_ip,)
@@ -59,8 +59,8 @@ def export_client_definition(client_ip):
             }
         
         # Get DNS queries with counts from dnsqueries.db
-        dns_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
-        dns_cursor = dns_conn.cursor()
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "pihole")
+        dns_cursor = conn.cursor()
         dns_cursor.execute("""
             SELECT domain, sum(times_seen) as query_count, 
                    MAX(last_seen) as last_query,
@@ -82,8 +82,8 @@ def export_client_definition(client_ip):
         ]
         
         # Get flows with aggregated statistics from allflows.db
-        flows_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
-        flows_cursor = flows_conn.cursor()
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
+        flows_cursor = conn.cursor()
         flows_cursor.execute("""
             SELECT dst_ip, dst_port, protocol,
                    sum(times_seen) as flow_count,
@@ -118,9 +118,9 @@ def export_client_definition(client_ip):
         return None
     finally:
         # Close all database connections
-        for conn in [localhosts_conn, dns_conn, flows_conn]:
+        for conn in [conn, conn, conn]:
             if 'conn' in locals() and conn:
-                conn.close()
+                disconnect_from_db(conn)
 
 def upload_client_definition(ip_address, client_data, machine_id):
     """

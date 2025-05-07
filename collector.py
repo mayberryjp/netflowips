@@ -15,16 +15,20 @@ if __name__ == "__main__":
 
     logger = logging.getLogger(__name__) 
  
-    site_config_path = os.path.join("/database", f"{SITE}.py")
+    site_config_path = os.path.join("/database/", f"{SITE}.py")
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
         create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
+        log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")    
         config_dict = init_configurations_from_variable()
 
     if os.path.exists(site_config_path):
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
+        delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
         import_whitelists(config_dict)
         import_custom_tags(config_dict)
     else:
@@ -32,14 +36,14 @@ if __name__ == "__main__":
 
     store_machine_unique_identifier()
 
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL)
-    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL)
+    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)

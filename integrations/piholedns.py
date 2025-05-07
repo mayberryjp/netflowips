@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 import sqlite3
+from database import connect_to_db, disconnect_from_db
 from pathlib import Path
 
 
@@ -94,7 +95,7 @@ def get_pihole_ftl_logs(page_size, config_dict):
 
     try:
         # Connect to the dnsqueries.db database and ensure the pihole table exists
-        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "pihole")
         cursor = conn.cursor()
         cursor.execute(CONST_CREATE_PIHOLE_SQL)
         conn.commit()
@@ -177,4 +178,4 @@ def get_pihole_ftl_logs(page_size, config_dict):
         return {}
     finally:
         if conn:
-            conn.close()
+            disconnect_from_db(conn)

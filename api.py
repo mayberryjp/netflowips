@@ -2,7 +2,7 @@ from bottle import Bottle, request, response
 import sqlite3
 import json
 import os
-from database import connect_to_db, collect_database_counts  # Import the function
+from database import connect_to_db, collect_database_counts, disconnect_from_db  # Import the function
 from const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
@@ -25,7 +25,7 @@ def set_json_response():
 def configurations():
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "configurations")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -37,12 +37,12 @@ def configurations():
             # Fetch all configurations
             cursor.execute("SELECT * FROM configuration")
             rows = cursor.fetchall()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, "Fetched all configurations successfully.")
             return json.dumps([{"key": row[0], "value": row[1]} for row in rows])
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error fetching configurations: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -55,12 +55,12 @@ def configurations():
         try:
             cursor.execute("INSERT INTO configuration (key, value) VALUES (?, ?)", (key, value))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Added new configuration: {key}")
             return {"message": "Configuration added successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error adding configuration: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -69,7 +69,7 @@ def configurations():
 def modify_configuration(key):
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "configurations")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -83,12 +83,12 @@ def modify_configuration(key):
         try:
             cursor.execute("UPDATE configuration SET value = ? WHERE key = ?", (value, key))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Updated configuration: {key}")
             return {"message": "Configuration updated successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error updating configuration: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -98,12 +98,12 @@ def modify_configuration(key):
         try:
             cursor.execute("DELETE FROM configuration WHERE key = ?", (key,))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Deleted configuration: {key}")
             return {"message": "Configuration deleted successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error deleting configuration: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -113,7 +113,7 @@ def modify_configuration(key):
 def alerts():
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -125,12 +125,12 @@ def alerts():
             # Fetch all alerts
             cursor.execute("SELECT * FROM alerts")
             rows = cursor.fetchall()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, "Fetched all alerts successfully.")
             return json.dumps([{"id": row[0], "ip_address": row[1], "category": row[3], "last_seen": row[8], "acknowledged": row[9]} for row in rows])
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error fetching alerts: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -139,7 +139,7 @@ def alerts():
 @app.route('/api/alerts/<id>', method=['PUT'])
 def modify_alert(id):
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -154,12 +154,12 @@ def modify_alert(id):
         try:
             cursor.execute("UPDATE alerts SET acknowledged = ? WHERE id = ?", (acknowledged, id))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Updated alert: {id}")
             return {"message": "Alert updated successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error updating alert: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -177,7 +177,7 @@ def delete_alert(id):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
 
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -189,13 +189,13 @@ def delete_alert(id):
         # Delete the alert with the specified ID
         cursor.execute("DELETE FROM alerts WHERE id = ?", (id,))
         conn.commit()
-        conn.close()
+        disconnect_from_db(conn)
 
         set_json_response()
         log_info(logger, f"[INFO] Deleted alert with ID: {id}")
         return {"message": f"Alert with ID {id} deleted successfully"}
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Error deleting alert with ID {id}: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -237,7 +237,7 @@ def get_recent_alerts_by_ip(ip_address):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -258,7 +258,7 @@ def get_recent_alerts_by_ip(ip_address):
         """, (ip_address,))
         
         rows = cursor.fetchall()
-        conn.close()
+        disconnect_from_db(conn)
         
         # Format the response
         alerts = [{
@@ -279,7 +279,7 @@ def get_recent_alerts_by_ip(ip_address):
         return json.dumps(alerts, indent=2)
         
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Database error fetching recent alerts for IP {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -302,7 +302,7 @@ def summarize_alerts_by_ip_address(ip_address):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -325,7 +325,7 @@ def summarize_alerts_by_ip_address(ip_address):
         """, (ip_address, start_time.strftime('%Y-%m-%d %H:%M:%S')))
 
         rows = cursor.fetchall()
-        conn.close()
+        disconnect_from_db(conn)
 
         # Initialize the result dictionary
         result = {"ip_address": ip_address, "alert_intervals": [0] * intervals}
@@ -346,7 +346,7 @@ def summarize_alerts_by_ip_address(ip_address):
         return json.dumps(result, indent=2)
 
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Database error summarizing alerts for IP {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -366,7 +366,7 @@ def summarize_alerts_by_ip():
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -390,7 +390,7 @@ def summarize_alerts_by_ip():
         """, (start_time.strftime('%Y-%m-%d %H:%M:%S'),))
 
         rows = cursor.fetchall()
-        conn.close()
+        disconnect_from_db(conn)
 
         # Initialize the result dictionary
         result = {}
@@ -414,7 +414,7 @@ def summarize_alerts_by_ip():
         return result
 
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"Error summarizing alerts: {e}")
         return {"error": str(e)}
     except Exception as e:
@@ -429,7 +429,7 @@ def get_recent_alerts():
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "alerts")
     
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -449,7 +449,7 @@ def get_recent_alerts():
         """)
         
         rows = cursor.fetchall()
-        conn.close()
+        disconnect_from_db(conn)
         
         # Format the response
         alerts = [{
@@ -470,7 +470,7 @@ def get_recent_alerts():
         return json.dumps(alerts, indent=2)
         
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Database error fetching recent alerts: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -492,7 +492,7 @@ def get_alerts_by_ip(ip_address):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, )
     
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -512,7 +512,7 @@ def get_alerts_by_ip(ip_address):
         """, (ip_address,))
         
         rows = cursor.fetchall()
-        conn.close()
+        disconnect_from_db(conn)
         
         # Format the response
         alerts = [{
@@ -533,7 +533,7 @@ def get_alerts_by_ip(ip_address):
         return json.dumps(alerts, indent=2)
         
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Database error fetching alerts for IP {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -558,12 +558,12 @@ def whitelist():
             # Fetch all whitelist entries
             cursor.execute("SELECT * FROM whitelist")
             rows = cursor.fetchall()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, "Fetched all whitelist entries successfully.")
             return json.dumps([{"whitelist_id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error fetching whitelist entries: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -580,12 +580,12 @@ def whitelist():
             cursor.execute("INSERT INTO whitelist (whitelist_id, src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
                            (whitelist_id, src_ip, dst_ip, dst_port, protocol))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Added new whitelist entry: {whitelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
             return {"message": "Whitelist entry added successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error adding whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -593,7 +593,7 @@ def whitelist():
 @app.route('/api/whitelist/<id>', method=['PUT', 'DELETE'])
 def modify_whitelist(id):
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "whitelist")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -611,12 +611,12 @@ def modify_whitelist(id):
             cursor.execute("UPDATE whitelist SET src_ip = ?, dst_ip = ?, dst_port = ?, protocol = ? WHERE id = ?", 
                            (src_ip, dst_ip, dst_port, protocol, id))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Updated whitelist entry: {id}")
             return {"message": "Whitelist entry updated successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error updating whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -626,12 +626,12 @@ def modify_whitelist(id):
         try:
             cursor.execute("DELETE FROM whitelist WHERE id = ?", (id,))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Deleted whitelist entry: {id}")
             return {"message": "Whitelist entry deleted successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error deleting whitelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -640,7 +640,7 @@ def modify_whitelist(id):
 @app.route('/api/localhosts', method=['GET'])
 def localhosts():
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "localhosts")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -652,7 +652,7 @@ def localhosts():
             # Fetch all local hosts
             cursor.execute("SELECT * FROM localhosts")
             rows = cursor.fetchall()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, "Fetched all local hosts successfully.")
             return json.dumps([
@@ -675,7 +675,7 @@ def localhosts():
                 } for row in rows
             ])
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error fetching local hosts: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -683,7 +683,7 @@ def localhosts():
 @app.route('/api/localhosts/<ip_address>', method=['PUT'])
 def modify_localhost(ip_address):
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "localhosts")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -704,12 +704,12 @@ def modify_localhost(ip_address):
                 WHERE ip_address = ?
             """, (local_description, icon, ip_address))
             conn.commit()
-            conn.close()
+            disconnect_from_db(conn)
             set_json_response()
             log_info(logger, f"Updated local host: {ip_address}")
             return {"message": "Local host updated successfully"}
         except sqlite3.Error as e:
-            conn.close()
+            disconnect_from_db(conn)
             log_error(logger, f"Error updating local host: {e}")
             response.status = 500
             return {"error": str(e)}
@@ -727,7 +727,7 @@ def delete_localhost(ip_address):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "localhosts")
 
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -739,13 +739,13 @@ def delete_localhost(ip_address):
         # Delete the local host with the specified IP address
         cursor.execute("DELETE FROM localhosts WHERE ip_address = ?", (ip_address,))
         conn.commit()
-        conn.close()
+        disconnect_from_db(conn)
 
         set_json_response()
         log_info(logger, f"[INFO] Deleted local host with IP address: {ip_address}")
         return {"message": f"Local host with IP address {ip_address} deleted successfully"}
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"[ERROR] Error deleting local host with IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
@@ -768,7 +768,7 @@ def get_localhost(ip_address):
     """
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, "localhosts")
     
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -780,7 +780,7 @@ def get_localhost(ip_address):
         # Fetch the local host with the specified IP address
         cursor.execute("SELECT * FROM localhosts WHERE ip_address = ?", (ip_address,))
         row = cursor.fetchone()
-        conn.close()
+        disconnect_from_db(conn)
 
         if row:
             # Format the response
@@ -810,7 +810,7 @@ def get_localhost(ip_address):
             return {"error": f"No local host found for IP address: {ip_address}"}
 
     except sqlite3.Error as e:
-        conn.close()
+        disconnect_from_db(conn)
         log_error(logger, f"Error fetching local host for IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}

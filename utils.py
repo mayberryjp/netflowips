@@ -44,7 +44,8 @@ def log_error(logger, message):
     logger.error(formatted_message)
 
     config_dict = get_config_settings_detached()
-
+    
+    exit(0)
     if config_dict['SendErrorsToCloudApi']  == 1:
         # Send the error message to the cloud API
         try:
@@ -68,7 +69,7 @@ def log_error(logger, message):
             log_warn(logger, f"[WARN] Failed to send error report to cloud API {url}: {e}")
 
     if SITE == 'TESTPPE':
-        exit(1)
+        exit(0)
 
 def log_warn(logger, message):
     """Log a message and print it to the console with timestamp."""

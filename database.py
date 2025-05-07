@@ -6,6 +6,8 @@ import ipaddress
 import os
 from datetime import datetime
 import json
+import traceback
+import sys
 import importlib
 from utils import is_ip_in_range
   # Create a logger for this module
@@ -22,15 +24,35 @@ def delete_database(db_path):
     except Exception as e:
         log_error(logger,f"[ERROR] Error deleting {db_path}: {e}")
 
-def connect_to_db(DB_NAME):
+def connect_to_db(DB_NAME,table="unknown"):
     """Establish a connection to the specified database."""
     logger = logging.getLogger(__name__)
+
     try:
         conn = sqlite3.connect(DB_NAME)
+        conn.execute("PRAGMA busy_timeout = 5000")
+        log_info(logger, f"[INFO] Connected to database: {DB_NAME} table {table}")
         return conn
     except sqlite3.Error as e:
-        log_error(logger,f"[ERROR] Error connecting to database {DB_NAME}: {e}")
+        log_error(logger,f"[ERROR] Error connecting to database {DB_NAME} table {table}: {e}")
         return None
+    
+def disconnect_from_db(conn):
+    """
+    Safely close the database connection.
+
+    Args:
+        conn: The SQLite connection object to close.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        if conn:
+            conn.close()
+            log_info(logger, "[INFO] Database connection closed successfully.")
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error closing database connection: {e}")
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while closing database connection: {e}")
 
 def create_table(db_name, create_table_sql):
     """Initializes a SQLite database with the specified schema."""
@@ -44,21 +66,21 @@ def create_table(db_name, create_table_sql):
         cursor = conn.cursor()
         cursor.execute(create_table_sql)
         conn.commit()
-        log_info(logger, f"[INFO] {db_name} initialized successfully.")
-        conn.close()
+        log_info(logger, f"[INFO] {db_name} table initialized successfully.")
+        disconnect_from_db(conn)
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error initializing {db_name}: {e}")
 
 def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
     logger = logging.getLogger(__name__)
-    allflows_conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
     total_packets = 0
     total_bytes = 0
 
-    if allflows_conn:
+    if conn:
         try:
-            allflows_cursor = allflows_conn.cursor()
+            allflows_cursor = conn.cursor()
             for row in rows:
                 src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags = row
                 total_packets += packets
@@ -78,14 +100,15 @@ def update_allflows(rows, config_dict):
                         last_seen = datetime('now', 'localtime'),
                         tags = excluded.tags
                 """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, tags))
-            allflows_conn.commit()
+            conn.commit()
             log_info(logger, f"[INFO] Updated {CONST_CONSOLIDATED_DB} with {len(rows)} rows.")
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error updating {CONST_CONSOLIDATED_DB}: {e}")
         finally:
-            allflows_conn.close()
+            disconnect_from_db(conn)
         log_info(logger, f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
 
+    disconnect_from_db(conn)
 
 def update_traffic_stats(rows, config_dict):
     """
@@ -96,15 +119,13 @@ def update_traffic_stats(rows, config_dict):
                      (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags)
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "trafficstats")
 
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to allflows database.")
         return
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
-
-
 
     try:
         cursor = conn.cursor()
@@ -134,12 +155,13 @@ def update_traffic_stats(rows, config_dict):
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error updating traffic statistics: {e}")
     finally:
-        conn.close()
+        disconnect_from_db(conn)
+    disconnect_from_db(conn)
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(db_name)
+    conn = connect_to_db(db_name, table_name)
     if conn:
         try:
             cursor = conn.cursor()
@@ -149,7 +171,8 @@ def delete_all_records(db_name, table_name='flows'):
         except sqlite3.Error as e:
             log_error(logger,f"[ERROR] Error deleting records from {db_name}: {e}")
         finally:
-            conn.close()
+            disconnect_from_db(conn)
+    disconnect_from_db(conn)
 
 def init_configurations_from_sitepy():
     """
@@ -162,7 +185,7 @@ def init_configurations_from_sitepy():
     config_dict = {}
 
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
@@ -178,6 +201,7 @@ def init_configurations_from_sitepy():
 
         # Insert default configurations into the database
         for key, value in config.CONST_DEFAULT_CONFIGS:
+            log_info(logger, f"[INFO] Inserting configuration: {key} = {value}")
             cursor.execute("""
                 INSERT OR IGNORE INTO configuration (key, value)
                 VALUES (?, ?)
@@ -189,15 +213,16 @@ def init_configurations_from_sitepy():
         config_dict = dict(cursor.fetchall())
 
         log_info(logger, f"[INFO] Default configurations initialized successfully.")
-        conn.close()
+        disconnect_from_db(conn)
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error initializing default configurations: {e}")
     except Exception as e:
         log_error(logger,f"[ERROR] Unexpected error: {e}")
     finally:
         if 'conn' in locals() and conn:
-            conn.close()
-
+            disconnect_from_db(conn)
+    
+    disconnect_from_db(conn)
     return config_dict
 
 
@@ -212,7 +237,7 @@ def init_configurations_from_variable():
     config_dict = {}
 
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
@@ -232,22 +257,22 @@ def init_configurations_from_variable():
         config_dict = dict(cursor.fetchall())
 
         log_info(logger, f"[INFO] Default configurations initialized successfully.")
-        conn.close()
+        disconnect_from_db(conn)
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error initializing default configurations: {e}")
     except Exception as e:
         log_error(logger,f"[ERROR] Unexpected error: {e}")
     finally:
         if 'conn' in locals() and conn:
-            conn.close()
-
+            disconnect_from_db(conn)
+    disconnect_from_db(conn)
     return config_dict
 
 def get_config_settings():
     """Read configuration settings from the configuration database into a dictionary."""
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return None
@@ -255,18 +280,22 @@ def get_config_settings():
         cursor = conn.cursor()
         cursor.execute("SELECT key, value FROM configuration")
         config_dict = dict(cursor.fetchall())
-        conn.close()
         log_info(logger, f"[INFO] Successfully loaded {len(config_dict)} configuration settings")
         return config_dict
     except sqlite3.Error as e:
         log_error(logger,f"[ERROR] Error reading configuration database: {e}")
+        disconnect_from_db(conn)
         return None
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 
 def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
     """Logs an alert to the alerts.db SQLite database."""
     logger = logging.getLogger(__name__)
     try:
-        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen, acknowledged)
@@ -277,10 +306,12 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
                 last_seen = datetime('now', 'localtime')
         """, (alert_id_hash, ip_address, json.dumps(flow), category, alert_enrichment_1, alert_enrichment_2))
         conn.commit()
-        conn.close()
         log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error logging alert to database: {e}")
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
 
 def get_custom_tags():
     """
@@ -292,7 +323,7 @@ def get_custom_tags():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "customtags")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to whitelist database")
             return None
@@ -314,7 +345,8 @@ def get_custom_tags():
         return None
     finally:
         if conn:
-            conn.close()
+            disconnect_from_db(conn)
+
 
 def get_whitelist():
     """
@@ -326,7 +358,7 @@ def get_whitelist():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to whitelist database")
             return None
@@ -348,7 +380,8 @@ def get_whitelist():
         return None
     finally:
         if conn:
-            conn.close()
+            disconnect_from_db(conn)
+
 
 def get_row_count(db_name, table_name):
     """
@@ -363,7 +396,7 @@ def get_row_count(db_name, table_name):
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(db_name)
+        conn = connect_to_db(db_name, table_name)
         if not conn:
             log_error(logger, f"[ERROR] Unable to connect to database {db_name}")
             return -1
@@ -379,7 +412,7 @@ def get_row_count(db_name, table_name):
         return -1
     finally:
         if 'conn' in locals():
-            conn.close()
+            disconnect_from_db(conn)
 
 def get_alerts_summary():
     """
@@ -388,7 +421,7 @@ def get_alerts_summary():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to alerts database")
             return
@@ -419,7 +452,7 @@ def get_alerts_summary():
         log_error(logger, f"[ERROR] Error getting alerts summary: {e}")
     finally:
         if 'conn' in locals():
-            conn.close()
+            disconnect_from_db(conn)
 
 def import_custom_tags(config_dict):
     """
@@ -438,7 +471,7 @@ def import_custom_tags(config_dict):
         log_info(logger, "[INFO] No custom tag entries found in config_dict.")
         return
 
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "customtags")
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to whitelist database.")
         return
@@ -474,7 +507,7 @@ def import_custom_tags(config_dict):
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error importing custom tag entries: {e}")
     finally:
-        conn.close()
+        disconnect_from_db(conn)
 
 def import_whitelists(config_dict):
     """
@@ -487,13 +520,17 @@ def import_whitelists(config_dict):
     """
     logger = logging.getLogger(__name__)
     whitelist_entries_json = config_dict.get("WhitelistEntries", "[]")
+    if not whitelist_entries_json:
+        log_info(logger, "[INFO] No whitelist entries found in config_dict.")
+        return
+    #print(f"[INFO] whitelist_entries_json: {whitelist_entries_json}")
     whitelist_entries = json.loads(whitelist_entries_json)
 
     if not whitelist_entries:
         log_info(logger, "[INFO] No whitelist entries found in config_dict.")
         return
 
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to whitelist database.")
         return
@@ -529,7 +566,7 @@ def import_whitelists(config_dict):
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error importing whitelist entries: {e}")
     finally:
-        conn.close()
+        disconnect_from_db(conn)
 
 def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
     """
@@ -547,7 +584,7 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
         bool: True if the update was successful, False otherwise.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, table_name)
     if not conn:
         log_error(logger, f"[ERROR] Unable to connect to database: {CONST_CONSOLIDATED_DB}")
         return False
@@ -582,7 +619,7 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
         log_error(logger, f"[ERROR] Failed to add tag to flow: {e}")
         return False
     finally:
-        conn.close()
+        disconnect_from_db(conn)
 
 def get_localhosts():
     """
@@ -592,7 +629,7 @@ def get_localhosts():
         set: A set of IP addresses from the localhosts database, or an empty set if an error occurs.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
 
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
@@ -608,7 +645,7 @@ def get_localhosts():
         log_error(logger, f"[ERROR] Failed to retrieve local hosts: {e}")
         return set()
     finally:
-        conn.close()
+        disconnect_from_db(conn)
 
 def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostname=None, dns_hostname=None, os_fingerprint=None, lease_hostname=None, lease_hwaddr=None, lease_clientid=None):
     """
@@ -628,7 +665,7 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         bool: True if the operation was successful, False otherwise.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
 
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
@@ -657,7 +694,7 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         log_error(logger, f"[ERROR] Failed to update localhosts database: {e}")
         return False
     finally:
-        conn.close()
+        disconnect_from_db(conn)
 
 
 def collect_database_counts():
@@ -682,9 +719,9 @@ def collect_database_counts():
 
     try:
         # Connect to the alerts database
-        conn_alerts = connect_to_db(CONST_CONSOLIDATED_DB)
-        if conn_alerts:
-            cursor = conn_alerts.cursor()
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if conn:
+            cursor = conn.cursor()
             # Count acknowledged alerts
             cursor.execute("SELECT COUNT(*) FROM alerts WHERE acknowledged = 1")
             counts["acknowledged_alerts"] = cursor.fetchone()[0]
@@ -697,12 +734,12 @@ def collect_database_counts():
             cursor.execute("SELECT COUNT(*) FROM alerts")
             counts["total_alerts"] = cursor.fetchone()[0]
 
-            conn_alerts.close()
+            conn.close()
         else:
             log_error(logger, "[ERROR] Unable to connect to alerts database")
 
         # Connect to the localhosts database
-        conn_localhosts = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn_localhosts = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
         if conn_localhosts:
             cursor = conn_localhosts.cursor()
             # Count entries in localhosts
@@ -720,7 +757,7 @@ def collect_database_counts():
             log_error(logger, "[ERROR] Unable to connect to localhosts database")
 
         # Connect to the whitelist database
-        conn_whitelist = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn_whitelist = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
         if conn_whitelist:
             cursor = conn_whitelist.cursor()
             # Count entries in whitelist
@@ -736,6 +773,7 @@ def collect_database_counts():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error: {e}")
 
+    conn_whitelist.close()
     return counts
 
 def store_machine_unique_identifier():
@@ -755,7 +793,7 @@ def store_machine_unique_identifier():
             return False
 
         # Connect to the configuration database
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to configuration database.")
             return False
@@ -771,7 +809,7 @@ def store_machine_unique_identifier():
         """, (unique_id,))
 
         conn.commit()
-        conn.close()
+        disconnect_from_db(conn)
 
         log_info(logger, f"[INFO] Machine unique identifier stored successfully: {unique_id}")
         return True
@@ -793,7 +831,7 @@ def get_machine_unique_identifier_from_db():
     logger = logging.getLogger(__name__)
     try:
         # Connect to the configuration database
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to configuration database.")
             return None
@@ -806,7 +844,7 @@ def get_machine_unique_identifier_from_db():
         """)
         result = cursor.fetchone()
 
-        conn.close()
+        disconnect_from_db(conn)
 
         if result:
             #log_info(logger, f"[INFO] Retrieved MachineUniqueIdentifier: {result[0]}")
@@ -821,6 +859,8 @@ def get_machine_unique_identifier_from_db():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while retrieving machine unique identifier: {e}")
         return None
-
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
 
 

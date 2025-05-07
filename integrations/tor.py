@@ -1,6 +1,6 @@
 from utils import log_info, log_error
 import logging
-from database import connect_to_db, delete_all_records, create_table
+from database import connect_to_db, delete_all_records, disconnect_from_db
 from const import CONST_CONSOLIDATED_DB
 from datetime import datetime, timedelta
 import requests
@@ -12,7 +12,7 @@ def update_tor_nodes(config_dict):
     """
     logger = logging.getLogger(__name__)
     log_info(logger, "[INFO] Starting tor node processing")   
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "tornodes")
 
     tor_nodes_url = config_dict.get('TorNodesUrl','https://www.dan.me.uk/torlist/?full')
     
@@ -49,6 +49,6 @@ def update_tor_nodes(config_dict):
         log_error(logger, f"[ERROR] Error updating Tor nodes: {e}")
     finally:
         if conn:
-            conn.close()
+            disconnect_from_db(conn)
 
     log_info(logger, "[INFO] Finished tor node processing")

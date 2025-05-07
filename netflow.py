@@ -5,7 +5,7 @@ import os
 from utils import log_info, log_warn, log_error, calculate_broadcast
 import logging
 from datetime import datetime, timezone
-from database import connect_to_db, get_whitelist, get_config_settings
+from database import connect_to_db, get_whitelist, get_config_settings, disconnect_from_db
 from tags import apply_tags
 from queue import Queue
 import threading
@@ -21,7 +21,7 @@ netflow_queue = Queue()
 
 # Update or insert flow in the DB
 def update_newflow(record):
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "flows")
     c = conn.cursor()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -39,7 +39,7 @@ def update_newflow(record):
     ''', (record['src_ip'], record['dst_ip'], record['src_port'], record['dst_port'],record['protocol'], record['packets'], record['bytes'], record['start_time'], record['end_time'], now,  record['tags']))
 
     conn.commit()
-    conn.close()
+    disconnect_from_db(conn)
 
 def parse_netflow_v5_header(data):
     # Unpack the header into its individual fields

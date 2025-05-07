@@ -1,5 +1,5 @@
 import sqlite3  # Import the sqlite3 module
-from database import update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
+from database import disconnect_from_db, update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
 from detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
 from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import load_geolocation_data
@@ -27,7 +27,7 @@ def process_data():
         return
 
     """Read data from the database and process it."""
-    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "flows")
     if conn and config_dict['ScheduleProcessor'] == 1:
         try:
             cursor = conn.cursor()
@@ -128,10 +128,10 @@ def process_data():
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error reading from database: {e}")
         finally:
-            conn.close()
+            disconnect_from_db(conn)
         
     log_info(logger,f"[INFO] Processing finished.") 
-    conn.close()
+    disconnect_from_db(conn)
 
 if __name__ == "__main__":
 

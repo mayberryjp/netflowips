@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int, calculate_broadcast  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB # Assuming constants are defined in const
-from database import get_whitelist,connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
+from database import get_whitelist,connect_to_db, log_alert_to_db, update_tag_to_allflows, disconnect_from_db
 from notifications import send_telegram_message  # Import notification functions
 import logging
 import requests
@@ -14,21 +14,22 @@ def update_local_hosts(rows, config_dict):
     Uses an in-memory list to avoid repeated database queries.
     """
     logger = logging.getLogger(__name__)
-    log_info(logger,"[INFO] Staring to update local hosts")
+    log_info(logger,"[INFO] Starting to update local hosts")
     # Connect to the localhosts database
-    localhosts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
-    if not localhosts_conn:
+    if not conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
         return
 
     try:
-        localhosts_cursor = localhosts_conn.cursor()
+        localhosts_cursor = conn.cursor()
 
         # Load all existing local hosts into memory
         localhosts_cursor.execute("SELECT ip_address FROM localhosts")
         existing_localhosts = set(row[0] for row in localhosts_cursor.fetchall())
         log_info(logger, f"[INFO] Loaded {len(existing_localhosts)} existing local hosts into memory")
+    
 
         for row in rows:
             for range_index in (0, 1):  # Assuming the IP addresses are in the first two columns
@@ -45,6 +46,7 @@ def update_local_hosts(rows, config_dict):
                         "INSERT INTO localhosts (ip_address, first_seen, original_flow) VALUES (?, ?, ?)",
                         (ip_address, first_seen, original_flow)
                     )
+                    conn.commit()
                     existing_localhosts.add(ip_address)  # Add to in-memory set
                     log_info(logger, f"[INFO] Added new IP to localhosts.db: {ip_address}")
 
@@ -60,13 +62,10 @@ def update_local_hosts(rows, config_dict):
                         log_alert_to_db(ip_address, row, "New Host Detected", "", "",
                                         f"{ip_address}_NewHostsDetection", False)
 
-        # Commit changes to localhosts.db
-        localhosts_conn.commit()
-
     except Exception as e:
         log_error(logger, f"[ERROR] Error in update_local_hosts: {e}")
     finally:
-        localhosts_conn.close()
+        disconnect_from_db(conn)
 
     log_info(logger,"[INFO] Finished updating local hosts")
 
@@ -81,15 +80,15 @@ def detect_new_outbound_connections(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     log_info(logger,f"[INFO] Preparing to detect new outbound connections")
-    alerts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
-    if not alerts_conn:
+    if not conn:
         log_error(logger, "[ERROR] Unable to connect to alerts database")
         return
 
     try:
-        alerts_cursor = alerts_conn.cursor()
+        alerts_cursor = conn.cursor()
 
         for row in rows:
             src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
@@ -136,7 +135,7 @@ def detect_new_outbound_connections(rows, config_dict):
     except Exception as e:
         log_error(logger, f"[ERROR] Error in detect_new_outbound_connections: {e}")
     finally:
-        alerts_conn.close()
+        disconnect_from_db(conn)
     
     log_info(logger,f"[INFO] Finished detecting new outbound connections")
 
@@ -627,7 +626,7 @@ def detect_dead_connections(config_dict):
     logger = logging.getLogger(__name__)
     log_info(logger, f"[INFO] Started detecting unresponsive destinations")
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to allflows database")
             return
@@ -738,7 +737,7 @@ def detect_dead_connections(config_dict):
         log_error(logger, f"[ERROR] Database error in detect_dead_connections: {e}")
     finally:
         if 'conn' in locals():
-            conn.close()
+            disconnect_from_db(conn)
     log_info(logger, f"[INFO] Finished detecting unresponsive destinations")
 
 def detect_reputation_flows(rows, config_dict, reputation_data):
@@ -959,7 +958,7 @@ def detect_tor_traffic(rows, config_dict):
     
     try:
         # Get current Tor nodes
-        conn = connect_to_db(CONST_CONSOLIDATED_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "tornodes")
         cursor = conn.cursor()
         cursor.execute("SELECT ip_address FROM tornodes")
         tor_nodes = set(row[0] for row in cursor.fetchall())
@@ -1004,7 +1003,7 @@ def detect_tor_traffic(rows, config_dict):
         log_error(logger, f"[ERROR] Error in detect_tor_traffic: {e}")
     finally:
         if 'conn' in locals():
-            conn.close()
+            disconnect_from_db(conn)
     log_info(logger,"[INFO] Finished detecting traffic to tor nodes")
 
 
