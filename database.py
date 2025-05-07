@@ -4,7 +4,7 @@ from utils import log_info, log_error, get_machine_unique_identifier  # Assuming
 from const import CONST_INSTALL_CONFIGS, CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import ipaddress
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import traceback
 import sys
@@ -109,6 +109,48 @@ def update_allflows(rows, config_dict):
         log_info(logger, f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
 
     disconnect_from_db(conn)
+
+
+def delete_old_traffic_stats():
+    """
+    Delete all records from the trafficstats table with a timestamp of 2 days ago or older.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Connect to the consolidated database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "trafficstats")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to trafficstats database.")
+            return False
+
+        cursor = conn.cursor()
+
+        # Calculate the cutoff timestamp (2 days ago)
+        cutoff_date = (datetime.now() - timedelta(days=31)).strftime('%Y-%m-%d')
+
+        # Delete records older than the cutoff timestamp
+        cursor.execute(f"""
+            DELETE FROM trafficstats
+            WHERE timestamp LIKE '{cutoff_date}:%'
+        """, )
+
+        conn.commit()
+        log_info(logger, f"[INFO] Deleted records older than {cutoff_date} from trafficstats table.")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while deleting old traffic stats: {e}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while deleting old traffic stats: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 
 def update_traffic_stats(rows, config_dict):
     """

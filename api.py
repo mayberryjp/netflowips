@@ -2,7 +2,7 @@ from bottle import Bottle, request, response
 import sqlite3
 import json
 import os
-from database import connect_to_db, collect_database_counts, disconnect_from_db  # Import the function
+from database import connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
 from const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
@@ -881,8 +881,7 @@ def get_traffic_stats(ip_address):
     """
     logger = logging.getLogger(__name__)
     try:
-        from database import get_traffic_stats_for_ip
-
+        
         # Call the function to get traffic stats for the IP address
         traffic_stats = get_traffic_stats_for_ip(ip_address)
 
@@ -899,8 +898,6 @@ def get_traffic_stats(ip_address):
         log_error(logger, f"[ERROR] Failed to get traffic stats for IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
-
-
 
 # Run the Bottle app
 if __name__ == '__main__':

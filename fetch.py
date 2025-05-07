@@ -2,7 +2,7 @@ import time
 import logging
 from integrations.tor import update_tor_nodes
 from utils import log_info, log_error
-from database import get_config_settings, delete_database, delete_all_records, create_table
+from database import get_config_settings, delete_database, delete_old_traffic_stats
 from integrations.maxmind import create_geolocation_db
 from client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
@@ -24,13 +24,12 @@ def main():
         log_error(logger, "[ERROR] Failed to load configuration settings")
         exit(1)
 
-    fetch_interval = config_dict.get('IntegrationFetchInterval',3660)
+    fetch_interval = config_dict.get('IntegrationFetchInterval',3600)
     # Fixed interval in seconds (e.g., 24 hours = 86400 seconds)
 
-    if (REINITIALIZE_DB):
-        delete_database(CONST_CONSOLIDATED_DB)
-
     while True:
+
+        delete_old_traffic_stats()
 
         config_dict = get_config_settings()
         if not config_dict:
