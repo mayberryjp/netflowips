@@ -135,8 +135,7 @@ def tag_custom(record, tag_entries):
         return "".join(applied_tags)
     return None
     
-
-def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries=None):
+def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, config_dict):
     """
     Apply multiple tagging functions to one or more rows. For each row, append the tag to the tags position.
 
@@ -167,11 +166,12 @@ def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries=None)
     if multicast_tag:
         record['tags'] += f"{multicast_tag}"
         
-    # Apply custom tags
-    if tag_entries:
-        custom_tags = tag_custom(record, tag_entries)
-        if custom_tags:
-            record['tags'] += custom_tags
+    if config_dict.get("AlertOnCustomTags", 0) > 0:
+        # Apply custom tags
+        if tag_entries:
+            custom_tags = tag_custom(record, tag_entries)
+            if custom_tags:
+                record['tags'] += custom_tags
 
     return record
 
