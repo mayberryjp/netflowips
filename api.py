@@ -867,36 +867,38 @@ def get_database_counts():
         response.status = 500
         return {"error": str(e)}
 
-@app.route('/api/client/<ip_address>', method=['GET'])
-def get_client_info(ip_address):
+
+@app.route('/api/trafficstats/<ip_address>', method=['GET'])
+def get_traffic_stats(ip_address):
     """
-    API endpoint to get detailed client information for a specific IP address.
-    Returns JSON object containing host info, DNS queries, and flow history.
-    
+    API endpoint to get all traffic statistics for a specific IP address.
+
     Args:
-        ip_address: IP address of the client to query
+        ip_address: The IP address to filter traffic statistics by.
+
+    Returns:
+        JSON object containing the traffic statistics for the specified IP address.
     """
     logger = logging.getLogger(__name__)
     try:
-        from client import export_client_definition
-        
-        # Get client definition directly
-        client_data = export_client_definition(ip_address)
-        
-        if client_data:
+        from database import get_traffic_stats_for_ip
+
+        # Call the function to get traffic stats for the IP address
+        traffic_stats = get_traffic_stats_for_ip(ip_address)
+
+        if traffic_stats:
             set_json_response()
-            log_info(logger, f"[INFO] Successfully retrieved client info for {ip_address}")
-            return json.dumps(client_data, indent=2)
+            log_info(logger, f"[INFO] Successfully retrieved traffic stats for IP address {ip_address}")
+            return json.dumps(traffic_stats, indent=2)
         else:
-            log_warn(logger, f"[WARN] No client data found for {ip_address}")
+            log_warn(logger, f"[WARN] No traffic stats found for IP address {ip_address}")
             response.status = 404
-            return {"error": f"No client data found for {ip_address}"}
-            
+            return {"error": f"No traffic stats found for IP address {ip_address}"}
+
     except Exception as e:
-        log_error(logger, f"[ERROR] Failed to get client info for {ip_address}: {e}")
+        log_error(logger, f"[ERROR] Failed to get traffic stats for IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
-
 
 
 
