@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL< "customtags")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL, "allflows")
