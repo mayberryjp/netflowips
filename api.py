@@ -3,7 +3,7 @@ import sqlite3
 import json
 import os
 from database import connect_to_db, collect_database_counts  # Import the function
-from const import CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, CONST_LOCALHOSTS_DB, IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT
+from const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from utils import log_info, log_warn, log_error  # Import logging functions
 import logging
 from pathlib import Path
@@ -20,11 +20,11 @@ if IS_CONTAINER:
 def set_json_response():
     response.content_type = 'application/json'
 
-# API for CONST_CONFIG_DB
+# API for CONST_CONSOLIDATED_DB
 @app.route('/api/configurations', method=['GET', 'POST'])
 def configurations():
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONFIG_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -68,7 +68,7 @@ def configurations():
 @app.route('/api/configurations/<key>', method=['PUT', 'DELETE'])
 def modify_configuration(key):
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONFIG_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -108,11 +108,11 @@ def modify_configuration(key):
             response.status = 500
             return {"error": str(e)}
 
-# API for CONST_ALERTS_DB
+# API for CONST_CONSOLIDATED_DB
 @app.route('/api/alerts', method=['GET'])
 def alerts():
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -138,7 +138,7 @@ def alerts():
 
 @app.route('/api/alerts/<id>', method=['PUT'])
 def modify_alert(id):
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -176,7 +176,7 @@ def delete_alert(id):
         JSON object indicating success or failure.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
 
     if not conn:
@@ -236,7 +236,7 @@ def get_recent_alerts_by_ip(ip_address):
         JSON object containing the most recent alerts for the specified IP address.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     
     if not conn:
@@ -301,7 +301,7 @@ def summarize_alerts_by_ip_address(ip_address):
         JSON object containing a summary of alerts for the specified IP address.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     
     if not conn:
@@ -365,7 +365,7 @@ def summarize_alerts_by_ip():
               of alerts for each one-hour interval, sorted from oldest to most recent.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -428,7 +428,7 @@ def get_recent_alerts():
     Returns alerts sorted by last_seen timestamp in descending order.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     
     if not conn:
@@ -491,7 +491,7 @@ def get_alerts_by_ip(ip_address):
         JSON object containing all alerts for the specified IP address.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_ALERTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     
     if not conn:
@@ -542,10 +542,10 @@ def get_alerts_by_ip(ip_address):
         response.status = 500
         return {"error": str(e)}
 
-# API for CONST_WHITELIST_DB
+# API for CONST_CONSOLIDATED_DB
 @app.route('/api/whitelist', method=['GET', 'POST'])
 def whitelist():
-    db_name = CONST_WHITELIST_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -592,7 +592,7 @@ def whitelist():
 
 @app.route('/api/whitelist/<id>', method=['PUT', 'DELETE'])
 def modify_whitelist(id):
-    db_name = CONST_WHITELIST_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -636,10 +636,10 @@ def modify_whitelist(id):
             response.status = 500
             return {"error": str(e)}
 
-# API for CONST_LOCALHOSTS_DB
+# API for CONST_CONSOLIDATED_DB
 @app.route('/api/localhosts', method=['GET'])
 def localhosts():
-    db_name = CONST_LOCALHOSTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -682,7 +682,7 @@ def localhosts():
 
 @app.route('/api/localhosts/<ip_address>', method=['PUT'])
 def modify_localhost(ip_address):
-    db_name = CONST_LOCALHOSTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
@@ -726,7 +726,7 @@ def delete_localhost(ip_address):
         JSON object indicating success or failure.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_LOCALHOSTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
 
     if not conn:
@@ -767,7 +767,7 @@ def get_localhost(ip_address):
         JSON object containing the local host's details or an error message.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_LOCALHOSTS_DB
+    db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     
     if not conn:

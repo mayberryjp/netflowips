@@ -1,6 +1,6 @@
 import socket
 import struct
-from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_NEWFLOWS_DB
+from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import os
 from utils import log_info, log_warn, log_error, calculate_broadcast
 import logging
@@ -21,7 +21,7 @@ netflow_queue = Queue()
 
 # Update or insert flow in the DB
 def update_newflow(record):
-    conn = connect_to_db(CONST_NEWFLOWS_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     c = conn.cursor()
     now = datetime.now(timezone.utc).isoformat()
 

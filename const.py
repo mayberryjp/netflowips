@@ -4,16 +4,9 @@ CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
 CONST_API_LISTEN_PORT=8044
 CONST_API_LISTEN_ADDRESS="0.0.0.0"
 IS_CONTAINER=1
-CONST_NEWFLOWS_DB="/database/newflows.db"
-CONST_ALLFLOWS_DB="/database/allflows.db"
-CONST_LOCALHOSTS_DB = "/database/localhosts.db"
-CONST_DNSQUERIES_DB = '/database/dnsqueries.db'
-CONST_CONFIG_DB="/database/config.db"
-CONST_ALERTS_DB="/database/alerts.db"
-CONST_WHITELIST_DB = '/database/whitelist.db'
+CONST_CONSOLIDATED_DB = "/database/consolidated.db"
 #CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','/database/test_source_2.db']
 CONST_TEST_SOURCE_DB = ['/database/test_source_1.db']
-CONST_GEOLOCATION_DB = '/database/geolocation.db'
 CONST_SITE= 'TESTPPE'
 CONST_REINITIALIZE_DB = 0
 CONST_CREATE_NEWFLOWS_SQL='''
@@ -79,17 +72,17 @@ CONST_CREATE_WHITELIST_SQL='''
     )'''
 
 CONST_CREATE_CUSTOMTAGS_SQL='''
-CREATE TABLE IF NOT EXISTS customtags (
-    tag_id TEXT PRIMARY KEY,
-    src_ip TEXT,
-    dst_ip TEXT,
-    dst_port INTEGER,
-    protocol TEXT,
-    tag_name TEXT,
-    enabled INTEGER DEFAULT 1,
-    added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    insert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)'''
+    CREATE TABLE IF NOT EXISTS customtags (
+        tag_id TEXT PRIMARY KEY,
+        src_ip TEXT,
+        dst_ip TEXT,
+        dst_port INTEGER,
+        protocol TEXT,
+        tag_name TEXT,
+        enabled INTEGER DEFAULT 1,
+        added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        insert_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )'''
 
 CONST_CREATE_CONFIG_SQL='''
     CREATE TABLE IF NOT EXISTS configuration (
@@ -98,13 +91,13 @@ CONST_CREATE_CONFIG_SQL='''
     )'''
 
 CONST_CREATE_GEOLOCATION_SQL="""
-            CREATE TABLE IF NOT EXISTS geolocation (
-                network TEXT PRIMARY KEY,
-                start_ip INTEGER,
-                end_ip INTEGER,
-                netmask INTEGER,
-                country_name TEXT
-            )"""
+    CREATE TABLE IF NOT EXISTS geolocation (
+        network TEXT PRIMARY KEY,
+        start_ip INTEGER,
+        end_ip INTEGER,
+        netmask INTEGER,
+        country_name TEXT
+    )"""
 
 CONST_CREATE_LOCALHOSTS_SQL = """
     CREATE TABLE IF NOT EXISTS localhosts (
@@ -126,14 +119,23 @@ CONST_CREATE_LOCALHOSTS_SQL = """
     )
 """
 
+CONST_CREATE_TRAFFICSTATS_SQL = """
+    CREATE TABLE IF NOT EXISTS trafficstats (
+        ip_address TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        total_packets INTEGER DEFAULT 0,
+        total_bytes INTEGER DEFAULT 0,
+        PRIMARY KEY (ip_address, timestamp)
+    )"""
+
 CONST_CREATE_REPUTATIONLIST_SQL="""
-            CREATE TABLE IF NOT EXISTS reputationlist (
-                network TEXT PRIMARY KEY,
-                start_ip INTEGER,
-                end_ip INTEGER,
-                netmask INTEGER
-            )
-        """
+    CREATE TABLE IF NOT EXISTS reputationlist (
+        network TEXT PRIMARY KEY,
+        start_ip INTEGER,
+        end_ip INTEGER,
+        netmask INTEGER
+    )
+"""
 
 CONST_CREATE_TORNODES_SQL = '''
     CREATE TABLE IF NOT EXISTS tornodes (

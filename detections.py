@@ -2,7 +2,7 @@ import sqlite3
 import json
 from datetime import datetime, timedelta
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int, calculate_broadcast  # Assuming log_info and is_ip_in_range are defined in utils
-from const import CONST_LOCALHOSTS_DB, CONST_ALERTS_DB, CONST_ALLFLOWS_DB, CONST_GEOLOCATION_DB # Assuming constants are defined in const
+from const import CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB # Assuming constants are defined in const
 from database import get_whitelist,connect_to_db, log_alert_to_db, update_tag_to_allflows  # Import connect_to_db and update_tag from database.py
 from notifications import send_telegram_message  # Import notification functions
 import logging
@@ -16,7 +16,7 @@ def update_local_hosts(rows, config_dict):
     logger = logging.getLogger(__name__)
     log_info(logger,"[INFO] Staring to update local hosts")
     # Connect to the localhosts database
-    localhosts_conn = connect_to_db(CONST_LOCALHOSTS_DB)
+    localhosts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
     if not localhosts_conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
@@ -81,7 +81,7 @@ def detect_new_outbound_connections(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     log_info(logger,f"[INFO] Preparing to detect new outbound connections")
-    alerts_conn = connect_to_db(CONST_ALERTS_DB)
+    alerts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     if not alerts_conn:
@@ -627,7 +627,7 @@ def detect_dead_connections(config_dict):
     logger = logging.getLogger(__name__)
     log_info(logger, f"[INFO] Started detecting unresponsive destinations")
     try:
-        conn = connect_to_db(CONST_ALLFLOWS_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to allflows database")
             return
@@ -959,7 +959,7 @@ def detect_tor_traffic(rows, config_dict):
     
     try:
         # Get current Tor nodes
-        conn = connect_to_db(CONST_GEOLOCATION_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         cursor = conn.cursor()
         cursor.execute("SELECT ip_address FROM tornodes")
         tor_nodes = set(row[0] for row in cursor.fetchall())

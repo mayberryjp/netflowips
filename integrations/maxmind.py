@@ -2,9 +2,9 @@ import sqlite3
 import csv
 import os
 from utils import log_info, log_error, ip_network_to_range  # Assuming log_info is already defined
-from database import connect_to_db, create_database, get_config_settings  # Assuming connect_to_db is already defined
+from database import connect_to_db, get_config_settings  # Assuming connect_to_db is already defined
 import logging
-from const import CONST_SITE, IS_CONTAINER, CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL
+from const import CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL
 
 if IS_CONTAINER:
     SITE = os.getenv("SITE", CONST_SITE)
@@ -46,12 +46,9 @@ def create_geolocation_db(
                 country_name = row.get("country_name", "")
                 locations[geoname_id] = country_name
 
-
-        create_database(CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL)
-
-        conn=connect_to_db(CONST_GEOLOCATION_DB)
+        conn=connect_to_db(CONST_CONSOLIDATED_DB)
         if conn is None:
-            log_error(logger, f"[ERROR] Failed to connect to the database {CONST_GEOLOCATION_DB}.")
+            log_error(logger, f"[ERROR] Failed to connect to the database {CONST_CONSOLIDATED_DB}.")
             return
         cursor = conn.cursor()
 
@@ -107,7 +104,7 @@ def create_geolocation_db(
         conn.commit()
         conn.close()
 
-        log_info(logger, f"[INFO] Geolocation database {CONST_GEOLOCATION_DB} created successfully.")
+        log_info(logger, f"[INFO] Geolocation database {CONST_CONSOLIDATED_DB} created successfully.")
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error creating geolocation database: {e}")
@@ -121,7 +118,7 @@ def load_geolocation_data():
     """
     logger = logging.getLogger(__name__)
     geolocation_data = []
-    conn = connect_to_db(CONST_GEOLOCATION_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     if conn:
         try:
             cursor = conn.cursor()

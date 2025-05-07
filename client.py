@@ -5,13 +5,9 @@ from enum import Enum
 import logging
 from datetime import datetime
 import requests
-from const import (
-    CONST_LOCALHOSTS_DB, 
-    CONST_DNSQUERIES_DB, 
-    CONST_ALLFLOWS_DB
-)
 from utils import log_info, log_error, log_warn
 from database import get_machine_unique_identifier_from_db, get_localhosts, get_config_settings
+from const import CONST_CONSOLIDATED_DB
 
 class ActionType(Enum):
     """Placeholder for action types"""
@@ -42,7 +38,7 @@ def export_client_definition(client_ip):
         }
         
         # Get host information from localhosts.db
-        localhosts_conn = sqlite3.connect(CONST_LOCALHOSTS_DB)
+        localhosts_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         localhosts_cursor = localhosts_conn.cursor()
         localhosts_cursor.execute(
             "SELECT * FROM localhosts WHERE ip_address = ?", 
@@ -63,7 +59,7 @@ def export_client_definition(client_ip):
             }
         
         # Get DNS queries with counts from dnsqueries.db
-        dns_conn = sqlite3.connect(CONST_DNSQUERIES_DB)
+        dns_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         dns_cursor = dns_conn.cursor()
         dns_cursor.execute("""
             SELECT domain, sum(times_seen) as query_count, 
@@ -86,7 +82,7 @@ def export_client_definition(client_ip):
         ]
         
         # Get flows with aggregated statistics from allflows.db
-        flows_conn = sqlite3.connect(CONST_ALLFLOWS_DB)
+        flows_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         flows_cursor = flows_conn.cursor()
         flows_cursor.execute("""
             SELECT dst_ip, dst_port, protocol,

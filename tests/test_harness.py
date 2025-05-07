@@ -22,18 +22,18 @@ from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-from database import get_localhosts, update_localhosts, import_custom_tags, get_custom_tags
-
+from database import delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
+from const import CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from const import (
-    CONST_NEWFLOWS_DB, 
+    CONST_CONSOLIDATED_DB, 
     CONST_TEST_SOURCE_DB,
-    CONST_ALLFLOWS_DB,
-    CONST_ALERTS_DB,
-    CONST_WHITELIST_DB,
-    CONST_LOCALHOSTS_DB,
-    CONST_CONFIG_DB,
+    CONST_CONSOLIDATED_DB,
+    CONST_CONSOLIDATED_DB,
+    CONST_CONSOLIDATED_DB,
+    CONST_CONSOLIDATED_DB,
+    CONST_CONSOLIDATED_DB,
     CONST_CREATE_ALLFLOWS_SQL,
     CONST_CREATE_ALERTS_SQL,
     CONST_CREATE_WHITELIST_SQL,
@@ -41,11 +41,11 @@ from const import (
     CONST_CREATE_NEWFLOWS_SQL,
     CONST_CREATE_LOCALHOSTS_SQL,
     CONST_CREATE_GEOLOCATION_SQL,
-    CONST_GEOLOCATION_DB,
     CONST_CREATE_REPUTATIONLIST_SQL,
     CONST_CREATE_CUSTOMTAGS_SQL,
+    CONST_CREATE_TRAFFICSTATS_SQL,
     VERSION,
-    CONST_DNSQUERIES_DB
+    CONST_CONSOLIDATED_DB
 )
 from utils import log_info
 
@@ -54,8 +54,9 @@ from database import (
     get_whitelist,
     connect_to_db,
     update_allflows,
+    update_traffic_stats,
     delete_database,
-    create_database,
+    create_table,
     init_configurations_from_sitepy,
     get_row_count,
     get_alerts_summary,
@@ -103,7 +104,7 @@ def copy_flows_to_newflows():
             source_conn = sqlite3.connect(source_db)
             source_cursor = source_conn.cursor()
 
-            log_info(logger, f"[INFO] Copying flows from {source_db} to {CONST_NEWFLOWS_DB}")       
+            log_info(logger, f"[INFO] Copying flows from {source_db} to {CONST_CONSOLIDATED_DB}")       
 
             # Get all flows from source
             source_cursor.execute("SELECT * FROM flows")
@@ -111,10 +112,10 @@ def copy_flows_to_newflows():
             
             log_info(logger, f"[INFO] Fetched {len(rows)} rows from {source_db}")
             # Connect to newflows database
-            newflows_conn = sqlite3.connect(CONST_NEWFLOWS_DB)
+            newflows_conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
             newflows_cursor = newflows_conn.cursor()
 
-            log_info(logger, f"[INFO] Preparing to insert flows into {CONST_NEWFLOWS_DB}")
+            log_info(logger, f"[INFO] Preparing to insert flows into {CONST_CONSOLIDATED_DB}")
             # Insert flows into newflows
             for row in rows:
                 newflows_cursor.execute('''
@@ -156,7 +157,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
     logger = logging.getLogger(__name__)
     try:
         # Get alert categories and counts
-        alerts_conn = connect_to_db(CONST_ALERTS_DB)
+        alerts_conn = connect_to_db(CONST_CONSOLIDATED_DB)
         alerts_cursor = alerts_conn.cursor()
         alerts_cursor.execute("""
             SELECT category, COUNT(*) as count 
@@ -177,16 +178,16 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
             "total_rows": total_rows,
             "filtered_rows": filtered_rows,
             "database_counts": {
-                "newflows": get_row_count(CONST_NEWFLOWS_DB, 'flows'),
-                "allflows": get_row_count(CONST_ALLFLOWS_DB, 'allflows'),
-                "alerts": get_row_count(CONST_ALERTS_DB, 'alerts'),
-                "whitelist": get_row_count(CONST_WHITELIST_DB, 'whitelist'),
-                "localhosts": get_row_count(CONST_LOCALHOSTS_DB, 'localhosts'),
-                "configuration": get_row_count(CONST_CONFIG_DB, 'configuration'),
-                "geolocation": get_row_count(CONST_GEOLOCATION_DB, 'geolocation'),
-                "dnsqueries": get_row_count(CONST_DNSQUERIES_DB, "pihole"),
-                "reputationlist": get_row_count(CONST_GEOLOCATION_DB, "reputationlist"),
-                "tornodes": get_row_count(CONST_GEOLOCATION_DB, "tornodes")
+                "newflows": get_row_count(CONST_CONSOLIDATED_DB, 'flows'),
+                "allflows": get_row_count(CONST_CONSOLIDATED_DB, 'allflows'),
+                "alerts": get_row_count(CONST_CONSOLIDATED_DB, 'alerts'),
+                "whitelist": get_row_count(CONST_CONSOLIDATED_DB, 'whitelist'),
+                "localhosts": get_row_count(CONST_CONSOLIDATED_DB, 'localhosts'),
+                "configuration": get_row_count(CONST_CONSOLIDATED_DB, 'configuration'),
+                "geolocation": get_row_count(CONST_CONSOLIDATED_DB, 'geolocation'),
+                "dnsqueries": get_row_count(CONST_CONSOLIDATED_DB, "pihole"),
+                "reputationlist": get_row_count(CONST_CONSOLIDATED_DB, "reputationlist"),
+                "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes")
             },
             "tag_distribution": tag_distribution,
             "alert_categories": categories,
@@ -215,23 +216,40 @@ def main():
     start_time = datetime.now()
     logger = logging.getLogger(__name__)
 
-    delete_database(CONST_ALLFLOWS_DB)
-    delete_database(CONST_ALERTS_DB)
-    delete_database(CONST_WHITELIST_DB)
-    delete_database(CONST_LOCALHOSTS_DB)
-    delete_database(CONST_NEWFLOWS_DB)
-    delete_database(CONST_CONFIG_DB)
-    delete_database(CONST_GEOLOCATION_DB)
 
-    create_database(CONST_ALLFLOWS_DB, CONST_CREATE_ALLFLOWS_SQL)
-    create_database(CONST_ALERTS_DB, CONST_CREATE_ALERTS_SQL)
-    create_database(CONST_WHITELIST_DB, CONST_CREATE_WHITELIST_SQL)
-    create_database(CONST_CONFIG_DB, CONST_CREATE_CONFIG_SQL)
-    create_database(CONST_LOCALHOSTS_DB, CONST_CREATE_LOCALHOSTS_SQL)
-    create_database(CONST_NEWFLOWS_DB, CONST_CREATE_NEWFLOWS_SQL)
-    create_database(CONST_GEOLOCATION_DB, CONST_CREATE_GEOLOCATION_SQL)
-    create_database(CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL)
-    create_database(CONST_WHITELIST_DB, CONST_CREATE_CUSTOMTAGS_SQL)
+    SITE = os.getenv("SITE", CONST_SITE)
+
+    site_config_path = os.path.join("/database", f"{SITE}.py")
+    
+    if not os.path.exists(CONST_CONSOLIDATED_DB):
+        log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
+        config_dict = init_configurations_from_variable()
+
+
+    if os.path.exists(site_config_path):
+        log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
+        config_dict = init_configurations_from_sitepy()
+        import_whitelists(config_dict)
+        import_custom_tags(config_dict)
+    else:
+        log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")
+
+    store_machine_unique_identifier()
+
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL)
+    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL)
 
     init_configurations_from_sitepy()
 
@@ -239,21 +257,20 @@ def main():
     store_machine_unique_identifier()
     copy_flows_to_newflows()
 
-    conn = connect_to_db(CONST_NEWFLOWS_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
 
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM flows")
     rows = cursor.fetchall()
     rows = [list(row) for row in rows]
 
-    log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_NEWFLOWS_DB}")
+    log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_CONSOLIDATED_DB}")
 
     import_whitelists(config_dict)
     import_custom_tags(config_dict)
 
     whitelist_entries = get_whitelist()
     customtag_entries = get_custom_tags()
-
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
 
@@ -279,6 +296,7 @@ def main():
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]
 
     update_allflows(tagged_rows, config_dict)
+    update_traffic_stats(tagged_rows, config_dict)
 
     filtered_rows = [row for row in tagged_rows if 'Whitelist' not in str(row[11])]
     log_info(logger, f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
@@ -446,7 +464,7 @@ def main():
 
     # Query to count rows grouped by tags
     try:
-        conn = connect_to_db(CONST_ALLFLOWS_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         cursor = conn.cursor()
 
         cursor.execute("""

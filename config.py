@@ -1,12 +1,12 @@
 import sqlite3
-from const import CONST_CONFIG_DB, CONST_LOCALHOSTS_DB, CONST_DNSQUERIES_DB, CONST_ALLFLOWS_DB
+from const import CONST_CONSOLIDATED_DB
 import logging
 
 def get_config_settings_detached():
     """Read configuration settings from the configuration database into a dictionary."""
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db_detached(CONST_CONFIG_DB)
+        conn = connect_to_db_detached(CONST_CONSOLIDATED_DB)
         if not conn:
             return None
         cursor = conn.cursor()

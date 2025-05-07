@@ -3,6 +3,7 @@ import sqlite3
 import logging
 from ipaddress import ip_network
 import sys
+from const import CONST_CONSOLIDATED_DB
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
@@ -11,8 +12,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from utils import log_info, log_error
-from const import CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL
-from database import connect_to_db, create_database
+from database import connect_to_db
 
 def import_reputation_list(config_dict):
     """
@@ -64,10 +64,8 @@ def import_reputation_list(config_dict):
 
         log_info(logger, f"[INFO] Processed {len(processed_networks)} networks from reputation list.")
 
-        create_database(CONST_GEOLOCATION_DB, CONST_CREATE_REPUTATIONLIST_SQL)
-
         # Connect to the geolocations.db database
-        conn = sqlite3.connect(CONST_GEOLOCATION_DB)
+        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         cursor = conn.cursor()
 
         # Insert the processed networks into the reputation table
@@ -98,7 +96,7 @@ def load_reputation_data(config_dict):
     """
     logger = logging.getLogger(__name__)
     geolocation_data = []
-    conn = connect_to_db(CONST_GEOLOCATION_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     if conn:
         try:
             cursor = conn.cursor()

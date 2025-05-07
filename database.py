@@ -1,12 +1,13 @@
 import sqlite3
 import logging
 from utils import log_info, log_error, get_machine_unique_identifier  # Assuming log_info is defined in utils
-from const import CONST_INSTALL_CONFIGS, CONST_SITE, CONST_ALLFLOWS_DB, CONST_CONFIG_DB, CONST_ALERTS_DB, CONST_WHITELIST_DB, IS_CONTAINER, CONST_LOCALHOSTS_DB
+from const import CONST_INSTALL_CONFIGS, CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import ipaddress
 import os
 from datetime import datetime
 import json
 import importlib
+from utils import is_ip_in_range
   # Create a logger for this module
 
 def delete_database(db_path):
@@ -31,7 +32,7 @@ def connect_to_db(DB_NAME):
         log_error(logger,f"[ERROR] Error connecting to database {DB_NAME}: {e}")
         return None
 
-def create_database(db_name, create_table_sql):
+def create_table(db_name, create_table_sql):
     """Initializes a SQLite database with the specified schema."""
     logger = logging.getLogger(__name__)
     try:
@@ -51,7 +52,7 @@ def create_database(db_name, create_table_sql):
 def update_allflows(rows, config_dict):
     """Update allflows.db with the rows from newflows.db."""
     logger = logging.getLogger(__name__)
-    allflows_conn = connect_to_db(CONST_ALLFLOWS_DB)
+    allflows_conn = connect_to_db(CONST_CONSOLIDATED_DB)
     total_packets = 0
     total_bytes = 0
 
@@ -78,12 +79,62 @@ def update_allflows(rows, config_dict):
                         tags = excluded.tags
                 """, (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, tags))
             allflows_conn.commit()
-            log_info(logger, f"[INFO] Updated {CONST_ALLFLOWS_DB} with {len(rows)} rows.")
+            log_info(logger, f"[INFO] Updated {CONST_CONSOLIDATED_DB} with {len(rows)} rows.")
         except sqlite3.Error as e:
-            log_error(logger, f"[ERROR] Error updating {CONST_ALLFLOWS_DB}: {e}")
+            log_error(logger, f"[ERROR] Error updating {CONST_CONSOLIDATED_DB}: {e}")
         finally:
             allflows_conn.close()
         log_info(logger, f"[INFO] Latest collection results packets: {total_packets} for bytes {total_bytes}")
+
+
+def update_traffic_stats(rows, config_dict):
+    """
+    Update the trafficstats table with hourly traffic statistics for each source IP address.
+
+    Args:
+        rows (list): List of tuples containing flow data:
+                     (src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags)
+    """
+    logger = logging.getLogger(__name__)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
+
+    if not conn:
+        log_error(logger, "[ERROR] Unable to connect to allflows database.")
+        return
+
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+
+
+
+    try:
+        cursor = conn.cursor()
+
+        # Process each row and update the trafficstats table
+        for row in rows:
+            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, last_seen, times_seen, tags = row
+
+            if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+                continue
+
+            # Format the timestamp as yyyy-mm-dd-hh
+            timestamp = datetime.now().strftime('%Y-%m-%d:%H')
+
+            # Insert or update the traffic statistics for the source IP and timestamp
+            cursor.execute("""
+                INSERT INTO trafficstats (ip_address, timestamp, total_packets, total_bytes)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(ip_address, timestamp)
+                DO UPDATE SET
+                    total_packets = total_packets + excluded.total_packets,
+                    total_bytes = total_bytes + excluded.total_bytes
+            """, (src_ip, timestamp, packets, bytes_))
+
+        conn.commit()
+        log_info(logger, f"[INFO] Updated traffic statistics for {len(rows)} rows.")
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Error updating traffic statistics: {e}")
+    finally:
+        conn.close()
 
 def delete_all_records(db_name, table_name='flows'):
     """Delete all records from the specified database and table."""
@@ -102,7 +153,7 @@ def delete_all_records(db_name, table_name='flows'):
 
 def init_configurations_from_sitepy():
     """
-    Inserts default configurations from file in /database into the CONST_CONFIG_DB database and returns a configuration dictionary.
+    Inserts default configurations from file in /database into the CONST_CONSOLIDATED_DB database and returns a configuration dictionary.
 
     Returns:
         dict: A dictionary containing the configuration settings.
@@ -111,7 +162,7 @@ def init_configurations_from_sitepy():
     config_dict = {}
 
     try:
-        conn = connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
@@ -152,7 +203,7 @@ def init_configurations_from_sitepy():
 
 def init_configurations_from_variable():
     """
-    Inserts default configurations into the CONST_CONFIG_DB database and returns a configuration dictionary.
+    Inserts default configurations into the CONST_CONSOLIDATED_DB database and returns a configuration dictionary.
 
     Returns:
         dict: A dictionary containing the configuration settings.
@@ -161,7 +212,7 @@ def init_configurations_from_variable():
     config_dict = {}
 
     try:
-        conn = connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return config_dict
@@ -196,7 +247,7 @@ def get_config_settings():
     """Read configuration settings from the configuration database into a dictionary."""
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger,"[ERROR] Unable to connect to configuration database")
             return None
@@ -215,7 +266,7 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
     """Logs an alert to the alerts.db SQLite database."""
     logger = logging.getLogger(__name__)
     try:
-        conn = sqlite3.connect(CONST_ALERTS_DB)
+        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen, acknowledged)
@@ -241,7 +292,7 @@ def get_custom_tags():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_WHITELIST_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to whitelist database")
             return None
@@ -275,7 +326,7 @@ def get_whitelist():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_WHITELIST_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to whitelist database")
             return None
@@ -337,7 +388,7 @@ def get_alerts_summary():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_ALERTS_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to alerts database")
             return
@@ -387,7 +438,7 @@ def import_custom_tags(config_dict):
         log_info(logger, "[INFO] No custom tag entries found in config_dict.")
         return
 
-    conn = connect_to_db(CONST_WHITELIST_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to whitelist database.")
         return
@@ -442,7 +493,7 @@ def import_whitelists(config_dict):
         log_info(logger, "[INFO] No whitelist entries found in config_dict.")
         return
 
-    conn = connect_to_db(CONST_WHITELIST_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to whitelist database.")
         return
@@ -496,9 +547,9 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
         bool: True if the update was successful, False otherwise.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_ALLFLOWS_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
     if not conn:
-        log_error(logger, f"[ERROR] Unable to connect to database: {CONST_ALLFLOWS_DB}")
+        log_error(logger, f"[ERROR] Unable to connect to database: {CONST_CONSOLIDATED_DB}")
         return False
 
     try:
@@ -541,7 +592,7 @@ def get_localhosts():
         set: A set of IP addresses from the localhosts database, or an empty set if an error occurs.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_LOCALHOSTS_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
 
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
@@ -577,7 +628,7 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         bool: True if the operation was successful, False otherwise.
     """
     logger = logging.getLogger(__name__)
-    conn = connect_to_db(CONST_LOCALHOSTS_DB)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
 
     if not conn:
         log_error(logger, "[ERROR] Unable to connect to localhosts database")
@@ -631,7 +682,7 @@ def collect_database_counts():
 
     try:
         # Connect to the alerts database
-        conn_alerts = connect_to_db(CONST_ALERTS_DB)
+        conn_alerts = connect_to_db(CONST_CONSOLIDATED_DB)
         if conn_alerts:
             cursor = conn_alerts.cursor()
             # Count acknowledged alerts
@@ -651,7 +702,7 @@ def collect_database_counts():
             log_error(logger, "[ERROR] Unable to connect to alerts database")
 
         # Connect to the localhosts database
-        conn_localhosts = connect_to_db(CONST_LOCALHOSTS_DB)
+        conn_localhosts = connect_to_db(CONST_CONSOLIDATED_DB)
         if conn_localhosts:
             cursor = conn_localhosts.cursor()
             # Count entries in localhosts
@@ -669,7 +720,7 @@ def collect_database_counts():
             log_error(logger, "[ERROR] Unable to connect to localhosts database")
 
         # Connect to the whitelist database
-        conn_whitelist = connect_to_db(CONST_WHITELIST_DB)
+        conn_whitelist = connect_to_db(CONST_CONSOLIDATED_DB)
         if conn_whitelist:
             cursor = conn_whitelist.cursor()
             # Count entries in whitelist
@@ -704,7 +755,7 @@ def store_machine_unique_identifier():
             return False
 
         # Connect to the configuration database
-        conn = connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to configuration database.")
             return False
@@ -742,7 +793,7 @@ def get_machine_unique_identifier_from_db():
     logger = logging.getLogger(__name__)
     try:
         # Connect to the configuration database
-        conn = connect_to_db(CONST_CONFIG_DB)
+        conn = connect_to_db(CONST_CONSOLIDATED_DB)
         if not conn:
             log_error(logger, "[ERROR] Unable to connect to configuration database.")
             return None

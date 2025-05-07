@@ -1,7 +1,7 @@
 from utils import log_info, log_error
 import logging
-from database import connect_to_db, delete_all_records, create_database
-from const import CONST_GEOLOCATION_DB, CONST_CREATE_TORNODES_SQL
+from database import connect_to_db, delete_all_records, create_table
+from const import CONST_CONSOLIDATED_DB
 from datetime import datetime, timedelta
 import requests
 
@@ -11,10 +11,8 @@ def update_tor_nodes(config_dict):
     Deletes all existing entries in the tornodes table before updating.
     """
     logger = logging.getLogger(__name__)
-    log_info(logger, "[INFO] Starting tor node processing")
-
-    create_database(CONST_GEOLOCATION_DB, CONST_CREATE_TORNODES_SQL)    
-    conn = connect_to_db(CONST_GEOLOCATION_DB)
+    log_info(logger, "[INFO] Starting tor node processing")   
+    conn = connect_to_db(CONST_CONSOLIDATED_DB)
 
     tor_nodes_url = config_dict.get('TorNodesUrl','https://www.dan.me.uk/torlist/?full')
     
@@ -22,7 +20,7 @@ def update_tor_nodes(config_dict):
         cursor = conn.cursor()
 
         # Use delete_all_records to clear the tornodes table
-        delete_all_records(CONST_GEOLOCATION_DB, "tornodes")
+        delete_all_records(CONST_CONSOLIDATED_DB, "tornodes")
 
         log_info(logger,"[INFO] About to request tor node list from dan.me.uk")
         # Download new list with timeout

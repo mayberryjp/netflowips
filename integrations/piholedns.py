@@ -11,9 +11,8 @@ parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from utils import log_info, log_error, dump_json
-from database import get_config_settings
-from const import CONST_CREATE_PIHOLE_SQL, CONST_DNSQUERIES_DB
+from utils import log_info, log_error
+from const import CONST_CREATE_PIHOLE_SQL, CONST_CONSOLIDATED_DB
 
 
 def authenticate_pihole(pihole_url, api_token):
@@ -95,7 +94,7 @@ def get_pihole_ftl_logs(page_size, config_dict):
 
     try:
         # Connect to the dnsqueries.db database and ensure the pihole table exists
-        conn = sqlite3.connect(CONST_DNSQUERIES_DB)
+        conn = sqlite3.connect(CONST_CONSOLIDATED_DB)
         cursor = conn.cursor()
         cursor.execute(CONST_CREATE_PIHOLE_SQL)
         conn.commit()
