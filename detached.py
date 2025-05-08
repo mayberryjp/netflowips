@@ -1,10 +1,9 @@
 import sqlite3
 from const import CONST_CONSOLIDATED_DB
-import logging
 
 def get_config_settings_detached():
     """Read configuration settings from the configuration database into a dictionary."""
-    logger = logging.getLogger(__name__)
+
     try:
         conn = connect_to_db_detached(CONST_CONSOLIDATED_DB)
         if not conn:
@@ -19,9 +18,33 @@ def get_config_settings_detached():
     
 def connect_to_db_detached(DB_NAME):
     """Establish a connection to the specified database."""
-    logger = logging.getLogger(__name__)
     try:
         conn = sqlite3.connect(DB_NAME)
         return conn
     except sqlite3.Error as e:
         return None
+    
+
+def insert_action_detached(action_text):
+    """
+    Insert a new record into the actions table.
+
+    Args:
+        action_data (dict): A dictionary containing the action data to insert.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+
+    conn = connect_to_db_detached(CONST_CONSOLIDATED_DB, "actions")
+
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO actions (action_text, acknowledged)
+        VALUES (?, 0)
+    """, action_text)
+    conn.commit()
+
+    conn.close()
+
+    return True

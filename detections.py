@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int, calculate_broadcast  # Assuming log_info and is_ip_in_range are defined in utils
 from const import CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB # Assuming constants are defined in const
-from database import get_whitelist,connect_to_db, log_alert_to_db, update_tag_to_allflows, disconnect_from_db
+from database import get_whitelist, connect_to_db, log_alert_to_db, update_tag_to_allflows, disconnect_from_db
 from notifications import send_telegram_message  # Import notification functions
 import logging
 import requests
@@ -49,18 +49,20 @@ def update_local_hosts(rows, config_dict):
                     conn.commit()
                     existing_localhosts.add(ip_address)  # Add to in-memory set
                     log_info(logger, f"[INFO] Added new IP to localhosts.db: {ip_address}")
+                    
+                    message = f"New Host Detected: {ip_address}"
 
-                    # Handle alerts and notifications based on NewHostsDetection config
-                    if config_dict.get("NewHostsDetection") == 2:
-                        # Send a Telegram message and log the alert
-                        message = f"New Host Detected: {ip_address}"
-                        send_telegram_message(message, original_flow[0:5])
-                        log_alert_to_db(ip_address, row, "New Host Detected", "", "",
-                                        f"{ip_address}_NewHostsDetection", False)
-                    elif config_dict.get("NewHostsDetection") == 1:
-                        # Only log the alert
-                        log_alert_to_db(ip_address, row, "New Host Detected", "", "",
-                                        f"{ip_address}_NewHostsDetection", False)
+                    handle_alert(
+                        config_dict,
+                        "NewHostsDetection",
+                        message,
+                        ip_address,
+                        row,
+                        "New Host Detected",
+                        "",
+                        "",
+                        f"{ip_address}_NewHostsDetection"
+                    )  
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error in update_local_hosts: {e}")
@@ -120,17 +122,18 @@ def detect_new_outbound_connections(rows, config_dict):
                              f"Protocol: {protocol}")
                     
                     log_info(logger, f"[INFO] New outbound connection detected: {src_ip} -> {dst_ip}:{dst_port}")
-                    
-                    # Log alert based on configuration level
-                    if config_dict.get("NewOutboundDetection") == 2:
-                        # Send Telegram alert and log to database
-                        send_telegram_message(message, row)
-                        log_alert_to_db(src_ip, row, "New outbound connection detected", dst_ip, dst_port, 
-                                      alert_id, False)
-                    elif config_dict.get("NewOutboundDetection") == 1:
-                        # Only log to database
-                        log_alert_to_db(src_ip, row, "New outbound connection detected", dst_ip, dst_port, 
-                                      alert_id, False)
+
+                    handle_alert(
+                        config_dict,
+                        "NewOutboundDetection",
+                        message,
+                        src_ip,
+                        row,
+                        "New outbound connection detected",
+                        dst_ip,
+                        dst_port,
+                        alert_id
+                    )    
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error in detect_new_outbound_connections: {e}")
@@ -167,28 +170,20 @@ def router_flows_detection(rows, config_dict):
             original_flow = json.dumps(row)
             log_info(logger, f"[INFO] Flow involves a router IP address: {router_ip_seen}")
 
-            if config_dict.get("RouterFlowsDetection") == 2:
-                message = f"Flow involves a router IP address: {router_ip_seen}"
-                send_telegram_message(message, original_flow[0:5])
-                log_alert_to_db(
-                    router_ip_seen, 
-                    row, 
-                    "Flow involves a router IP address",
-                    src_port,
-                    dst_port,
-                    f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection", 
-                    False
-                )
-            elif config_dict.get("RouterFlowsDetection") == 1:
-                log_alert_to_db(
-                    router_ip_seen, 
-                    row, 
-                    "Flow involves a router IP address",
-                    src_port,
-                    dst_port,
-                    f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection", 
-                    False
-                )
+            message = f"Flow involves a router IP address: {router_ip_seen}"
+
+            handle_alert(
+                config_dict,
+                "RouterFlowsDetection",
+                message,
+                router_ip_seen,
+                row,
+                "Flow involves a router IP address",
+                src_port,
+                dst_port,
+                f"{router_ip_seen}_{src_ip}_{dst_ip}_{protocol}_{router_port}_RouterFlowsDetection"
+            )
+
     log_info(logger,"[INFO] Finished detecting flows to or from the router")
 
 def local_flows_detection(rows, config_dict):
@@ -223,29 +218,20 @@ def local_flows_detection(rows, config_dict):
 
         if is_src_local and is_dst_local:
             log_info(logger, f"[INFO] Flow involves two local hosts: {src_ip} and {dst_ip}")
+            message = f"Flow involves two local hosts: {src_ip} and {dst_ip}"
 
-            if config_dict.get("LocalFlowsDetection") == 2:
-                message = f"Flow involves two local hosts: {src_ip} and {dst_ip}"
-                send_telegram_message(message, row)
-                log_alert_to_db(
-                    src_ip, 
-                    row, 
-                    "Flow involves two local hosts",
-                    dst_ip,
-                    dst_port,
-                    f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_LocalFlowsDetection", 
-                    False
-                )
-            elif config_dict.get("LocalFlowsDetection") == 1:
-                log_alert_to_db(
-                    src_ip, 
-                    row, 
-                    "Flow involves two local hosts",
-                    dst_ip,
-                    dst_port,
-                    f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_LocalFlowsDetection", 
-                    False
-                )
+            handle_alert(
+                config_dict,
+                "LocalFlowsDetection",
+                message,
+                src_ip,
+                row,
+                "Flow involves two local hosts",
+                dst_ip,
+                dst_port,
+                f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_LocalFlowsDetection"
+            )
+
     log_info(logger,"[INFO] Finished detecting flows for the same local network going through the router")
 
 def foreign_flows_detection(rows, config_dict):
@@ -273,28 +259,20 @@ def foreign_flows_detection(rows, config_dict):
         if not is_src_local and not is_dst_local:
             log_info(logger, f"[INFO] Flow involves two foreign hosts: {src_ip} and {dst_ip}")
 
-            if config_dict.get("ForeignFlowsDetection") == 2:
-                message = f"Flow involves two foreign hosts: {src_ip} and {dst_ip}"
-                send_telegram_message(message, row)
-                log_alert_to_db(
-                    src_ip, 
-                    row, 
-                    "Flow involves two foreign hosts",
-                    dst_ip, 
-                    dst_port,
-                    f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection", 
-                    False
-                )
-            elif config_dict.get("ForeignFlowsDetection") == 1:
-                log_alert_to_db(
-                    src_ip, 
-                    row, 
-                    "Flow involves two foreign hosts",
-                    dst_ip, 
-                    dst_port,
-                    f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection", 
-                    False
-                )
+            message = f"Flow involves two foreign hosts: {src_ip} and {dst_ip}"
+
+            handle_alert(
+                config_dict,
+                "ForeignFlowsDetection",
+                message,
+                src_ip,
+                row,
+                "Flow involves two foreign hosts",
+                dst_ip,
+                dst_port,
+                f"{src_ip}_{dst_ip}_{protocol}_{src_port}_{dst_port}_ForeignFlowsDetection"
+            )
+            
     log_info(logger,"[INFO] Finished detecting flows that don't involve any local network")
 
 def detect_geolocation_flows(rows, config_dict, geolocation_data):
@@ -392,27 +370,16 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
                 remote_country = src_country
                 remote_ip = src_ip
 
-
-            if config_dict.get("GeolocationFlowsDetection") == 2:
-                send_telegram_message(message, row[0:5])
-                log_alert_to_db(
-                    local_ip, 
-                    row, 
+                handle_alert(
+                    config_dict,
+                    "GeolocationFlowsDetection",
+                    message,
+                    src_ip,
+                    row,
                     "Flow involves an IP in a banned country",
                     remote_ip,
-                    remote_country, 
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("GeolocationFlowsDetection") == 1:
-                log_alert_to_db(
-                    local_ip, 
-                    row, 
-                    "Flow involves an IP in a banned country",
-                    remote_ip,
-                    remote_country, 
-                    alert_id,
-                    False
+                    remote_country,
+                    alert_id
                 )
 
     print()  # Final newline
@@ -458,16 +425,18 @@ def detect_unauthorized_ntp(rows, config_dict):
                         f"Destination: {dst_ip}:{dst_port}\n"
                         f"Protocol: {protocol}")
 
-                # Log alert based on configuration level
-                if int(config_dict.get("BypassLocalNtpDetection", 0)) == 2:
-                    # Send Telegram alert and log to database
-                    send_telegram_message(message, row)
-                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
-                elif int(config_dict.get("BypassLocalNtpDetection", 0)) == 1:
-                    # Only log to database
-                    log_alert_to_db(src_ip, row, "Unauthorized NTP Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
+                handle_alert(
+                    config_dict,
+                    "BypassLocalNtpDetection",
+                    message,
+                    src_ip,
+                    row,
+                    "Unauthorized NTP Traffic Detected",
+                    dst_ip,
+                    dst_port,
+                    alert_id
+                )
+
     log_info(logger,"[INFO] Finished detecting unauthorized NTP destinations")
 
 def detect_unauthorized_dns(rows, config_dict):
@@ -506,16 +475,18 @@ def detect_unauthorized_dns(rows, config_dict):
                             f"Destination: {dst_ip}:{dst_port}\n"
                             f"Protocol: {protocol}")
 
-                # Log alert based on configuration level
-                if int(config_dict.get("BypassLocalDnsDetection", 0)) == 2:
-                    # Send Telegram alert and log to database
-                    send_telegram_message(message, row)
-                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
-                elif int(config_dict.get("BypassLocalDnsDetection", 0)) == 1:
-                    # Only log to database
-                    log_alert_to_db(src_ip, row, "Unauthorized DNS Traffic Detected", dst_ip, dst_port,
-                                    alert_id, False)
+                handle_alert(
+                    config_dict,
+                    "BypassLocalDnsDetection",
+                    message,
+                    src_ip,
+                    row,
+                    "Unauthorized DNS Traffic Detected",
+                    dst_ip,
+                    dst_port,
+                    alert_id
+                )
+
     log_info(logger,"[INFO] Finished detecting unauthorized DNS destinations")
 
 def detect_incorrect_authoritative_dns(rows, config_dict):
@@ -553,16 +524,18 @@ def detect_incorrect_authoritative_dns(rows, config_dict):
                         f"Destination: {dst_ip}:{dst_port}\n"
                         f"Protocol: {protocol}")
 
-            # Log alert based on configuration level
-            if int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 2:
-                # Send Telegram alert and log to database
-                send_telegram_message(message, row)
-                log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
-                                alert_id, False)
-            elif int(config_dict.get("IncorrectAuthoritativeDnsDetection", 0)) == 1:
-                # Only log to database
-                log_alert_to_db(src_ip, row, "Incorrect Authoritative DNS Detected", dst_ip, dst_port,
-                                alert_id, False)
+            handle_alert(
+                config_dict,
+                "IncorrectAuthoritativeDnsDetection",
+                message,
+                src_ip,
+                row,
+                "Incorrect Authoritative DNS Detected",
+                dst_ip,
+                dst_port,
+                alert_id
+            )
+
     log_info(logger,"[INFO] Finished detecting local DNS servers using unauthorized authoritative DNS")
 
 def detect_incorrect_ntp_stratum(rows, config_dict):
@@ -600,16 +573,18 @@ def detect_incorrect_ntp_stratum(rows, config_dict):
                         f"Destination: {dst_ip}:{dst_port}\n"
                         f"Protocol: {protocol}")
 
-            # Log alert based on configuration level
-            if int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 2:
-                # Send Telegram alert and log to database
-                send_telegram_message(message, row)
-                log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
-                                alert_id, False)
-            elif int(config_dict.get("IncorrectNtpStratrumDetection", 0)) == 1:
-                # Only log to database
-                log_alert_to_db(src_ip, row, "Incorrect NTP Stratum Detected", dst_ip, dst_port,
-                                alert_id, False)
+            handle_alert(
+                config_dict,
+                "IncorrectNtpStratrumDetection",
+                message,
+                src_ip,
+                row,
+                "Incorrect NTP Stratum Detected",
+                dst_ip,
+                dst_port,
+                alert_id
+            )
+
     log_info(logger,"[INFO] Finished detecting local NTP servers using unauthorized stratum NTP destinations")
 
 def detect_dead_connections(config_dict):
@@ -710,28 +685,18 @@ def detect_dead_connections(config_dict):
             if not update_tag_to_allflows("allflows", "DeadConnectionDetection;", src_ip, dst_ip, dst_port):
                 log_error(logger, f"[ERROR] Failed to add tag for flow: {src_ip} -> {dst_ip}:{dst_port}")
 
-            # Handle alerts based on configuration
-            if config_dict.get("DeadConnectionDetection") == 2:
-                send_telegram_message(message, row)
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Dead Connection Detected",
-                    dst_ip,
-                    dst_port,
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("DeadConnectionDetection") == 1:
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Dead Connection Detected",
-                    dst_ip,
-                    dst_port,
-                    alert_id,
-                    False
-                )
+
+            handle_alert(
+                config_dict,
+                "DeadConnectionDetection",
+                message,
+                src_ip,
+                row,
+                "Dead Connection Detected",
+                dst_ip,
+                dst_port,
+                alert_id
+            )
 
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Database error in detect_dead_connections: {e}")
@@ -808,27 +773,17 @@ def detect_reputation_flows(rows, config_dict, reputation_data):
 
             alert_id = f"{src_ip}_{dst_ip}_{protocol}_ReputationListDetection"
 
-            if config_dict.get("ReputationListDetection") == 2:
-                send_telegram_message(message, row[0:5])
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Flow involves an IP on the reputation list",
-                    dst_ip,
-                    match_network,
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("ReputationListDetection") == 1:
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Flow involves an IP on the reputation list",
-                    dst_ip,
-                    match_network,
-                    alert_id,
-                    False
-                )
+            handle_alert(
+                config_dict,
+                "ReputationListDetection",
+                message,
+                src_ip,
+                row,
+                "Flow involves an IP on the reputation list",
+                dst_ip,
+                match_network,
+                alert_id
+            )
 
     log_info(logger, f"[INFO] Completed reputation flow processing. Found {matches} matches in {total} flows")
 
@@ -916,28 +871,18 @@ def detect_vpn_traffic(rows, config_dict):
                   f"Protocol: {proto_name}\n")
          
         log_info(logger, f"[INFO] Potential VPN traffic detected: {src_ip} -> {dst_ip}:{dst_port} ({proto_name})")
-        
-        if config_dict.get("VpnTrafficDetection") == 2:
-            send_telegram_message(message, row)
-            log_alert_to_db(
-                src_ip,
-                row,
-                "Potential VPN Traffic Detected",
-                dst_ip,
-                f"Port:{dst_port} Proto:{proto_name}",
-                alert_id,
-                False
-            )
-        elif config_dict.get("VpnTrafficDetection") == 1:
-            log_alert_to_db(
-                src_ip,
-                row,
-                "Potential VPN Traffic Detected",
-                dst_ip,
-                f"Port:{dst_port} Proto:{proto_name}",
-                alert_id,
-                False
-            )
+
+        handle_alert(
+            config_dict,
+            "VpnTrafficDetection",
+            message,
+            src_ip,
+            row,
+            "Potential VPN Traffic Detected",
+            dst_ip,
+            f"Port:{dst_port} Proto:{proto_name}",
+            alert_id
+        )
 
     log_info(logger, f"[INFO] Finished detecting VPN protocol usage")
 
@@ -976,28 +921,18 @@ def detect_tor_traffic(rows, config_dict):
                           f"Tor Node: {dst_ip}:{dst_port}\n")
                 
                 log_info(logger, f"[INFO] Tor traffic detected: {src_ip} -> {dst_ip}:{dst_port}")
-                
-                if config_dict.get("TorFlowDetection") == 2:
-                    send_telegram_message(message, row)
-                    log_alert_to_db(
-                        src_ip,
-                        row,
-                        "Tor Traffic Detected",
-                        dst_ip,
-                        "Tor Exit Node",
-                        alert_id,
-                        False
-                    )
-                elif config_dict.get("TorFlowDetection") == 1:
-                    log_alert_to_db(
-                        src_ip,
-                        row,
-                        "Tor Traffic Detected",
-                        dst_ip,
-                        "Tor Exit Node",
-                        alert_id,
-                        False
-                    )
+
+                handle_alert(
+                    config_dict,
+                    "TorFlowDetection",
+                    message,
+                    src_ip,
+                    row,
+                    "Tor Traffic Detected",
+                    dst_ip,
+                    f"Tor Exit Node",
+                    alert_id
+                )
                     
     except Exception as e:
         log_error(logger, f"[ERROR] Error in detect_tor_traffic: {e}")
@@ -1081,27 +1016,17 @@ def detect_high_risk_ports(rows, config_dict):
             
             log_info(logger, f"[INFO] High-risk port traffic detected: {src_ip} -> {dst_ip}:{dst_port} ({service_name})")
             
-            if config_dict.get("HighRiskPortDetection") == 2:
-                send_telegram_message(message, row)
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "High-Risk Port Traffic Detected",
-                    dst_ip,
-                    f"Port:{dst_port} ({service_name})",
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("HighRiskPortDetection") == 1:
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "High-Risk Port Traffic Detected",
-                    dst_ip,
-                    f"Port:{dst_port} ({service_name})",
-                    alert_id,
-                    False
-                )
+            handle_alert(
+                config_dict,
+                "HighRiskPortDetection",
+                message,
+                src_ip,
+                row,
+                "High-Risk Port Traffic Detected",
+                dst_ip,
+                f"Port:{dst_port} ({service_name})",
+                alert_id
+            )
     
     log_info(logger, f"[INFO] Completed high-risk port detection. Found {matches} matches in {total} flows")
 
@@ -1159,28 +1084,17 @@ def detect_many_destinations(rows, config_dict):
 
             log_info(logger, f"[INFO] Excessive destinations detected from {src_ip}: {unique_dests} destinations")
 
-            # Handle alerts based on configuration
-            if config_dict.get("ManyDestinationsDetection") == 2:
-                send_telegram_message(message, stats)
-                log_alert_to_db(
-                    src_ip,
-                    flow,
-                    "Excessive Unique Destinations",
-                    f"{unique_dests} destinations",
-                    "",
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("ManyDestinationsDetection") == 1:
-                log_alert_to_db(
-                    src_ip,
-                    flow,
-                    "Excessive Unique Destinations",
-                    f"{unique_dests} destinations",
-                    "",
-                    alert_id,
-                    False
-                )
+            handle_alert(
+                config_dict,
+                "ManyDestinationsDetection",
+                message,
+                src_ip,
+                flow,
+                "Excessive Unique Destinations",
+                "",
+                f"{unique_dests} destinations",
+                alert_id
+            )
 
     log_info(logger, "[INFO] Finished one source to many destinations detection")
 
@@ -1249,28 +1163,17 @@ def detect_port_scanning(rows, config_dict):
 
             log_info(logger, f"[INFO] Port scan detected from {src_ip} to {dst_ip}: {unique_ports} ports")
 
-            # Handle alerts based on configuration
-            if config_dict.get("PortScanDetection") == 2:
-                send_telegram_message(message, stats['flow'])
-                log_alert_to_db(
-                    src_ip,
-                    stats['flow'],
-                    "Port Scan Detected",
-                    dst_ip,
-                    f"Ports:{unique_ports}",
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("PortScanDetection") == 1:
-                log_alert_to_db(
-                    src_ip,
-                    stats['flow'],
-                    "Port Scan Detected",
-                    dst_ip,
-                    f"Ports:{unique_ports}",
-                    alert_id,
-                    False
-                )
+            handle_alert(
+                config_dict,
+                "PortScanDetection",
+                message,
+                src_ip,
+                row,
+                "Port Scan Detected",
+                dst_ip,
+                f"Ports:{unique_ports}",
+                alert_id
+            )
 
     log_info(logger, "[INFO] Finished detecting port scanning activity")
 
@@ -1334,28 +1237,18 @@ def detect_high_bandwidth_flows(rows, config_dict):
             log_info(logger, f"[INFO] High bandwidth flow detected for {ip}: "
                              f"Packets: {total_packets}, Bytes: {total_bytes}")
 
-            # Handle alerts based on configuration
-            if config_dict.get("HighBandwidthFlowDetection") == 2:
-                send_telegram_message(message, stats["flows"])
-                log_alert_to_db(
-                    ip,
-                    stats["flows"][-1],
-                    "High Bandwidth Flow Detected",
-                    "Aggregate",
-                    f"Packets: {total_packets}, Bytes: {total_bytes}",
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("HighBandwidthFlowDetection") == 1:
-                log_alert_to_db(
-                    ip,
-                    stats["flows"][-1],
-                    "High Bandwidth Flow Detected",
-                    "Aggregate",
-                    f"Packets: {total_packets}, Bytes: {total_bytes}",
-                    alert_id,
-                    False
-                )
+
+            handle_alert(
+                config_dict,
+                "HighBandwidthFlowDetection",
+                message,
+                src_ip,
+                row,
+                "High Bandwidth Flow Detected",
+                "Aggregate",
+                f"Packets: {total_packets}, Bytes: {total_bytes}",
+                alert_id
+            )
 
     log_info(logger, "[INFO] Finished detecting high bandwidth flows")
 
@@ -1406,29 +1299,59 @@ def detect_custom_tag(rows, config_dict):
 
             log_info(logger, f"[INFO] Custom tag alert detected: {src_ip} -> {dst_ip}:{dst_port} ")
 
-            # Handle alerts based on configuration
-            if config_dict.get("CustomTagAlertDetection") == "2":
-                send_telegram_message(message, row)
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Custom Tag Alert Detected",
-                    dst_ip,
-                    f"Tags: {', '.join(matching_tags)}",
-                    alert_id,
-                    False
-                )
-            elif config_dict.get("CustomTagAlertDetection") == "1":
-                log_alert_to_db(
-                    src_ip,
-                    row,
-                    "Custom Tag Alert Detected",
-                    dst_ip,
-                    f"Tags: {', '.join(matching_tags)}",
-                    alert_id,
-                    False
-                )
+            # Call the reusable function
+            handle_alert(
+                config_dict,
+                "CustomTagAlertDetection",
+                message,
+                src_ip,
+                row,
+                "Custom Tag Alert Detected",
+                dst_ip,
+                f"Tags: {', '.join(matching_tags)}",
+                alert_id
+            )
 
     log_info(logger, "[INFO] Finished detecting custom tag alerts")
 
 
+def handle_alert(config_dict, detection_key, telegram_message, local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash):
+    """
+    Handle alerting logic based on the configuration level.
+
+    Args:
+        config_dict (dict): Configuration dictionary.
+        detection_key (str): The key in the configuration dict for the detection type (e.g., "NewOutboundDetection").
+        src_ip (str): Source IP address.
+        row (list): The flow data row.
+        alert_message (str): The alert message to send.
+        dst_ip (str): Destination IP address.
+        dst_port (int): Destination port.
+        alert_id (str): Unique identifier for the alert.
+
+    Returns:
+        str: "insert", "update", or None based on the operation performed.
+    """
+    logger = logging.getLogger(__name__)
+
+    # Get the detection level from the configuration
+    detection_level = config_dict.get(detection_key, 0)
+
+    if detection_level >= 2:
+        # Send Telegram alert and log to database
+        insert_or_update = log_alert_to_db(local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash, False)
+                #insert_or_update = log_alert_to_db(local_ip, original_flow, category, enrichment_1, enrichment_2, alert_id, False)
+#                           def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
+ 
+        if insert_or_update == "insert":
+            send_telegram_message(telegram_message, original_flow)
+        elif insert_or_update == "update" and detection_level == 3:
+            send_telegram_message(telegram_message, original_flow)
+
+        return insert_or_update
+
+    elif detection_level == 1:
+        # Only log to database
+        return log_alert_to_db(local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash, False)
+
+    return None

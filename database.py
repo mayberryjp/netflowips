@@ -334,11 +334,31 @@ def get_config_settings():
 
 
 def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
-    """Logs an alert to the alerts.db SQLite database."""
+    """
+    Logs an alert to the alerts.db SQLite database and indicates whether it was an insert or an update.
+
+    Args:
+        ip_address (str): The IP address associated with the alert.
+        flow (dict): The flow data as a dictionary.
+        category (str): The category of the alert.
+        alert_enrichment_1 (str): Additional enrichment data for the alert.
+        alert_enrichment_2 (str): Additional enrichment data for the alert.
+        alert_id_hash (str): A unique hash for the alert.
+        realert (bool): Whether this is a re-alert.
+
+    Returns:
+        str: "insert" if a new row was inserted, "update" if an existing row was updated, or "error" if an error occurred.
+    """
     logger = logging.getLogger(__name__)
     try:
         conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database.")
+            return "error"
+
         cursor = conn.cursor()
+
+        # Execute the insert or update query
         cursor.execute("""
             INSERT INTO alerts (id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, times_seen, first_seen, last_seen, acknowledged)
             VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), datetime('now', 'localtime'), 0)
@@ -347,10 +367,20 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
                 times_seen = times_seen + 1,
                 last_seen = datetime('now', 'localtime')
         """, (alert_id_hash, ip_address, json.dumps(flow), category, alert_enrichment_1, alert_enrichment_2))
+
+        # Check the number of rows affected
+        if conn.total_changes == 1:
+            operation = "insert"
+        else:
+            operation = "update"
+
         conn.commit()
-        log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category}")
+        log_info(logger, f"[INFO] Alert logged to database for IP: {ip_address}, Category: {category} ({operation}).")
+        return operation
+
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Error logging alert to database: {e}")
+        return "error"
     finally:
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
@@ -953,6 +983,107 @@ def get_traffic_stats_for_ip(ip_address):
         return []
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while retrieving traffic stats for IP {ip_address}: {e}")
+        return []
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def update_action_acknowledged(action_id):
+    """
+    Update the acknowledged field to 1 for a specific action based on the action_id.
+
+    Args:
+        action_id (str): The ID of the action to update.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "actions")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to actions database.")
+            return False
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE actions
+            SET acknowledged = 1
+            WHERE action_id = ?
+        """, (action_id,))
+        conn.commit()
+        log_info(logger, f"[INFO] Updated acknowledged field to 1 for action ID: {action_id}")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while updating action: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+
+def insert_action(action_text):
+    """
+    Insert a new record into the actions table.
+
+    Args:
+        action_data (dict): A dictionary containing the action data to insert.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "actions")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to actions database.")
+            return False
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO actions (action_text, acknowledged)
+            VALUES (?, 0)
+        """, action_text)
+        conn.commit()
+        log_info(logger, f"[INFO] Inserted new action with text: {action_text}")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while inserting action: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def get_all_actions():
+    """
+    Retrieve all records from the actions table.
+
+    Returns:
+        list: A list of dictionaries containing all records from the actions table.
+              Returns an empty list if no data is found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "actions")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to actions database.")
+            return []
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM actions")
+        rows = cursor.fetchall()
+        disconnect_from_db(conn)
+
+        # Format the results as a list of dictionaries
+        actions = [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+
+        log_info(logger, f"[INFO] Retrieved {len(actions)} actions from the database.")
+        return actions
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving actions: {e}")
         return []
     finally:
         if 'conn' in locals() and conn:

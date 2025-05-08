@@ -289,7 +289,7 @@ def main():
         row['tags'] = ""  # Initialize an empty string for tags
 
     # Apply tags
-    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries) for row in rows_as_dicts]
+    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries, config_dict) for row in rows_as_dicts]
 
     # Convert back to arrays for use in update_allflows
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]

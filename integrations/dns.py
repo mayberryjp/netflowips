@@ -1,6 +1,7 @@
 import dns.resolver
 from utils import log_info
 import logging
+from database import insert_action
 
 def dns_lookup(ip_addresses, dns_servers, config_dict):
     """
@@ -44,6 +45,7 @@ def dns_lookup(ip_addresses, dns_servers, config_dict):
                 "ip": ip,
                 "dns_hostname": "NXDOMAIN"
             })
+            insert_action(f"You have an IP address without a reverse DNS entry. It is recommeneded to inventory all your local network devices in your local DNS. In Pi-hole, you can do this by going to Settings > Local DNS Records. Affected IP address is {ip}. DNS response was 'NXDOMAIN'.")
         except dns.resolver.Timeout:
             results.append({
                 "ip": ip,
