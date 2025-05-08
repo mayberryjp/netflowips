@@ -26,8 +26,8 @@ def check_scripts():
     missing = [script for script in required_scripts if not is_script_running(script)]
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if missing:
-        log_error(logger,f"[ERROR] Missing python processes: {', '.join(missing)}. Please restart container and check configuration, errors. ")
         insert_action_detached(f"[ERROR] Missing python processes: {', '.join(missing)}. Please restart container and check configuration, errors. ")
+        log_error(logger,f"[ERROR] Missing python processes: {', '.join(missing)}. Please restart container and check configuration, errors. ")
     else:
         log_info(logger,"[INFO] All required python processes are running")
 

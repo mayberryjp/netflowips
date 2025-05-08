@@ -35,16 +35,22 @@ def insert_action_detached(action_text):
     Returns:
         bool: True if the operation was successful, False otherwise.
     """
+    try:
+        conn = connect_to_db_detached(CONST_CONSOLIDATED_DB)
 
-    conn = connect_to_db_detached(CONST_CONSOLIDATED_DB, "actions")
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO actions (action_text, acknowledged)
+            VALUES (?, 0)
+        """, (action_text,))
+        conn.commit()
+        conn.close()
+        return True
 
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO actions (action_text, acknowledged)
-        VALUES (?, 0)
-    """, action_text)
-    conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error inserting action: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            conn.close()
 
-    conn.close()
-
-    return True

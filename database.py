@@ -1044,7 +1044,7 @@ def insert_action(action_text):
         cursor.execute("""
             INSERT INTO actions (action_text, acknowledged)
             VALUES (?, 0)
-        """, action_text)
+        """, (action_text,))
         conn.commit()
         log_info(logger, f"[INFO] Inserted new action with text: {action_text}")
         return True
