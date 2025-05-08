@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from utils import log_error, log_info
 import logging
+from detached import insert_action_detached
 
 # List of required Python script names
 required_scripts = ["processor.py", "discovery.py", "api.py", "collector.py","fetch.py"]
@@ -26,6 +27,7 @@ def check_scripts():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if missing:
         log_error(logger,f"[ERROR] Missing python processes: {', '.join(missing)}. Please restart container and check configuration, errors. ")
+        insert_action_detached(f"[ERROR] Missing python processes: {', '.join(missing)}. Please restart container and check configuration, errors. ")
     else:
         log_info(logger,"[INFO] All required python processes are running")
 

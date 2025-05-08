@@ -1,4 +1,4 @@
-from const import CONST_CREATE_GEOLOCATION_SQL, CONST_CREATE_REPUTATIONLIST_SQL, CONST_CREATE_TORNODES_SQL, CONST_CREATE_PIHOLE_SQL, CONST_CREATE_LOCALHOSTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, CONST_CREATE_WHITELIST_SQL, VERSION, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE, CONST_CREATE_CONFIG_SQL
+from const import CONST_CREATE_ACTIONS_SQL, CONST_CREATE_GEOLOCATION_SQL, CONST_CREATE_REPUTATIONLIST_SQL, CONST_CREATE_TORNODES_SQL, CONST_CREATE_PIHOLE_SQL, CONST_CREATE_LOCALHOSTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, CONST_CREATE_WHITELIST_SQL, VERSION, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE, CONST_CREATE_CONFIG_SQL
 from database import delete_all_records, import_custom_tags, create_table, get_whitelist,init_configurations_from_variable,store_machine_unique_identifier,import_whitelists, delete_database, create_table, get_config_settings, init_configurations_from_sitepy
 from netflow import handle_netflow_v5
 from utils import log_info, log_error, dump_json
@@ -16,6 +16,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__) 
  
     site_config_path = os.path.join("/database/", f"{SITE}.py")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
