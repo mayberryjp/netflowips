@@ -61,7 +61,8 @@ from src.database import (
     get_row_count,
     get_alerts_summary,
     import_whitelists,
-    store_machine_unique_identifier
+    store_machine_unique_identifier, 
+    store_version
 )
 
 from src.tags import apply_tags
@@ -240,6 +241,7 @@ def main():
 
 
     store_machine_unique_identifier()
+    store_version()
     config_dict = get_config_settings()
     print(f"Configuration: {config_dict}")
 

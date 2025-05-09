@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 from src.utils import log_info, log_error, get_machine_unique_identifier  # Assuming log_info is defined in utils
-from src.const import CONST_INSTALL_CONFIGS, CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB
+from src.const import CONST_INSTALL_CONFIGS, CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB, VERSION
 import ipaddress
 import os
 from datetime import datetime, timedelta
@@ -847,6 +847,55 @@ def collect_database_counts():
 
     conn_whitelist.close()
     return counts
+
+
+def store_version():
+    """
+    Store the current version from CONST.py in the configuration database
+    with the key 'Version'.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Import the version from CONST.py
+        from src.const import VERSION
+        
+        # Connect to the configuration database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to configuration database.")
+            return False
+
+        cursor = conn.cursor()
+
+        # Insert or update the Version in the configuration table
+        cursor.execute("""
+            INSERT INTO configuration (key, value)
+            VALUES ('Version', ?)
+            ON CONFLICT(key)
+            DO UPDATE SET value = excluded.value
+        """, (VERSION,))
+
+        conn.commit()
+        disconnect_from_db(conn)
+
+        log_info(logger, f"[INFO] Version stored successfully: {VERSION}")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while storing version: {e}")
+        return False
+    except ImportError as e:
+        log_error(logger, f"[ERROR] Failed to import CONST_VERSION: {e}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while storing version: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
 
 def store_machine_unique_identifier():
     """
