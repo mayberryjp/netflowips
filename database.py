@@ -211,7 +211,7 @@ def delete_all_records(db_name, table_name='flows'):
             conn.commit()
             log_info(logger, f"[INFO] All records deleted from {db_name}.{table_name}")
         except sqlite3.Error as e:
-            log_error(logger,f"[ERROR] Error deleting records from {db_name}: {e}")
+            log_error(logger,f"[ERROR] Error deleting records from {db_name} {table_name}: {e}")
         finally:
             disconnect_from_db(conn)
     disconnect_from_db(conn)
