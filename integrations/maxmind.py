@@ -33,9 +33,6 @@ def create_geolocation_db():
     blocks_csv_url = "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key={api_key}&suffix=zip"
     locations_csv_url = "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key={api_key}&suffix=zip"
 
-    log_info(logger, f"[DEBUG] blocks_csv_url type: {type(blocks_csv_url)}")
-    log_info(logger, f"[DEBUG] locations_csv_url type: {type(locations_csv_url)}")
-
     temp_dir = "/database"
 
     try:
