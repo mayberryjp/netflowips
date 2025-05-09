@@ -2,6 +2,7 @@
 <p align="center">
   <img src="assets/small.png?text=HomelabIDS" alt="HomelabIDS Logo" />
 </p>
+
 # 🚀 **HomelabIDS** - Your Personal Intrusion Detection System for the Home Lab!  
 
 ---
