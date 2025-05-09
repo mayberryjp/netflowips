@@ -58,6 +58,7 @@
 Please see docker compose example files in the docker_config_examples folder. Below if you prefer docker run. 
 
 ```
+
 docker run -d \
   --name homelabids \
   --network host \
