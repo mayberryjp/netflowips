@@ -1,4 +1,14 @@
-#!/usr/bin/env python3
+import sys
+import os
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+src_dir = f"{parent_dir}/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+sys.path.insert(0, "/database")
 import psutil
 import time
 from datetime import datetime

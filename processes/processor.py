@@ -1,3 +1,14 @@
+import sys
+import os
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+src_dir = f"{parent_dir}/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+sys.path.insert(0, "/database")
 import sqlite3  # Import the sqlite3 module
 from src.database import disconnect_from_db, update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
 from src.detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
@@ -9,7 +20,7 @@ from src.const import CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import schedule
 import time
 import logging
-import os
+
 
 
 if (IS_CONTAINER):

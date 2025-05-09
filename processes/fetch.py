@@ -1,3 +1,15 @@
+
+import sys
+import os
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+src_dir = f"{parent_dir}/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+sys.path.insert(0, "/database")
 import time
 import logging
 from integrations.tor import update_tor_nodes
@@ -8,7 +20,7 @@ from src.client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
 from src.const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
-import os
+
 
 if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
