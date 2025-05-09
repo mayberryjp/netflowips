@@ -104,15 +104,6 @@ If you find HomelabIDS useful, please consider giving us a ⭐ on GitHub! It hel
 
 Take control of your home network with **HomelabIDS**. Start monitoring, detecting, and protecting your network today!
 
----
-
-Let me know if you need further adjustments or additional sections!
-
----
-
-Here’s the configuration documentation formatted appropriately for a README.md file on GitHub:
-
----
 
 # **HomelabIDS Configuration Documentation**
 
