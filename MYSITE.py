@@ -61,4 +61,5 @@ CONST_DEFAULT_CONFIGS = [
     ('AlertOnCustomTags','0'),
     ('SendConfigurationToCloudApi','0'),
     ('ApprovedHighRiskDestinations', ''),
+    ('MaxMindAPIKey', ''),
 ]

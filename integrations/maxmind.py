@@ -1,42 +1,106 @@
+import requests  # Add this import
 import sqlite3
 import csv
 import os
 from src.utils import log_info, log_error, ip_network_to_range  # Assuming log_info is already defined
 from src.database import connect_to_db, get_config_settings, disconnect_from_db  # Assuming connect_to_db is already defined
 import logging
-from src.const import CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL
+from src.const import CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB
+import zipfile
 
 if IS_CONTAINER:
     SITE = os.getenv("SITE", CONST_SITE)
 
-def create_geolocation_db(
-    blocks_csv_path="/database/geolite/GeoLite2-Country-Blocks-IPv4.csv",
-    locations_csv_path="/database/geolite/GeoLite2-Country-Locations-en.csv",
-):
+def create_geolocation_db():
     """
-    Reads the MaxMind GeoLite2 database from CSV files and creates a SQLite database.
+    Fetches the MaxMind GeoLite2 database from their API, extracts the CSV files, and creates a SQLite database.
     Also adds LOCAL_NETWORKS with SITE_NAME as country.
 
     Args:
-        blocks_csv_path (str): The path to the GeoLite2 country blocks CSV file.
-        locations_csv_path (str): The path to the GeoLite2 country locations CSV file.
-        db_name (str): The name of the SQLite database to create.
+        api_key (str): The API key for MaxMind's GeoLite2 database.
+        blocks_csv_url (str): The URL template for the GeoLite2 country blocks CSV file.
+        locations_csv_url (str): The URL template for the GeoLite2 country locations CSV file.
+        temp_dir (str): Temporary directory to store downloaded and extracted files.
     """
     logger = logging.getLogger(__name__)
 
     config_dict = get_config_settings()
-    LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
-    
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+
+    api_key = config_dict.get('MaxMindAPIKey', None)
+
+    # Remove trailing commas to avoid creating tuples
+    blocks_csv_url = "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key={api_key}&suffix=zip"
+    locations_csv_url = "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key={api_key}&suffix=zip"
+
+    log_info(logger, f"[DEBUG] blocks_csv_url type: {type(blocks_csv_url)}")
+    log_info(logger, f"[DEBUG] locations_csv_url type: {type(locations_csv_url)}")
+
+    temp_dir = "/database"
+
     try:
-        # Step 1: Check if the CSV files exist
-        if not os.path.exists(blocks_csv_path):
-            log_error(logger, f"[ERROR] Country blocks CSV file not found at {blocks_csv_path}.")
+        # Step 1: Create temporary directory if it doesn't exist
+        os.makedirs(temp_dir, exist_ok=True)
+
+        # Step 2: Download and extract the GeoLite2 database
+        log_info(logger, "[INFO] Downloading GeoLite2 database from MaxMind...")
+        blocks_zip_path = os.path.join(temp_dir, "GeoLite2-Country-Blocks.zip")
+        locations_zip_path = os.path.join(temp_dir, "GeoLite2-Country-Locations.zip")
+
+        # Download blocks CSV
+        blocks_response = requests.get(blocks_csv_url.format(api_key=api_key), stream=True)
+        locations_response = requests.get(locations_csv_url.format(api_key=api_key), stream=True)
+
+        if blocks_response.status_code != 200:
+            log_error(logger, f"[ERROR] Failed to download country blocks CSV: {blocks_response.status_code}")
             return
-        if not os.path.exists(locations_csv_path):
-            log_error(logger, f"[ERROR] Country locations CSV file not found at {locations_csv_path}.")
+        with open(blocks_zip_path, "wb") as f:
+            f.write(blocks_response.content)
+
+        if locations_response.status_code != 200:
+            log_error(logger, f"[ERROR] Failed to download country locations CSV: {locations_response.status_code}")
+            return
+        with open(locations_zip_path, "wb") as f:
+            f.write(locations_response.content)
+
+        log_info(logger, "[INFO] Extracting ZIP files with flattened structure...")
+
+        # Function to extract ZIP files with flattened structure
+        def extract_flat(zip_file_path, destination_dir):
+            with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+                for file_info in zip_ref.infolist():
+                    # Skip directories
+                    if file_info.filename[-1] == '/':
+                        continue
+
+                    # Get just the base filename without path
+                    base_filename = os.path.basename(file_info.filename)
+
+                    # Skip if no filename (just a directory)
+                    if not base_filename:
+                        continue
+
+                    # Extract the file data
+                    file_data = zip_ref.read(file_info.filename)
+
+                    # Write to destination directory with just the base filename
+                    target_path = os.path.join(destination_dir, base_filename)
+                    with open(target_path, 'wb') as target_file:
+                        target_file.write(file_data)
+
+        # Extract each ZIP file with flattened structure
+        extract_flat(blocks_zip_path, temp_dir)
+        extract_flat(locations_zip_path, temp_dir)
+
+        # Locate the extracted CSV files (which should now be in the root of temp_dir)
+        blocks_csv_path = os.path.join(temp_dir, "GeoLite2-Country-Blocks-IPv4.csv")
+        locations_csv_path = os.path.join(temp_dir, "GeoLite2-Country-Locations-en.csv")
+
+        if not os.path.exists(blocks_csv_path) or not os.path.exists(locations_csv_path):
+            log_error(logger, "[ERROR] Extracted CSV files not found.")
             return
 
-        # Step 2: Load the country locations data into a dictionary
+        # Step 3: Load the country locations data into a dictionary
         log_info(logger, "[INFO] Loading country locations data...")
         locations = {}
         with open(locations_csv_path, "r", encoding="utf-8") as locations_file:
@@ -46,7 +110,7 @@ def create_geolocation_db(
                 country_name = row.get("country_name", "")
                 locations[geoname_id] = country_name
 
-        conn=connect_to_db(CONST_CONSOLIDATED_DB, "geolocation")
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "geolocation")
         if conn is None:
             log_error(logger, f"[ERROR] Failed to connect to the database {CONST_CONSOLIDATED_DB}.")
             return
@@ -61,10 +125,10 @@ def create_geolocation_db(
                 start_ip, end_ip, netmask = ip_network_to_range(network)
                 if start_ip is None:
                     continue
-                
+
                 geoname_id = row.get("geoname_id")
                 country_name = locations.get(geoname_id, None)  # Get the country name from the locations dictionary
-                
+
                 cursor.execute("""
                     INSERT OR IGNORE INTO geolocation (
                         network, start_ip, end_ip, netmask, country_name
@@ -84,7 +148,7 @@ def create_geolocation_db(
             start_ip, end_ip, netmask = ip_network_to_range(network)
             if start_ip is None:
                 continue
-                
+
             cursor.execute("""
                 INSERT OR REPLACE INTO geolocation (
                     network, start_ip, end_ip, netmask, country_name

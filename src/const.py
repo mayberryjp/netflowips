@@ -229,4 +229,5 @@ CONST_INSTALL_CONFIGS = [
     ('SendConfigurationToCloudApi','0'),
     ('ApprovedHighRiskDestinations', ''),
     ('WhitelistEntries', '[]'),
+    ('MaxMindAPIKey', ''),
 ]
