@@ -55,8 +55,18 @@
 ## 📦 **Installation**
 
 
-Please see docker compose example files in the docker_config_examples folder. 
+Please see docker compose example files in the docker_config_examples folder. Below if you prefer docker run. 
 
+```
+docker run -d \
+  --name homelabids \
+  --network host \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /docker/homelabids:/database \
+  -e SITE=MYSITE \
+  homelabids:latest
+  ```
 
 ---
 
