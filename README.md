@@ -1,7 +1,8 @@
-# 🚀 **HomelabIDS** - Your Personal Intrusion Detection System for the Home Lab!  
 
-![HomelabIDS Logo](https://via.placeholder.com/800x200.png?text=HomelabIDS)  
-*(Replace this placeholder with your project logo or banner)*
+<p align="center">
+  <img src="assets/small.png?text=HomelabIDS" alt="HomelabIDS Logo" />
+</p>
+# 🚀 **HomelabIDS** - Your Personal Intrusion Detection System for the Home Lab!  
 
 ---
 
