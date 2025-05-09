@@ -3,7 +3,7 @@ import logging
 import sys
 import time
 import sqlite3
-from database import connect_to_db, disconnect_from_db
+from src.database import connect_to_db, disconnect_from_db
 from pathlib import Path
 
 
@@ -12,8 +12,8 @@ parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from utils import log_info, log_error
-from const import CONST_CREATE_PIHOLE_SQL, CONST_CONSOLIDATED_DB
+from src.utils import log_info, log_error
+from src.const import CONST_CREATE_PIHOLE_SQL, CONST_CONSOLIDATED_DB
 
 
 def authenticate_pihole(pihole_url, api_token):

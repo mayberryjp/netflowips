@@ -1,13 +1,13 @@
 import time
 import logging
 from integrations.tor import update_tor_nodes
-from utils import log_info, log_error
-from database import get_config_settings, delete_database, delete_old_traffic_stats
+from src.utils import log_info, log_error
+from src.database import get_config_settings, delete_old_traffic_stats
 from integrations.maxmind import create_geolocation_db
-from client import upload_all_client_definitions, upload_configuration
+from src.client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
-from const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
+from src.const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
 import os
 
 if (IS_CONTAINER):

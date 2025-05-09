@@ -1,12 +1,12 @@
 import socket
 import struct
-from const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
+from src.const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import os
-from utils import log_info, log_warn, log_error, calculate_broadcast
+from src.utils import log_info, log_error, calculate_broadcast
 import logging
 from datetime import datetime, timezone
-from database import connect_to_db, get_whitelist, get_config_settings, disconnect_from_db
-from tags import apply_tags
+from src.database import connect_to_db, get_whitelist, get_config_settings, disconnect_from_db
+from src.tags import apply_tags
 from queue import Queue
 import threading
 import time

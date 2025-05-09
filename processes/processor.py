@@ -1,11 +1,11 @@
 import sqlite3  # Import the sqlite3 module
-from database import disconnect_from_db, update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
-from detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
-from notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
+from src.database import disconnect_from_db, update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
+from src.detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
+from src.notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
 from integrations.maxmind import load_geolocation_data
 from integrations.reputation import load_reputation_data
-from utils import log_info, log_error  # Import log_info from utils
-from const import CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB
+from src.utils import log_info, log_error  # Import log_info from utils
+from src.const import CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import schedule
 import time
 import logging

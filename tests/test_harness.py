@@ -14,7 +14,7 @@ if parent_dir not in sys.path:
 
 sys.path.insert(0, "/database")
 
-from utils import log_info, log_warn, log_error, calculate_broadcast
+from src.utils import log_info, log_warn, log_error, calculate_broadcast
 from integrations.maxmind import load_geolocation_data, create_geolocation_db
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
 from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
@@ -22,11 +22,11 @@ from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-from database import delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
-from const import CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
+from src.database import delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
+from src.const import CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from const import (
+from src.const import (
     CONST_CONSOLIDATED_DB, 
     CONST_TEST_SOURCE_DB,
     CONST_CONSOLIDATED_DB,
@@ -47,9 +47,9 @@ from const import (
     VERSION,
     CONST_CONSOLIDATED_DB
 )
-from utils import log_info
+from src.utils import log_info
 
-from database import (
+from src.database import (
     get_config_settings,
     get_whitelist,
     connect_to_db,
@@ -64,9 +64,9 @@ from database import (
     store_machine_unique_identifier
 )
 
-from tags import apply_tags
+from src.tags import apply_tags
 
-from detections import (
+from src.detections import (
     update_local_hosts,
     detect_new_outbound_connections,
     router_flows_detection,

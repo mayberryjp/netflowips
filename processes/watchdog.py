@@ -2,9 +2,9 @@
 import psutil
 import time
 from datetime import datetime
-from utils import log_error, log_info
+from src.utils import log_error, log_info
 import logging
-from detached import insert_action_detached
+from src.detached import insert_action_detached
 
 # List of required Python script names
 required_scripts = ["processor.py", "discovery.py", "api.py", "collector.py","fetch.py"]

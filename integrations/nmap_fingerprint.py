@@ -9,7 +9,7 @@ parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from utils import log_info, log_error
+from src.utils import log_info, log_error
 
 def os_fingerprint(ip_addresses, config_dict):
     """

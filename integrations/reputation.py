@@ -3,7 +3,7 @@ import sqlite3
 import logging
 from ipaddress import ip_network
 import sys
-from const import CONST_CONSOLIDATED_DB
+from src.const import CONST_CONSOLIDATED_DB
 from pathlib import Path
 
 current_dir = Path(__file__).resolve().parent
@@ -11,8 +11,8 @@ parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from utils import log_info, log_error
-from database import connect_to_db, disconnect_from_db
+from src.utils import log_info, log_error
+from src.database import connect_to_db, disconnect_from_db
 
 def import_reputation_list(config_dict):
     """

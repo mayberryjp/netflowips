@@ -1,7 +1,7 @@
 import dns.resolver
-from utils import log_info
+from src.utils import log_info
 import logging
-from database import insert_action
+from src.database import insert_action
 
 def dns_lookup(ip_addresses, dns_servers, config_dict):
     """

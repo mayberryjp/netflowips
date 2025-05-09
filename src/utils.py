@@ -10,8 +10,8 @@ import os
 import traceback
 import uuid
 import hashlib
-from const import IS_CONTAINER, CONST_SITE
-from detached import get_config_settings_detached, insert_action_detached
+from src.const import IS_CONTAINER, CONST_SITE
+from src.detached import get_config_settings_detached, insert_action_detached
 
 if (IS_CONTAINER):
     SITE = os.getenv("SITE", CONST_SITE)

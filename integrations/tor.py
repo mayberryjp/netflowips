@@ -1,7 +1,7 @@
-from utils import log_info, log_error
+from src.utils import log_info, log_error
 import logging
-from database import connect_to_db, delete_all_records, disconnect_from_db
-from const import CONST_CONSOLIDATED_DB
+from src.database import connect_to_db, delete_all_records, disconnect_from_db
+from src.const import CONST_CONSOLIDATED_DB
 from datetime import datetime, timedelta
 import requests
 

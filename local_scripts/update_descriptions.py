@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
 # Configure logging
 
 
-from utils import dump_json, log_error, log_info
+from src.utils import dump_json, log_error, log_info
 
 def update_localhosts(data_object):
     """

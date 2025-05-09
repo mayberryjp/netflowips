@@ -1,5 +1,5 @@
 import sqlite3
-from const import CONST_CONSOLIDATED_DB
+from src.const import CONST_CONSOLIDATED_DB
 
 def get_config_settings_detached():
     """Read configuration settings from the configuration database into a dictionary."""
