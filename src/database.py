@@ -30,7 +30,7 @@ def connect_to_db(DB_NAME,table="unknown"):
 
     try:
         conn = sqlite3.connect(DB_NAME)
-        conn.execute("PRAGMA busy_timeout = 5000")
+        conn.execute("PRAGMA busy_timeout = 10000")
         #log_info(logger, f"[INFO] Connected to database: {DB_NAME} table {table}")
         return conn
     except sqlite3.Error as e:
@@ -209,7 +209,7 @@ def delete_all_records(db_name, table_name='flows'):
             cursor = conn.cursor()
             cursor.execute(f"DELETE FROM {table_name}")
             conn.commit()
-            log_info(logger, f"[INFO] All records deleted from {db_name}.{table_name}")
+            log_info(logger, f"[INFO] All records deleted from {db_name} {table_name}")
         except sqlite3.Error as e:
             log_error(logger,f"[ERROR] Error deleting records from {db_name} {table_name}: {e}")
         finally:
