@@ -8,7 +8,7 @@ if parent_dir not in sys.path:
 src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
-from bottle import Bottle, request, response
+from bottle import Bottle, request, response, hook, route
 import sqlite3
 import json
 from src.database import get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
@@ -19,6 +19,30 @@ from datetime import datetime, timedelta
 
 # Initialize the Bottle app
 app = Bottle()
+
+# Define CORS headers
+CORS_HEADERS = {
+    'Access-Control-Allow-Origin': 'http://localhost:3030',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+}
+
+# Add CORS headers to all responses
+@app.hook('after_request')
+def enable_cors():
+    """Add CORS headers to every response"""
+    for key, value in CORS_HEADERS.items():
+        response.headers[key] = value
+
+# Handle OPTIONS preflight requests
+@app.route('/<path:path>', method='OPTIONS')
+@app.route('/', method='OPTIONS')
+def options_handler(path=None):
+    """Handle OPTIONS requests for CORS preflight"""
+    # Set CORS headers explicitly for OPTIONS
+    for key, value in CORS_HEADERS.items():
+        response.headers[key] = value
+    return {}
 
 if IS_CONTAINER:
     API_LISTEN_ADDRESS = os.getenv("API_LISTEN_ADDRESS", CONST_API_LISTEN_ADDRESS)
