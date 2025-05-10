@@ -77,6 +77,10 @@ def process_data():
                     filtered_rows = [row for row in filtered_rows if 'Multicast' not in str(row[11])]
                     log_info(logger,f"Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
 
+                if config_dict.get('RemoveLinkLocalFlows', 0) >0:
+                    filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
+                    log_info(logger,f"Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
+
                 # Proper way to check config values with default of 0
                 if config_dict.get("NewHostsDetection", 0) > 0:
                     update_local_hosts(filtered_rows, config_dict)

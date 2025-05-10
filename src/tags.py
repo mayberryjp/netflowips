@@ -1,4 +1,4 @@
-from src.utils import log_error, log_warn
+from src.utils import log_error, log_warn, is_ip_in_range
 import logging
 
 
@@ -89,6 +89,35 @@ def tag_multicast(record):
         log_error(logger, f"[ERROR] Invalid IP address format in record: {e}")
         return None
     
+def tag_linklocal(record, link_local_range):
+    """
+    Tag flows where either source or destination IP is in link-local range (169.254.0.0/16).
+    
+    Args:
+        record: Flow record to check
+        
+    Returns:
+        str: "LinkLocal;" if either IP is in link-local range, None otherwise
+    """
+    logger = logging.getLogger(__name__)
+    from src.utils import is_ip_in_range
+
+    try:
+        # Link-local address range
+        
+        # Check if source IP is in link-local range
+        if is_ip_in_range(record["src_ip"], link_local_range):
+            return "LinkLocal;"
+            
+        # Check if destination IP is in link-local range
+        if is_ip_in_range(record["dst_ip"], link_local_range):
+            return "LinkLocal;"
+            
+        return None
+        
+    except Exception as e:
+        log_error(logger, f"[ERROR] Error checking for link-local address: {e}")
+        return None
 
 def tag_custom(record, tag_entries):
     """
@@ -135,7 +164,7 @@ def tag_custom(record, tag_entries):
         return "".join(applied_tags)
     return None
     
-def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, config_dict):
+def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, config_dict, link_local_range):
     """
     Apply multiple tagging functions to one or more rows. For each row, append the tag to the tags position.
 
@@ -165,6 +194,10 @@ def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, conf
     multicast_tag = tag_multicast(record)
     if multicast_tag:
         record['tags'] += f"{multicast_tag}"
+        
+    linklocal_tag = tag_linklocal(record, link_local_range)
+    if linklocal_tag:
+        record['tags'] += f"{linklocal_tag}"
         
     if config_dict.get("AlertOnCustomTags", 0) > 0:
         # Apply custom tags

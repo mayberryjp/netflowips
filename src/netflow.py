@@ -1,6 +1,6 @@
 import socket
 import struct
-from src.const import CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
+from src.const import CONST_LINK_LOCAL_RANGE, CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import os
 from src.utils import log_info, log_error, calculate_broadcast
 import logging
@@ -119,6 +119,7 @@ def process_netflow_packets():
             
             # Add global broadcast address
             broadcast_addresses.add('255.255.255.255')
+            broadcast_addresses.add('0.0.0.0')
             
             packets = []
             # Collect all available packets
@@ -146,7 +147,7 @@ def process_netflow_packets():
                         offset += 48
                         
                         # Apply tags and update flow database
-                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries, config_dict)
+                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries, config_dict, CONST_LINK_LOCAL_RANGE)
                         update_newflow(record)
                         total_flows += 1
                         

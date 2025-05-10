@@ -25,7 +25,7 @@ from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
 from src.database import delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
-from src.const import CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
+from src.const import CONST_LINK_LOCAL_RANGE, CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.const import (
@@ -396,6 +396,9 @@ def main():
         if broadcast_ip:
             broadcast_addresses.add(broadcast_ip)
 
+    broadcast_addresses.add('255.255.255.255')
+    broadcast_addresses.add('0.0.0.0')
+
     # Convert rows to dictionaries for input into apply_tags
     column_names = [desc[0] for desc in cursor.description]  # Get column names from the cursor
     rows_as_dicts = [dict(zip(column_names, row)) for row in rows]
@@ -405,7 +408,7 @@ def main():
         row['tags'] = ""  # Initialize an empty string for tags
 
     # Apply tags
-    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries, config_dict) for row in rows_as_dicts]
+    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries, config_dict, CONST_LINK_LOCAL_RANGE) for row in rows_as_dicts]
 
     # Convert back to arrays for use in update_allflows
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]
@@ -421,6 +424,9 @@ def main():
 
     filtered_rows = [row for row in filtered_rows if 'Multicast' not in str(row[11])]
     log_info(logger, f"[INFO] Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
+
+    filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
+    log_info(logger,f"Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
 
     # Dictionary to store durations for each detection function

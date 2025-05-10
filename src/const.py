@@ -8,6 +8,7 @@ CONST_CONSOLIDATED_DB = "/database/consolidated.db"
 #CONST_TEST_SOURCE_DB = ['/database/test_source_1.db','/database/test_source_2.db']
 CONST_TEST_SOURCE_DB = ['/database/test_source_1.db']
 CONST_SITE= 'TESTPPE'
+CONST_LINK_LOCAL_RANGE = ["169.254.0.0/16"]
 CONST_REINITIALIZE_DB = 0
 CONST_CREATE_NEWFLOWS_SQL='''
     CREATE TABLE IF NOT EXISTS flows (
@@ -230,4 +231,5 @@ CONST_INSTALL_CONFIGS = [
     ('ApprovedHighRiskDestinations', ''),
     ('WhitelistEntries', '[]'),
     ('MaxMindAPIKey', ''),
+    ('RemoveLinkLocalFlows', '0'),
 ]
