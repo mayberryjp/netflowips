@@ -1,7 +1,7 @@
 {
     "ip_address": "192.168.50.13",
-    "export_date": "2025-05-04T07:01:46.708118",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-10T09:37:01.364508",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.13",
         "mac_address": null,
@@ -10,79 +10,57 @@
         "dns_hostname": "panasonic-hub.832-5.com.",
         "os_fingerprint": "Linux_Linux_3.X_100",
         "lease_hostname": "panasonic-hub",
-        "icon": "LIGHT_CONTROLLER",
-        "local_description": "Panasanic Advance Light Controller"
+        "icon": null,
+        "local_description": null
     },
     "dns_queries": [
         {
-            "domain": "jp-ldcws.pcpf.panasonic.com",
-            "times_queried": 12,
-            "first_query": "2025-05-03 14:43:47",
-            "last_query": "2025-04-27 23:01:13"
-        },
-        {
             "domain": "esvchk-s2.svrpf.jp",
-            "times_queried": 7,
-            "first_query": "2025-05-03 06:08:46",
-            "last_query": "2025-04-28 01:03:46"
-        },
-        {
-            "domain": "ntp.anshin-home.jp",
-            "times_queried": 7,
-            "first_query": "2025-05-04 03:04:27",
-            "last_query": "2025-04-28 03:06:20"
+            "times_queried": 1,
+            "first_query": "2025-05-07 19:37:57",
+            "last_query": "2025-05-07 19:37:57"
         }
     ],
     "flows": [
         {
-            "destination": "20.210.59.191",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 13,
-            "total_packets": 55489,
-            "total_bytes": 6722690,
-            "first_seen": "2025-05-03 13:49:20",
-            "last_seen": "1000"
-        },
-        {
             "destination": "239.255.255.250",
             "port": 1900,
             "protocol": 17,
-            "flow_count": 544,
-            "total_packets": 4352,
-            "total_bytes": 1489472,
-            "first_seen": "2025-05-04 06:35:11",
-            "last_seen": "2025-04-23T11:00:00.548000+00:00"
-        },
-        {
-            "destination": "224.0.23.0",
-            "port": 3610,
-            "protocol": 17,
-            "flow_count": 432,
-            "total_packets": 432,
-            "total_bytes": 26703,
-            "first_seen": "2025-05-04 06:04:56",
-            "last_seen": "11874754"
+            "flow_count": 20,
+            "total_packets": 13440,
+            "total_bytes": 4599840,
+            "first_seen": "2025-05-10 08:39:31",
+            "last_seen": "2025-04-20T06:27:55.393000+00:00"
         },
         {
             "destination": "18.182.249.252",
             "port": 443,
             "protocol": 6,
-            "flow_count": 11,
-            "total_packets": 121,
-            "total_bytes": 18810,
-            "first_seen": "2025-05-03 06:02:18",
-            "last_seen": "2025-04-23T20:56:08.411000+00:00"
+            "flow_count": 60,
+            "total_packets": 640,
+            "total_bytes": 101560,
+            "first_seen": "2025-05-10 08:39:34",
+            "last_seen": "2025-04-20T17:56:03.315000+00:00"
+        },
+        {
+            "destination": "224.0.23.0",
+            "port": 3610,
+            "protocol": 17,
+            "flow_count": 1300,
+            "total_packets": 1300,
+            "total_bytes": 80860,
+            "first_seen": "2025-05-10 08:39:34",
+            "last_seen": "2025-04-20T06:57:09.609000+00:00"
         },
         {
             "destination": "13.115.31.26",
             "port": 123,
             "protocol": 17,
-            "flow_count": 11,
-            "total_packets": 11,
-            "total_bytes": 836,
-            "first_seen": "2025-05-04 03:03:26",
-            "last_seen": "2025-04-25T00:57:08.735000+00:00"
+            "flow_count": 20,
+            "total_packets": 20,
+            "total_bytes": 1520,
+            "first_seen": "2025-05-10 08:39:33",
+            "last_seen": "2025-04-21T00:56:58.655000+00:00"
         }
     ],
     "actions": []

@@ -1,122 +1,29 @@
 {
     "ip_address": "192.168.50.216",
-    "export_date": "2025-05-04T07:01:48.077113",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-10T09:37:01.816643",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.216",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "Outdoorlighting.832-5.com.",
-        "os_fingerprint": "NodeMCU_embedded_None_92",
+        "os_fingerprint": null,
         "lease_hostname": "Outdoorlighting",
-        "icon": "LIGHT_CONTROLLER",
-        "local_description": "Sunvie Outdoor Lighting Controller with Tuya Zigbee Relay"
+        "icon": null,
+        "local_description": null
     },
-    "dns_queries": [
-        {
-            "domain": "a3.tuyaus.com",
-            "times_queried": 8,
-            "first_query": "2025-05-03 14:43:47",
-            "last_query": "2025-04-27 23:01:13"
-        },
-        {
-            "domain": "m2.tuyaus.com",
-            "times_queried": 3,
-            "first_query": "2025-05-02 12:19:01",
-            "last_query": "2025-04-27 23:01:13"
-        }
-    ],
+    "dns_queries": [],
     "flows": [
-        {
-            "destination": "255.255.255.255",
-            "port": 6667,
-            "protocol": 17,
-            "flow_count": 100,
-            "total_packets": 11093,
-            "total_bytes": 2573576,
-            "first_seen": "2025-05-03 04:49:28",
-            "last_seen": "2025-04-23T10:38:57.929000+00:00"
-        },
-        {
-            "destination": "52.12.196.80",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 3,
-            "total_packets": 21330,
-            "total_bytes": 1679352,
-            "first_seen": "2025-04-24T10:53:56.460683",
-            "last_seen": "2025-04-17T02:16:09.546000+00:00"
-        },
-        {
-            "destination": "44.240.74.103",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 2,
-            "total_packets": 13186,
-            "total_bytes": 1037910,
-            "first_seen": "2025-05-02T11:52:54.243282",
-            "last_seen": "2025-04-27T22:53:36.001000+00:00"
-        },
-        {
-            "destination": "34.211.189.2",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 1,
-            "total_packets": 8136,
-            "total_bytes": 640385,
-            "first_seen": "2025-04-27T22:44:31.461747",
-            "last_seen": "2025-04-25T03:21:49.453000+00:00"
-        },
-        {
-            "destination": "54.69.37.156",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 343,
-            "total_packets": 3481,
-            "total_bytes": 428027,
-            "first_seen": "2025-05-04 06:56:37",
-            "last_seen": "10971875"
-        },
         {
             "destination": "54.187.112.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 309,
-            "total_packets": 3133,
-            "total_bytes": 385440,
-            "first_seen": "2025-05-03 13:27:23",
-            "last_seen": "2025-04-23T11:38:51.924000+00:00"
-        },
-        {
-            "destination": "35.161.158.54",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 2,
-            "total_packets": 1218,
-            "total_bytes": 96676,
-            "first_seen": "2025-05-03 13:42:25",
-            "last_seen": "29548739"
-        },
-        {
-            "destination": "34.218.147.23",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 47,
-            "total_packets": 477,
-            "total_bytes": 58484,
-            "first_seen": "2025-04-24T10:37:24.067402",
-            "last_seen": "2025-04-23T17:04:04.176000+00:00"
-        },
-        {
-            "destination": "54.212.163.173",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 1,
-            "total_packets": 1,
-            "total_bytes": 109,
-            "first_seen": "2025-04-25T03:24:38.115218",
-            "last_seen": "2025-04-25T03:21:34.090000+00:00"
+            "flow_count": 2160,
+            "total_packets": 22020,
+            "total_bytes": 2702340,
+            "first_seen": "2025-05-10 08:39:34",
+            "last_seen": "2025-04-20T06:30:53.484000+00:00"
         }
     ],
     "actions": []

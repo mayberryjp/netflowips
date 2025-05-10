@@ -1,102 +1,49 @@
 {
     "ip_address": "192.168.50.43",
-    "export_date": "2025-05-04T07:01:48.487625",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-10T09:37:01.305832",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.43",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "plug4.832-5.com.",
-        "os_fingerprint": "Philips_embedded_None_93",
+        "os_fingerprint": null,
         "lease_hostname": "plug4",
-        "icon": "PLUG",
-        "local_description": "Tuya Smart Plug"
+        "icon": null,
+        "local_description": null
     },
-    "dns_queries": [
-        {
-            "domain": "a3.tuyaus.com",
-            "times_queried": 1,
-            "first_query": "2025-05-02 15:25:02",
-            "last_query": "2025-05-02 15:25:02"
-        },
-        {
-            "domain": "m2.tuyaus.com",
-            "times_queried": 1,
-            "first_query": "2025-05-02 15:25:02",
-            "last_query": "2025-05-02 15:25:02"
-        }
-    ],
+    "dns_queries": [],
     "flows": [
-        {
-            "destination": "54.188.99.4",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 4,
-            "total_packets": 31847,
-            "total_bytes": 2845545,
-            "first_seen": "2025-04-26T11:37:29.036568",
-            "last_seen": "2025-04-17T02:16:24.193000+00:00"
-        },
-        {
-            "destination": "44.235.194.199",
-            "port": 8886,
-            "protocol": 6,
-            "flow_count": 4,
-            "total_packets": 15464,
-            "total_bytes": 1297251,
-            "first_seen": "2025-05-03 13:49:20",
-            "last_seen": "2025-04-27T22:53:33.411000+00:00"
-        },
         {
             "destination": "54.187.112.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 53,
-            "total_packets": 477,
-            "total_bytes": 58341,
-            "first_seen": "2025-05-02T03:03:41.818411",
-            "last_seen": "2025-04-23T12:13:29.094000+00:00"
+            "flow_count": 180,
+            "total_packets": 1600,
+            "total_bytes": 196500,
+            "first_seen": "2025-05-10 08:39:33",
+            "last_seen": "2025-04-20T14:02:05.629000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 67,
             "protocol": 17,
-            "flow_count": 82,
-            "total_packets": 82,
-            "total_bytes": 27552,
-            "first_seen": "2025-05-04 06:02:37",
-            "last_seen": "2025-04-23T13:58:52.088000+00:00"
-        },
-        {
-            "destination": "54.69.37.156",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 18,
-            "total_packets": 164,
-            "total_bytes": 20671,
-            "first_seen": "2025-05-04 06:40:59",
-            "last_seen": "10069017"
+            "flow_count": 20,
+            "total_packets": 280,
+            "total_bytes": 94080,
+            "first_seen": "2025-05-10 08:39:31",
+            "last_seen": "2025-04-20T07:42:15.157000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 6667,
             "protocol": 17,
-            "flow_count": 8,
-            "total_packets": 16,
-            "total_bytes": 3456,
-            "first_seen": "2025-05-02T14:53:49.374190",
-            "last_seen": "2025-04-25T00:26:06.732000+00:00"
-        },
-        {
-            "destination": "224.0.0.1",
-            "port": 0,
-            "protocol": 2,
-            "flow_count": 2,
-            "total_packets": 2,
-            "total_bytes": 92,
-            "first_seen": "2025-05-02T14:49:14.392310",
-            "last_seen": "2025-04-27T02:59:26.488000+00:00"
+            "flow_count": 20,
+            "total_packets": 60,
+            "total_bytes": 12960,
+            "first_seen": "2025-05-10 08:39:32",
+            "last_seen": "2025-04-20T13:14:30.133000+00:00"
         }
     ],
     "actions": []

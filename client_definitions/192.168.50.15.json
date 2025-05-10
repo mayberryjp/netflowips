@@ -1,72 +1,49 @@
 {
     "ip_address": "192.168.50.15",
-    "export_date": "2025-05-04T07:01:48.025876",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-10T09:37:01.217101",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.15",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "aircon-location1.832-5.com.",
-        "os_fingerprint": "DTE_embedded_None_100",
+        "os_fingerprint": null,
         "lease_hostname": "aircon-location1",
-        "icon": "AIR_CONDITIONER",
-        "local_description": "Panasonic Air Conditioner"
+        "icon": null,
+        "local_description": null
     },
-    "dns_queries": [
-        {
-            "domain": "afus.apc.panasonic.com",
-            "times_queried": 8,
-            "first_query": "2025-05-03 13:41:50",
-            "last_query": "2025-04-28 13:13:31"
-        },
-        {
-            "domain": "ldcws.pcpf.panasonic.com",
-            "times_queried": 8,
-            "first_query": "2025-05-03 14:43:47",
-            "last_query": "2025-04-27 23:01:13"
-        }
-    ],
+    "dns_queries": [],
     "flows": [
-        {
-            "destination": "20.191.171.212",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 11,
-            "total_packets": 117919,
-            "total_bytes": 19639656,
-            "first_seen": "2025-05-03 13:49:20",
-            "last_seen": "1171"
-        },
         {
             "destination": "224.0.23.0",
             "port": 0,
             "protocol": 2,
-            "flow_count": 3112,
-            "total_packets": 18695,
-            "total_bytes": 859970,
-            "first_seen": "2025-05-04 07:00:05",
-            "last_seen": "2025-04-23T11:12:13.131000+00:00"
+            "flow_count": 20,
+            "total_packets": 59540,
+            "total_bytes": 2738840,
+            "first_seen": "2025-05-10 08:39:31",
+            "last_seen": "2025-04-20T06:15:30.395000+00:00"
         },
         {
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 5096,
-            "total_packets": 5096,
-            "total_bytes": 234416,
-            "first_seen": "2025-05-04 07:01:15",
-            "last_seen": "10010849"
+            "flow_count": 15820,
+            "total_packets": 15820,
+            "total_bytes": 727720,
+            "first_seen": "2025-05-10 08:39:34",
+            "last_seen": "2025-04-20T06:12:28.042000+00:00"
         },
         {
             "destination": "20.27.125.158",
             "port": 443,
             "protocol": 6,
-            "flow_count": 9,
-            "total_packets": 156,
-            "total_bytes": 24439,
-            "first_seen": "2025-05-03 13:16:59",
-            "last_seen": "2025-04-23T12:10:03.130000+00:00"
+            "flow_count": 40,
+            "total_packets": 700,
+            "total_bytes": 106920,
+            "first_seen": "2025-05-10 08:39:34",
+            "last_seen": "2025-04-20T20:39:22.893000+00:00"
         }
     ],
     "actions": []

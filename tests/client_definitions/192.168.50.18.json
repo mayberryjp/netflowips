@@ -1,0 +1,57 @@
+{
+    "ip_address": "192.168.50.18",
+    "export_date": "2025-05-10T11:45:11.745389",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
+    "host_info": {
+        "ip_address": "192.168.50.18",
+        "mac_address": "2c:9f:fb:b6:f8:08",
+        "mac_vendor": "Wistron Neweb Corporation",
+        "dhcp_hostname": "aircon-location2.832-5.com",
+        "dns_hostname": "aircon-location2.832-5.com.",
+        "os_fingerprint": null,
+        "lease_hostname": "aircon-location2",
+        "icon": null,
+        "local_description": null
+    },
+    "dns_queries": [
+        {
+            "domain": "afus.apc.panasonic.com",
+            "times_queried": 1,
+            "first_query": "2025-05-07 14:53:52",
+            "last_query": "2025-05-07 14:53:52"
+        }
+    ],
+    "flows": [
+        {
+            "destination": "224.0.23.0",
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 23,
+            "total_packets": 67390,
+            "total_bytes": 3099940,
+            "first_seen": "2025-05-10 11:33:10",
+            "last_seen": "2025-04-20T06:08:15.607000+00:00"
+        },
+        {
+            "destination": "224.0.23.0",
+            "port": 3610,
+            "protocol": 17,
+            "flow_count": 18124,
+            "total_packets": 18124,
+            "total_bytes": 833704,
+            "first_seen": "2025-05-10 11:33:13",
+            "last_seen": "2025-04-20T06:13:56.361000+00:00"
+        },
+        {
+            "destination": "20.27.125.158",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 23,
+            "total_packets": 391,
+            "total_bytes": 60950,
+            "first_seen": "2025-05-10 11:33:12",
+            "last_seen": "2025-04-21T05:03:47.849000+00:00"
+        }
+    ],
+    "actions": []
+}

@@ -907,6 +907,35 @@ def get_traffic_stats(ip_address):
         response.status = 500
         return {"error": str(e)}
     
+@app.route('/api/client/<ip_address>', method=['GET'])
+def get_client_info(ip_address):
+    """
+    API endpoint to get detailed client information for a specific IP address.
+    Returns JSON object containing host info, DNS queries, and flow history.
+    
+    Args:
+        ip_address: IP address of the client to query
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        from client import export_client_definition
+        
+        # Get client definition directly
+        client_data = export_client_definition(ip_address)
+        
+        if client_data:
+            set_json_response()
+            log_info(logger, f"[INFO] Successfully retrieved client info for {ip_address}")
+            return json.dumps(client_data, indent=2)
+        else:
+            log_warn(logger, f"[WARN] No client data found for {ip_address}")
+            response.status = 404
+            return {"error": f"No client data found for {ip_address}"}
+            
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get client info for {ip_address}: {e}")
+        response.status = 500
+        return {"error": str(e)}
 
 @app.route('/api/actions/<action_id>/acknowledge', method=['PUT'])
 def update_action_acknowledged_api(action_id):
