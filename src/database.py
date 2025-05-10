@@ -12,6 +12,53 @@ import importlib
 from src.utils import is_ip_in_range
   # Create a logger for this module
 
+def store_site_name(site_name):
+    """
+    Store the site name in the configuration database with the key 'SiteName'.
+    
+    Args:
+        site_name (str): The site name to store
+        
+    Returns:
+        bool: True if the operation was successful, False otherwise
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        # Validate input
+        if not site_name or not isinstance(site_name, str):
+            log_error(logger, "[ERROR] Invalid site name provided")
+            return False
+            
+        # Connect to the configuration database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "configuration")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to configuration database")
+            return False
+
+        cursor = conn.cursor()
+
+        # Insert or update the SiteName in the configuration table
+        cursor.execute("""
+            INSERT INTO configuration (key, value)
+            VALUES ('SiteName', ?)
+            ON CONFLICT(key)
+            DO UPDATE SET value = excluded.value
+        """, (site_name,))
+
+        conn.commit()
+        log_info(logger, f"[INFO] Site name stored successfully: {site_name}")
+        return True
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while storing site name: {e}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while storing site name: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 def delete_database(db_path):
     """Deletes the specified SQLite database file if it exists."""
     logger = logging.getLogger(__name__)
