@@ -848,6 +848,53 @@ def collect_database_counts():
     conn_whitelist.close()
     return counts
 
+def get_alerts_by_category(category_name):
+    """
+    Retrieve alerts from the database for a specific category.
+
+    Args:
+        category_name (str): The category name to filter alerts by
+
+    Returns:
+        list: A list of raw database rows for the specified category.
+              Returns an empty list if no data is found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the alerts database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database.")
+            return []
+
+        cursor = conn.cursor()
+        
+        # Retrieve all alerts for the specified category
+        cursor.execute("""
+            SELECT id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, 
+                   times_seen, first_seen, last_seen, acknowledged
+            FROM alerts
+            WHERE category = ?
+            ORDER BY last_seen DESC
+        """, (category_name,))
+        
+        # Just return the raw rows
+        rows = cursor.fetchall()
+        
+        log_info(logger, f"[INFO] Retrieved {len(rows)} alerts for category '{category_name}' from the database.")
+        return rows
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving alerts for category '{category_name}': {e}")
+        return []
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving alerts for category '{category_name}': {e}")
+        return []
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 
 def store_version():
     """

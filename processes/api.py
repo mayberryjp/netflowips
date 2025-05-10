@@ -140,6 +140,57 @@ def modify_configuration(key):
             response.status = 500
             return {"error": str(e)}
 
+
+@app.route('/api/alerts/category/<category_name>', method=['GET'])
+def get_alerts_by_category_api(category_name):
+    """
+    API endpoint to get alerts for a specific category.
+    
+    Args:
+        category_name: The category name to filter alerts by.
+    
+    Returns:
+        JSON object containing all alerts for the specified category.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Import the function from database.py
+        from src.database import get_alerts_by_category
+        
+        # Get alerts by category
+        alerts = get_alerts_by_category(category_name)
+        
+        if not alerts:
+            log_info(logger, f"[INFO] No alerts found for category: {category_name}")
+            return json.dumps([])
+        
+        # Format the response
+        formatted_alerts = [{
+            "id": row[0],
+            "ip_address": row[1],
+            "category": row[3],
+            "enrichment_1": row[4],
+            "enrichment_2": row[5],
+            "times_seen": row[6],
+            "first_seen": row[7],
+            "last_seen": row[8],
+            "acknowledged": bool(row[9])
+        } for row in alerts]
+        
+        set_json_response()
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts for category {category_name}")
+        return json.dumps(formatted_alerts, indent=2)
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error fetching alerts for category {category_name}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to get alerts for category {category_name}: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/alerts', method=['GET'])
 def alerts():
@@ -160,7 +211,7 @@ def alerts():
             disconnect_from_db(conn)
             set_json_response()
             log_info(logger, "Fetched all alerts successfully.")
-            return json.dumps([{"id": row[0], "ip_address": row[1], "category": row[3], "last_seen": row[8], "acknowledged": row[9]} for row in rows])
+            return json.dumps([{"id": row[0], "ip_address": row[1], "category": row[3], "enrichment_1": row[4], "enrichment_2": row[5], "times_seen": row[6], "first_seen": row[7], "last_seen": row[8], "acknowledged": row[9]} for row in rows])
         except sqlite3.Error as e:
             disconnect_from_db(conn)
             log_error(logger, f"Error fetching alerts: {e}")
