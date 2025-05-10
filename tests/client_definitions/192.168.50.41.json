@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.41",
-    "export_date": "2025-05-10T11:45:20.401936",
+    "export_date": "2025-05-10T17:39:54.362726",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.41",
@@ -19,30 +19,30 @@
             "destination": "34.218.147.23",
             "port": 443,
             "protocol": 6,
-            "flow_count": 138,
-            "total_packets": 1242,
-            "total_bytes": 150121,
-            "first_seen": "2025-05-10 11:33:12",
+            "flow_count": 144,
+            "total_packets": 1296,
+            "total_bytes": 156648,
+            "first_seen": "2025-05-10 17:28:33",
             "last_seen": "2025-04-20T14:12:37.072000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 67,
             "protocol": 17,
-            "flow_count": 23,
-            "total_packets": 322,
-            "total_bytes": 108192,
-            "first_seen": "2025-05-10 11:33:10",
+            "flow_count": 24,
+            "total_packets": 336,
+            "total_bytes": 112896,
+            "first_seen": "2025-05-10 17:28:31",
             "last_seen": "2025-04-20T07:36:24.717000+00:00"
         },
         {
             "destination": "255.255.255.255",
             "port": 6667,
             "protocol": 17,
-            "flow_count": 23,
-            "total_packets": 92,
-            "total_bytes": 19872,
-            "first_seen": "2025-05-10 11:33:11",
+            "flow_count": 24,
+            "total_packets": 96,
+            "total_bytes": 20736,
+            "first_seen": "2025-05-10 17:28:31",
             "last_seen": "2025-04-20T13:14:27.603000+00:00"
         }
     ],
