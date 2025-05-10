@@ -202,7 +202,7 @@ CONST_INSTALL_CONFIGS = [
     ('DiscoveryProcessRunInterval', '60'),
     ('DiscoveryNmapOsFingerprint',0),
     ('ReputationUrl','https://iplists.firehol.org/files/firehol_level1.netset'),
-    ('ReputationListRemove','192.168.0.0/16,0.0.0.0/8,224.0.0.0/3'),
+    ('ReputationListRemove','192.168.0.0/16,0.0.0.0/8,224.0.0.0/3,169.254.0.0/16'),
     ('ReputationListDetection','0'),
     ('VpnTrafficDetection','0'),
     ('ApprovedVpnServersList',''),
