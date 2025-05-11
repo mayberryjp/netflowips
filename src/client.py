@@ -138,7 +138,7 @@ def upload_client_definition(ip_address, client_data, machine_id):
     
     try:
         # Construct API endpoint URL
-        api_url = f"http://api.homelabids.com:8044/api/classification/{machine_id}/{ip_address}"
+        api_url = f"http://api.homelabids.com:8045/api/classification/{machine_id}/{ip_address}"
         
         # Upload client definition
         response = requests.put(
@@ -236,7 +236,7 @@ def upload_configuration():
                 log_info(logger, f"[INFO] Sanitized sensitive key: {key}")
 
         # Construct the API endpoint URL
-        api_url = f"http://api.homelabids.com:8044/api/configurations/{instance_identifier}"
+        api_url = f"http://api.homelabids.com:8045/api/configurations/{instance_identifier}"
 
         # Post the sanitized configuration as JSON
         response = requests.post(

@@ -128,7 +128,7 @@ def classify_client(machine_identifier, client_data):
     """
     logger = logging.getLogger(__name__)
 
-    api_url = f"http://api.homelabids.com:8044/api/classify/{machine_identifier}"
+    api_url = f"http://api.homelabids.com:8045/api/classify/{machine_identifier}"
     
     try:
         log_info(logger, f"[INFO] Sending client data to classification API for machine {machine_identifier}")

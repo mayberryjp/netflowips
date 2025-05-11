@@ -49,7 +49,7 @@ def log_error(logger, message):
         # Send the error message to the cloud API
         try:
             import requests
-            url = f"http://api.homelabids.com:8044/api/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
+            url = f"http://api.homelabids.com:8045/api/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
             payload = {
                 "error_message": message,
                 "script_name": script_name,

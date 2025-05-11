@@ -47,9 +47,6 @@ def save_client_data(ip_address, data):
     except IOError as e:
         logging.error(f"Failed to save client data for {ip_address}: {e}")
 
-
-
-
 def classify_client(machine_identifier, client_data):
     """
     Send client data to the classification API and get classification results.
@@ -61,7 +58,7 @@ def classify_client(machine_identifier, client_data):
     Returns:
         dict: Classification response or None if request failed
     """
-    api_url = f"http://api.homelabids.com:8044/api/classify/{machine_identifier}"
+    api_url = f"http://api.homelabids.com:8045/api/classify/{machine_identifier}"
     
     try:
         log_info(logger, f"[INFO] Sending client data to classification API for machine {machine_identifier}")
