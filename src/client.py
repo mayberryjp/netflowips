@@ -205,7 +205,7 @@ def upload_all_client_definitions():
 def upload_configuration():
     """
     Retrieve the configuration using get_config_settings and post it as JSON
-    to /api/configurations/<instance_identifier>.
+    to /api/configurations/<instance_identifier>, with sensitive keys removed.
     """
     logger = logging.getLogger(__name__)
     try:
@@ -218,13 +218,30 @@ def upload_configuration():
             log_error(logger, "[ERROR] Failed to retrieve configuration settings.")
             return False
 
+        # Create a sanitized copy of the configuration
+        sanitized_config = config_dict.copy()
+        
+        # List of sensitive keys to sanitize
+        sensitive_keys = [
+            "MaxMindAPIKey", 
+            "PiholeApiKey", 
+            "TelegramBotToken", 
+            "TelegramChatId"
+        ]
+        
+        # Set sensitive values to empty strings
+        for key in sensitive_keys:
+            if key in sanitized_config:
+                sanitized_config[key] = ""
+                log_info(logger, f"[INFO] Sanitized sensitive key: {key}")
+
         # Construct the API endpoint URL
         api_url = f"http://api.homelabids.com:8044/api/configurations/{instance_identifier}"
 
-        # Post the configuration as JSON
+        # Post the sanitized configuration as JSON
         response = requests.post(
             api_url,
-            json=config_dict,
+            json=sanitized_config,
             headers={
                 'Content-Type': 'application/json',
                 'User-Agent': 'NetFlowIPS-Client/1.0'
