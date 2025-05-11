@@ -50,7 +50,7 @@ def process_data():
                 # delete newflows so collector can write clean to it again as quickly as possible
                 log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
                 if (config_dict['CleanNewFlows'] == 1):
-                    delete_all_records(CONST_CONSOLIDATED_DB)
+                    delete_all_records(CONST_CONSOLIDATED_DB, "flows")
 
                 log_info(logger,f"[INFO] Processing {len(rows)} rows.")
 
