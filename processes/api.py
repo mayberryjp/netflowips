@@ -11,11 +11,15 @@ if str(src_dir) not in sys.path:
 from bottle import Bottle, request, response, hook, route
 import sqlite3
 import json
-from src.database import get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
+from src.database import get_config_settings, get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
 from src.const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from src.utils import log_info, log_warn, log_error  # Import logging functions
 import logging
 from datetime import datetime, timedelta
+# Import DNS lookup function
+from integrations.dns import dns_lookup
+# Import geolocation function
+from integrations.maxmind import lookup_ip_country
 
 # Initialize the Bottle app
 app = Bottle()
@@ -51,6 +55,7 @@ if IS_CONTAINER:
 # Helper function to set JSON response headers
 def set_json_response():
     response.content_type = 'application/json'
+
 
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/configurations', method=['GET', 'POST'])
@@ -1073,6 +1078,64 @@ def get_actions():
         return json.dumps(actions, indent=2)
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to retrieve actions: {e}")
+        response.status = 500
+        return {"error": str(e)}
+
+@app.route('/api/investigate/<ip_address>', method=['GET'])
+def investigate_ip(ip_address):
+    """
+    API endpoint to investigate an IP address by performing reverse DNS lookup
+    and geolocation lookup.
+
+    Args:
+        ip_address: The IP address to investigate.
+
+    Returns:
+        JSON object containing the IP address, country, and DNS lookup results.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        result = {
+            "ip_address": ip_address,
+            "dns": None,
+            "country": None
+        }
+        
+        # Get configuration settings
+        config_dict = get_config_settings()
+
+        DNS_SERVERS = config_dict['ApprovedLocalDnsServersList'].split(',')
+
+        if DNS_SERVERS and config_dict.get('DiscoveryReverseDns', 0) > 0:
+            dns_results = dns_lookup([ip_address], DNS_SERVERS, config_dict)
+            log_info(logger, f"[INFO] DNS Results: {dns_results}")
+            
+            # Handle the returned format properly
+            if isinstance(dns_results, list):
+                # Find the result for our IP
+                for entry in dns_results:
+                    if entry.get('ip') == ip_address:
+                        result["dns"] = entry.get('dns_hostname')
+                        break
+            elif isinstance(dns_results, dict) and ip_address in dns_results:
+                # Handle the old format for backward compatibility
+                result["dns"] = dns_results[ip_address]
+        else:
+            log_info(logger, "[INFO] DNS lookup skipped - no DNS servers configured or discovery disabled")
+
+        # Perform geolocation lookup
+        geo_result = lookup_ip_country(ip_address)
+        if geo_result:
+            result["country"] = geo_result
+        else:
+            log_info(logger, f"[INFO] No geolocation result found for IP: {ip_address}")
+
+        set_json_response()
+        log_info(logger, f"[INFO] Successfully investigated IP address: {ip_address}")
+        return json.dumps(result, indent=2)
+        
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to investigate IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
 

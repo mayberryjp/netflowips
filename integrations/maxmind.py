@@ -2,7 +2,7 @@ import requests  # Add this import
 import sqlite3
 import csv
 import os
-from src.utils import log_info, log_error, ip_network_to_range  # Assuming log_info is already defined
+from src.utils import log_info, log_error, ip_network_to_range, ip_to_int  # Assuming log_info is already defined
 from src.database import connect_to_db, get_config_settings, disconnect_from_db  # Assuming connect_to_db is already defined
 import logging
 from src.const import CONST_SITE, IS_CONTAINER, CONST_CONSOLIDATED_DB
@@ -191,3 +191,59 @@ def load_geolocation_data():
         finally:
             disconnect_from_db(conn)
     return geolocation_data
+
+def lookup_ip_country(ip_address):
+    """
+    Look up the country for a given IP address by converting it to an integer
+    and finding which geolocation range it falls within.
+    
+    Args:
+        ip_address (str): The IP address to look up
+        
+    Returns:
+        str: The country name, or None if not found
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Convert IP address to integer using the utility function
+        ip_int = ip_to_int(ip_address)
+        
+        if ip_int is None:
+            log_error(logger, f"[ERROR] Invalid IP address format: {ip_address}")
+            return None
+        
+        # Query the database for the country
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "geolocation")
+        if not conn:
+            log_error(logger, f"[ERROR] Failed to connect to the geolocation database")
+            return None
+            
+        try:
+            cursor = conn.cursor()
+            # Find the range that contains this IP
+            cursor.execute("""
+                SELECT country_name 
+                FROM geolocation 
+                WHERE ? BETWEEN start_ip AND end_ip 
+                LIMIT 1
+            """, (ip_int,))
+            
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                log_info(logger, f"[INFO] No country found for IP address: {ip_address}")
+                return None
+                
+        except sqlite3.Error as e:
+            log_error(logger, f"[ERROR] Database error looking up country for IP {ip_address}: {e}")
+            return None
+        finally:
+            disconnect_from_db(conn)
+            
+    except Exception as e:
+        log_error(logger, f"[ERROR] Error looking up country for IP {ip_address}: {e}")
+        return None
+
+
