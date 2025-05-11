@@ -24,7 +24,7 @@ from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-from src.database import delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
+from src.database import store_site_name,delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
 from src.const import CONST_LINK_LOCAL_RANGE, CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -41,6 +41,7 @@ from src.const import (
     CONST_CREATE_WHITELIST_SQL,
     CONST_CREATE_CONFIG_SQL,
     CONST_CREATE_NEWFLOWS_SQL,
+    CONST_CREATE_ACTIONS_SQL,
     CONST_CREATE_LOCALHOSTS_SQL,
     CONST_CREATE_GEOLOCATION_SQL,
     CONST_CREATE_REPUTATIONLIST_SQL,
@@ -356,6 +357,7 @@ def main():
 
     store_machine_unique_identifier()
     store_version()
+    store_site_name(SITE)
     config_dict = get_config_settings()
     print(f"Configuration: {config_dict}")
 
@@ -372,6 +374,7 @@ def main():
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL)
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL)
 
     copy_flows_to_newflows()
 
@@ -566,22 +569,23 @@ def main():
         })
     detection_durations['discovery_pihole_network_devices'] = (datetime.now() - start).total_seconds()   
 
-    start = datetime.now()
 
-    # Limit the list of localhosts to the first 3 entries
-    sub_localhosts = list(localhosts)[:1]   # Slice the list to include only the first 3 hosts
-    nmap_results = os_fingerprint(sub_localhosts, config_dict)
+    if config_dict.get("DiscoveryNmapOsFingerprint", 0) == 1:
+        start = datetime.now()
+        # Limit the list of localhosts to the first 3 entries
+        sub_localhosts = list(localhosts)[:1]   # Slice the list to include only the first 3 hosts
+        nmap_results = os_fingerprint(sub_localhosts, config_dict)
 
-    log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_results)}")
+        log_info(logger, f"[INFO] Nmap Results: {json.dumps(nmap_results)}")
 
-    for result in nmap_results:
-        ip = result["ip"]
-        if ip not in combined_results:
-            combined_results[ip] = {}
-        combined_results[ip].update({
-            "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
-        })
-    detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
+        for result in nmap_results:
+            ip = result["ip"]
+            if ip not in combined_results:
+                combined_results[ip] = {}
+            combined_results[ip].update({
+                "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
+            })
+        detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
 
     # Query to count rows grouped by tags
     try:

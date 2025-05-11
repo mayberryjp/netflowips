@@ -22,6 +22,7 @@ def dns_lookup(ip_addresses, dns_servers, config_dict):
     log_info(logger,f"[INFO] DNS discovery starting")
     results = []
     resolver = dns.resolver.Resolver()
+    log_info(logger,f"[INFO] DNS servers are {dns_servers}")
     resolver.nameservers = dns_servers  # Set the specific DNS servers
     resolver.timeout = resolver_timeout
     resolver.lifetime = resolver_retries

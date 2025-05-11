@@ -45,7 +45,7 @@ def log_error(logger, message):
 
     config_dict = get_config_settings_detached()
 
-    if config_dict['SendErrorsToCloudApi']  == 1:
+    if config_dict.get('SendErrorsToCloudApi', 0) == 1:
         # Send the error message to the cloud API
         try:
             import requests
