@@ -1200,7 +1200,6 @@ def detect_high_bandwidth_flows(rows, config_dict):
     for row in rows:
         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes_, flow_start, flow_end, *_ = row
 
-
         # Initialize stats for src_ip
         if src_ip not in traffic_stats:
             traffic_stats[src_ip] = {"packets": 0, "bytes": 0, "flows": []}
@@ -1217,7 +1216,6 @@ def detect_high_bandwidth_flows(rows, config_dict):
 
     # Second pass: Check for threshold violations
     for ip, stats in traffic_stats.items():
-
 
         if not is_ip_in_range(ip, LOCAL_NETWORKS):
             continue
@@ -1242,7 +1240,7 @@ def detect_high_bandwidth_flows(rows, config_dict):
                 config_dict,
                 "HighBandwidthFlowDetection",
                 message,
-                src_ip,
+                ip,
                 row,
                 "High Bandwidth Flow Detected",
                 "Aggregate",
