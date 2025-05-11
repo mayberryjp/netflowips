@@ -371,4 +371,10 @@ LOCAL_DESCRIPTIONS = [
         "category": "PRINTER",
         "local_description": "Canon Printer"
     },
+    {
+        "api_endpoint": "http://192.168.60.4:8044",
+        "ip_address": "192.168.60.4",
+        "category": "SERVER",
+        "local_description": "Azure Cloud Server Docker"
+    },
 ]
