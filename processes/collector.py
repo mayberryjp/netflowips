@@ -24,7 +24,6 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__) 
  
     site_config_path = os.path.join("/database/", f"{SITE}.py")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
@@ -47,6 +46,7 @@ if __name__ == "__main__":
     store_version()
     store_site_name(SITE)
 
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
