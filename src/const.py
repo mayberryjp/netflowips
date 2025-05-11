@@ -27,6 +27,15 @@ CONST_CREATE_NEWFLOWS_SQL='''
         PRIMARY KEY (src_ip, dst_ip, src_port, dst_port, protocol)
     )'''
 
+CONST_CREATE_SERVICES_SQL="""
+    CREATE TABLE IF NOT EXISTS services (
+        port_number INTEGER,
+        protocol TEXT,
+        service_name TEXT,
+        description TEXT,
+        PRIMARY KEY (port_number, protocol)
+    )"""
+
 CONST_CREATE_ALLFLOWS_SQL='''
     CREATE TABLE IF NOT EXISTS allflows (
         src_ip TEXT,
@@ -232,4 +241,5 @@ CONST_INSTALL_CONFIGS = [
     ('WhitelistEntries', '[]'),
     ('MaxMindAPIKey', ''),
     ('RemoveLinkLocalFlows', '0'),
+    ('ImportServicesList','1')
 ]

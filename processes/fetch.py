@@ -19,6 +19,7 @@ from integrations.maxmind import create_geolocation_db
 from src.client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
+from integrations.services import create_services_db
 from src.const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
 
 
@@ -94,6 +95,14 @@ def main():
                 log_info(logger, "[INFO] Sending instance configuration to Homelab API...")
                 upload_configuration()
                 log_info(logger, "[INFO] Instance configuration upload finished.")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error during data fetch: {e}")
+
+        try: 
+            if config_dict.get('ImportServicesList', 0) > 0:
+                log_info(logger, "[INFO] Fetching and updating services list...")
+                create_services_db
+                log_info(logger, "[INFO] Services list download finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 

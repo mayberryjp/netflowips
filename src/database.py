@@ -101,7 +101,7 @@ def disconnect_from_db(conn):
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while closing database connection: {e}")
 
-def create_table(db_name, create_table_sql, table="unknown"):
+def create_table(db_name, create_table_sql, table):
     """Initializes a SQLite database with the specified schema."""
     logger = logging.getLogger(__name__)
     try:
@@ -247,7 +247,7 @@ def update_traffic_stats(rows, config_dict):
         disconnect_from_db(conn)
     disconnect_from_db(conn)
 
-def delete_all_records(db_name, table_name='flows'):
+def delete_all_records(db_name, table_name):
     """Delete all records from the specified database and table."""
     logger = logging.getLogger(__name__)
     conn = connect_to_db(db_name, table_name)

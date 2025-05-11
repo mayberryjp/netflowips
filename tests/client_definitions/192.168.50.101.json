@@ -1,14 +1,14 @@
 {
     "ip_address": "192.168.50.101",
-    "export_date": "2025-05-11T21:56:17.679884",
-    "instance_identifier": "768fd6770ce1b9dea6ed9e6bef4558a973c90fcf92996fdfa5f654b9c7ad5bad",
+    "export_date": "2025-05-12T07:52:57.275274",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.101",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "dns_hostname": "NXDOMAIN",
-        "os_fingerprint": null,
+        "dns_hostname": "refrigerator.832-5.com.",
+        "os_fingerprint": "2N_embedded_None_96",
         "lease_hostname": "refrigerator",
         "icon": null,
         "local_description": null
@@ -16,50 +16,82 @@
     "dns_queries": [
         {
             "domain": "hms.cloudlabs.sharp.co.jp",
-            "times_queried": 3,
-            "first_query": "2025-05-10 21:18:57",
-            "last_query": "2025-05-10 21:06:38"
+            "times_queried": 119,
+            "first_query": "2025-05-12 07:52:26",
+            "last_query": "2025-05-07 14:28:21"
+        },
+        {
+            "domain": "cpush-ssl-01.cloudlabs.sharp.co.jp",
+            "times_queried": 2,
+            "first_query": "2025-05-12 07:52:26",
+            "last_query": "2025-05-12 07:52:26"
+        },
+        {
+            "domain": "www.sharp.co.jp",
+            "times_queried": 1,
+            "first_query": "2025-05-07 19:37:57",
+            "last_query": "2025-05-07 19:37:57"
         }
     ],
     "flows": [
         {
+            "destination": "121.119.209.36",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 2950,
+            "total_packets": 91725,
+            "total_bytes": 74212200,
+            "first_seen": "2025-05-12 07:41:38",
+            "last_seen": "2025-04-20T07:41:15.600000+00:00"
+        },
+        {
             "destination": "121.119.209.37",
             "port": 443,
             "protocol": 6,
-            "flow_count": 34,
-            "total_packets": 716,
-            "total_bytes": 278226,
-            "first_seen": "2025-05-11 21:55:17",
+            "flow_count": 1975,
+            "total_packets": 70050,
+            "total_bytes": 56462750,
+            "first_seen": "2025-05-12 07:41:38",
             "last_seen": "2025-04-20T06:26:15.849000+00:00"
         },
         {
             "destination": "121.119.209.38",
             "port": 443,
             "protocol": 6,
-            "flow_count": 38,
-            "total_packets": 724,
-            "total_bytes": 238118,
-            "first_seen": "2025-05-11 21:55:17",
+            "flow_count": 4275,
+            "total_packets": 93650,
+            "total_bytes": 35749425,
+            "first_seen": "2025-05-12 07:41:38",
             "last_seen": "2025-04-20T06:23:42.446000+00:00"
         },
         {
-            "destination": "121.119.209.36",
+            "destination": "61.214.248.216",
             "port": 443,
             "protocol": 6,
-            "flow_count": 12,
-            "total_packets": 152,
-            "total_bytes": 64340,
-            "first_seen": "2025-05-11 21:55:17",
-            "last_seen": "2025-04-20T07:41:15.600000+00:00"
+            "flow_count": 25,
+            "total_packets": 48325,
+            "total_bytes": 2290975,
+            "first_seen": "2025-05-12 07:41:36",
+            "last_seen": "2025-04-19T23:52:32.294000+00:00"
+        },
+        {
+            "destination": "61.214.248.213",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 25,
+            "total_packets": 30000,
+            "total_bytes": 1417275,
+            "first_seen": "2025-05-12 07:41:37",
+            "last_seen": "2025-04-20T14:03:54.761000+00:00"
         },
         {
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 2,
-            "total_packets": 24,
-            "total_bytes": 1712,
-            "first_seen": "2025-05-11 21:55:16",
+            "flow_count": 25,
+            "total_packets": 2275,
+            "total_bytes": 158150,
+            "first_seen": "2025-05-12 07:41:36",
             "last_seen": "2025-04-20T06:25:55.575000+00:00"
         }
     ],

@@ -26,7 +26,14 @@ def log_info(logger, message):
     logger.info(formatted_message)
 
 def log_error(logger, message):
-    """Log a message and print it to the console with timestamp."""
+    """
+    Log an error message and optionally report it to the cloud API, excluding specified messages.
+    
+    Args:
+        logger: The logger object
+        message: The error message to log
+        excluded_messages: A list of message substrings that should not be sent to the cloud API
+    """
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
     script_name = os.path.basename(sys.argv[0])
     # Get the current line number from the traceback
@@ -45,11 +52,19 @@ def log_error(logger, message):
 
     config_dict = get_config_settings_detached()
 
+    excluded_messages = ["[ERROR] Failed to download country blocks CSV: 429", "[ERROR] Error updating Tor nodes: HTTPSConnectionPool(host='www.dan.me.uk', port=443): Read timed out. (read timeout=30)", "[ERROR] Error creating geolocation database: (\"Connection broken: ConnectionResetError(104, 'Connection reset by peer')\", ConnectionResetError(104, 'Connection reset by peer'))"]
+
+    # Check if error reporting is enabled and message is not in the exclusion list
     if config_dict.get('SendErrorsToCloudApi', 0) == 1:
+        # Skip cloud API reporting if message contains any excluded substring
+        if excluded_messages and any(excluded_msg in message for excluded_msg in excluded_messages):
+            log_info(logger, "[INFO] Error message excluded from cloud API reporting.")
+            return
+            
         # Send the error message to the cloud API
         try:
             import requests
-            url = f"http://api.homelabids.com:8045/api/errorreport/{config_dict['MachineUniqueIdentifier']}"  # Replace with your API endpoint
+            url = f"http://api.homelabids.com:8045/api/errorreport/{config_dict['MachineUniqueIdentifier']}"
             payload = {
                 "error_message": message,
                 "script_name": script_name,
@@ -68,9 +83,6 @@ def log_error(logger, message):
             log_warn(logger, f"[WARN] Failed to send error report to cloud API {url}: {e}")
     else:
         insert_action_detached(f"A fatal error occured in one of the system processes. It is suggested to turn on 'Send Errors To Cloud API' in settings in order to get these errors automatically sent to the developers. Error is as follows: [{timestamp}] {script_name}[/{file_name}/{line_number}] {message}")
-
-    #if SITE == 'TESTPPE':
-        #exit(0)
 
 def log_warn(logger, message):
     """Log a message and print it to the console with timestamp."""

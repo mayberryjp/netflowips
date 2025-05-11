@@ -1,13 +1,13 @@
 {
     "ip_address": "192.168.50.217",
-    "export_date": "2025-05-11T21:56:03.797766",
-    "instance_identifier": "768fd6770ce1b9dea6ed9e6bef4558a973c90fcf92996fdfa5f654b9c7ad5bad",
+    "export_date": "2025-05-12T07:52:46.178792",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.217",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
-        "dns_hostname": "NXDOMAIN",
+        "dns_hostname": "slzb-06p7.local.",
         "os_fingerprint": null,
         "lease_hostname": "slzb-06p7",
         "icon": null,
@@ -16,31 +16,41 @@
     "dns_queries": [
         {
             "domain": "google.com",
-            "times_queried": 12,
-            "first_query": "2025-05-11 21:55:51",
-            "last_query": "2025-05-10 21:06:38"
+            "times_queried": 79,
+            "first_query": "2025-05-12 07:52:26",
+            "last_query": "2025-05-07 14:28:21"
         }
     ],
     "flows": [
         {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17,
+            "flow_count": 25,
+            "total_packets": 1225,
+            "total_bytes": 368875,
+            "first_seen": "2025-05-12 07:41:36",
+            "last_seen": "2025-04-20T07:06:30.756000+00:00"
+        },
+        {
             "destination": "45.83.192.98",
             "port": 443,
             "protocol": 6,
-            "flow_count": 2,
-            "total_packets": 24,
-            "total_bytes": 2356,
-            "first_seen": "2025-05-11 21:55:17",
+            "flow_count": 50,
+            "total_packets": 625,
+            "total_bytes": 60050,
+            "first_seen": "2025-05-12 07:41:38",
             "last_seen": "2025-04-20T08:29:18.989000+00:00"
         },
         {
             "destination": "224.0.0.251",
-            "port": 5353,
-            "protocol": 17,
-            "flow_count": 2,
-            "total_packets": 6,
-            "total_bytes": 1878,
-            "first_seen": "2025-05-11 21:55:16",
-            "last_seen": "2025-04-20T07:06:30.756000+00:00"
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 25,
+            "total_packets": 100,
+            "total_bytes": 4600,
+            "first_seen": "2025-05-12 07:41:37",
+            "last_seen": "2025-04-20T17:00:37.082000+00:00"
         }
     ],
     "actions": []

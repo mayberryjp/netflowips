@@ -46,6 +46,7 @@ from src.const import (
     CONST_CREATE_GEOLOCATION_SQL,
     CONST_CREATE_REPUTATIONLIST_SQL,
     CONST_CREATE_CUSTOMTAGS_SQL,
+    CONST_CREATE_SERVICES_SQL,
     CONST_CREATE_TRAFFICSTATS_SQL,
     VERSION,
     CONST_CONSOLIDATED_DB
@@ -65,9 +66,10 @@ from src.database import (
     get_alerts_summary,
     import_whitelists,
     store_machine_unique_identifier, 
-    store_version
+    store_version,
 )
 
+from integrations.services import create_services_db, get_all_services
 from src.tags import apply_tags
 
 from src.detections import (
@@ -304,7 +306,11 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "geolocation": get_row_count(CONST_CONSOLIDATED_DB, 'geolocation'),
                 "dnsqueries": get_row_count(CONST_CONSOLIDATED_DB, "pihole"),
                 "reputationlist": get_row_count(CONST_CONSOLIDATED_DB, "reputationlist"),
-                "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes")
+                "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes"),
+                "actions": get_row_count(CONST_CONSOLIDATED_DB, "actions"),
+                "services": get_row_count(CONST_CONSOLIDATED_DB, "services"),
+                "customtags": get_row_count(CONST_CONSOLIDATED_DB, "customtags"),
+                "customtags": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats")
             },
             "tag_distribution": tag_distribution,
             "alert_categories": categories,
@@ -340,7 +346,7 @@ def main():
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
         log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")
         config_dict = init_configurations_from_variable()
     else:
@@ -350,8 +356,8 @@ def main():
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
         delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
         import_whitelists(config_dict)
         import_custom_tags(config_dict)
 
@@ -361,20 +367,21 @@ def main():
     config_dict = get_config_settings()
     print(f"Configuration: {config_dict}")
 
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_SERVICES_SQL, "services")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL,"allflows")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL, "flows")
     delete_all_records(CONST_CONSOLIDATED_DB,"flows")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL)
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL)
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL, "localhosts")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL, "geolocation")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL, "reputationlist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL, "tornodes")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL, "pihole")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
 
     copy_flows_to_newflows()
 
@@ -527,6 +534,12 @@ def main():
     reputation_data = load_reputation_data(config_dict)
     detect_reputation_flows(filtered_rows, config_dict, reputation_data)
     detection_durations['detect_reputationlist_flows'] = (datetime.now() - start).total_seconds()
+
+    log_info(logger, "[INFO] Preparing to fetch services list...")
+    start = datetime.now()
+    create_services_db()
+    services_data = get_all_services()
+    detection_durations['fetch_services_flow'] = (datetime.now() - start).total_seconds()
 
     combined_results = {}
     localhosts = get_localhosts()
