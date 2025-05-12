@@ -1231,3 +1231,58 @@ def get_all_actions():
     finally:
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
+
+def get_services_by_port(port_number):
+    """
+    Retrieve service information for a specific port number.
+    
+    Args:
+        port_number (int): The port number to query
+        
+    Returns:
+        dict: A dictionary where keys are protocols (e.g., 'tcp', 'udp') and values 
+              are dictionaries containing 'service_name' and 'description'.
+              Returns an empty dictionary if no services found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the services database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "services")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to services database.")
+            return {}
+            
+        cursor = conn.cursor()
+        
+        # Query services for the specified port
+        cursor.execute("""
+            SELECT protocol, service_name, description 
+            FROM services 
+            WHERE port_number = ?
+        """, (port_number,))
+        
+        rows = cursor.fetchall()
+        
+        # Format results as a dictionary
+        services_dict = {}
+        for row in rows:
+            protocol = row[0]
+            services_dict[protocol] = {
+                'service_name': row[1],
+                'description': row[2]
+            }
+        
+        log_info(logger, f"[INFO] Retrieved {len(services_dict)} service entries for port {port_number}.")
+        return services_dict
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving services for port {port_number}: {e}")
+        return {}
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving services for port {port_number}: {e}")
+        return {}
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+

@@ -263,3 +263,59 @@ def upload_configuration():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while uploading configuration: {str(e)}")
         return False
+    
+def classify_client(machine_identifier, client_data):
+    """
+    Send client data to the classification API and get classification results.
+    
+    Args:
+        machine_identifier (str): Unique identifier for the machine
+        client_data (dict): Client data JSON to be classified
+        
+    Returns:
+        dict: Classification response or None if request failed
+    """
+    logger = logging.getLogger(__name__)
+    api_url = f"http://api.homelabids.com:8045/api/classify/{machine_identifier}"
+    
+    try:
+        log_info(logger, f"[INFO] Sending client data to classification API for machine {machine_identifier}")
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+        
+        # Make the API request
+        response = requests.post(
+            api_url,
+            json=client_data,
+            headers=headers,
+            timeout=30  # Timeout after 30 seconds
+        )
+        
+        # Check for successful response
+        response.raise_for_status()
+        
+        # Parse the JSON response
+        classification_result = response.json()
+        log_info(logger, f"[INFO] Successfully received classification for machine {machine_identifier}")
+        
+        return classification_result
+        
+    except requests.exceptions.HTTPError as e:
+        log_error(logger, f"[ERROR] HTTP error when classifying machine {machine_identifier}: {e}")
+        log_error(logger, f"[ERROR] Response content: {e.response.text if hasattr(e, 'response') else 'No response'}")
+    except requests.exceptions.ConnectionError as e:
+        log_error(logger, f"[ERROR] Connection error when classifying machine {machine_identifier}: {e}")
+    except requests.exceptions.Timeout as e:
+        log_error(logger, f"[ERROR] Timeout when classifying machine {machine_identifier}: {e}")
+    except requests.exceptions.RequestException as e:
+        log_error(logger, f"[ERROR] Request error when classifying machine {machine_identifier}: {e}")
+    except json.JSONDecodeError as e:
+        log_error(logger, f"[ERROR] Invalid JSON in classification response for machine {machine_identifier}: {e}")
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error when classifying machine {machine_identifier}: {e}")
+    
+    return None
+

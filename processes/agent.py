@@ -1,3 +1,14 @@
+import sys
+import os
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+src_dir = f"{parent_dir}/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+
 import os
 import json
 import logging
@@ -6,14 +17,10 @@ import re
 from datetime import datetime
 from difflib import get_close_matches
 from bottle import Bottle, request, response, run
+from src.utils import log_error, log_info
 
 # Set up logging
 logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
 
 # Configuration 
 class Config:
@@ -26,79 +33,6 @@ app = Bottle()
 # Define available API endpoints and their descriptions
 API_ENDPOINTS = [
     # Alert management endpoints
-    {
-        "name": "delete_all_alerts",
-        "endpoint": "/alerts/delete/all",
-        "method": "DELETE",
-        "description": "Delete all alerts from the database",
-        "keywords": ["delete", "remove", "clear", "alerts", "all"],
-        "params": []
-    },
-    {
-        "name": "get_recent_alerts",
-        "endpoint": "/alerts/recent",
-        "method": "GET",
-        "description": "Get the most recent alerts",
-        "keywords": ["get", "recent", "alerts", "latest"],
-        "params": []
-    },
-    {
-        "name": "get_alerts_by_category",
-        "endpoint": "/alerts/category/{category_name}",
-        "method": "GET",
-        "description": "Get alerts filtered by a specific category",
-        "keywords": ["category", "alerts", "filter", "type"],
-        "params": ["category_name"]
-    },
-    {
-        "name": "get_alerts_by_ip",
-        "endpoint": "/alerts/{ip_address}",
-        "method": "GET",
-        "description": "Get all alerts for a specific IP address",
-        "keywords": ["get", "alerts", "ip", "address", "filter"],
-        "params": ["ip_address"]
-    },
-    {
-        "name": "get_recent_alerts_by_ip",
-        "endpoint": "/alerts/recent/{ip_address}",
-        "method": "GET",
-        "description": "Get recent alerts for a specific IP address",
-        "keywords": ["recent", "alerts", "ip", "address"],
-        "params": ["ip_address"]
-    },
-    {
-        "name": "update_alert",
-        "endpoint": "/alerts/{id}",
-        "method": "PUT",
-        "description": "Update an alert's acknowledged status",
-        "keywords": ["update", "acknowledge", "alert"],
-        "params": ["id", "acknowledged"]
-    },
-    {
-        "name": "delete_alert",
-        "endpoint": "/alerts/{id}",
-        "method": "DELETE",
-        "description": "Delete a specific alert by ID",
-        "keywords": ["delete", "remove", "alert", "id"],
-        "params": ["id"]
-    },
-    {
-        "name": "get_alerts_summary",
-        "endpoint": "/alerts/summary",
-        "method": "GET",
-        "description": "Get a summary of alerts by IP address",
-        "keywords": ["summary", "alerts", "overview"],
-        "params": []
-    },
-    {
-        "name": "get_alerts_summary_by_ip",
-        "endpoint": "/alerts/summary/{ip_address}",
-        "method": "GET",
-        "description": "Get a summary of alerts for a specific IP address",
-        "keywords": ["summary", "alerts", "ip", "address"],
-        "params": ["ip_address"]
-    },
-    
     # Client/Host information endpoints
     {
         "name": "get_client_info",
@@ -109,22 +43,6 @@ API_ENDPOINTS = [
         "params": ["ip_address"]
     },
     {
-        "name": "get_traffic_stats",
-        "endpoint": "/trafficstats/{ip_address}",
-        "method": "GET",
-        "description": "Get traffic statistics for a specific IP address",
-        "keywords": ["traffic", "stats", "bandwidth", "ip", "data"],
-        "params": ["ip_address"]
-    },
-    {
-        "name": "get_localhosts",
-        "endpoint": "/localhosts",
-        "method": "GET",
-        "description": "Get all devices on the local network",
-        "keywords": ["local", "hosts", "devices", "list"],
-        "params": []
-    },
-    {
         "name": "get_localhost_by_ip",
         "endpoint": "/localhosts/{ip_address}",
         "method": "GET",
@@ -132,23 +50,6 @@ API_ENDPOINTS = [
         "keywords": ["local", "host", "device", "details", "ip"],
         "params": ["ip_address"]
     },
-    {
-        "name": "update_localhost",
-        "endpoint": "/localhosts/{ip_address}",
-        "method": "PUT",
-        "description": "Update information for a local host",
-        "keywords": ["update", "edit", "local", "host", "device"],
-        "params": ["ip_address", "local_description", "icon", "acknowledged"]
-    },
-    {
-        "name": "delete_localhost",
-        "endpoint": "/localhosts/{ip_address}",
-        "method": "DELETE",
-        "description": "Delete a local host from the database",
-        "keywords": ["delete", "remove", "local", "host", "device"],
-        "params": ["ip_address"]
-    },
-    
     # Classification endpoint
     {
         "name": "classify_device",
@@ -165,118 +66,52 @@ API_ENDPOINTS = [
         "endpoint": "/configurations",
         "method": "GET",
         "description": "Get all system configurations",
-        "keywords": ["configurations", "settings", "options", "get"],
+        "keywords": ["configurations", "settings", "options", "version", "site name"],
         "params": []
-    },
-    {
-        "name": "add_configuration",
-        "endpoint": "/configurations",
-        "method": "POST",
-        "description": "Add a new configuration setting",
-        "keywords": ["add", "create", "configuration", "setting"],
-        "params": ["key", "value"]
-    },
-    {
-        "name": "update_configuration",
-        "endpoint": "/configurations/{key}",
-        "method": "PUT",
-        "description": "Update a configuration setting",
-        "keywords": ["update", "edit", "change", "configuration", "setting"],
-        "params": ["key", "value"]
-    },
-    {
-        "name": "delete_configuration",
-        "endpoint": "/configurations/{key}",
-        "method": "DELETE",
-        "description": "Delete a configuration setting",
-        "keywords": ["delete", "remove", "configuration", "setting"],
-        "params": ["key"]
-    },
-    
-    # Whitelist endpoints
-    {
-        "name": "get_whitelist",
-        "endpoint": "/whitelist",
-        "method": "GET",
-        "description": "Get all whitelist entries",
-        "keywords": ["whitelist", "allowed", "trusted", "get"],
-        "params": []
-    },
-    {
-        "name": "add_whitelist_entry",
-        "endpoint": "/whitelist",
-        "method": "POST",
-        "description": "Add a new whitelist entry",
-        "keywords": ["add", "create", "whitelist", "allow", "trust"],
-        "params": ["whitelist_id", "src_ip", "dst_ip", "dst_port", "protocol"]
-    },
-    {
-        "name": "update_whitelist_entry",
-        "endpoint": "/whitelist/{id}",
-        "method": "PUT",
-        "description": "Update a whitelist entry",
-        "keywords": ["update", "edit", "whitelist", "entry"],
-        "params": ["id", "src_ip", "dst_ip", "dst_port", "protocol"]
-    },
-    {
-        "name": "delete_whitelist_entry",
-        "endpoint": "/whitelist/{id}",
-        "method": "DELETE",
-        "description": "Delete a whitelist entry",
-        "keywords": ["delete", "remove", "whitelist", "entry"],
-        "params": ["id"]
-    },
-    
+    },   
     # Status and statistics endpoints
     {
-        "name": "get_database_counts",
+        "name": "get_statistics",
         "endpoint": "/quickstats",
         "method": "GET",
         "description": "Get quick statistics about the database (alert counts, host counts, etc.)",
-        "keywords": ["stats", "statistics", "counts", "dashboard", "overview"],
+        "keywords": ["stats", "statistics", "counts", "dashboard", "overview", "database"],
         "params": []
     },
     {
-        "name": "get_homeassistant_stats",
+        "name": "get_integration_stats",
         "endpoint": "/homeassistant",
         "method": "GET",
-        "description": "Get statistics for Home Assistant integration",
-        "keywords": ["homeassistant", "home", "assistant", "integration", "stats"],
+        "description": "Get statistics for third party integrations",
+        "keywords": ["third", "party", "integrations", "integration", "stats"],
         "params": []
     },
-    
-    # Action endpoints
-    {
-        "name": "get_actions",
-        "endpoint": "/actions",
-        "method": "GET",
-        "description": "Get all available actions",
-        "keywords": ["actions", "tasks", "get", "list"],
-        "params": []
-    },
-    {
-        "name": "insert_action",
-        "endpoint": "/actions",
-        "method": "POST",
-        "description": "Create a new action",
-        "keywords": ["create", "add", "new", "action", "task"],
-        "params": ["action_data"]
-    },
-    {
-        "name": "acknowledge_action",
-        "endpoint": "/actions/{action_id}/acknowledge",
-        "method": "PUT",
-        "description": "Acknowledge an action",
-        "keywords": ["acknowledge", "confirm", "action", "task"],
-        "params": ["action_id"]
-    },
+
 # Add this to the API_ENDPOINTS list
     {
-        "name": "investigate_ip",
+        "name": "remote_ip",
         "endpoint": "/investigate/{ip_address}",
         "method": "GET",
         "description": "Investigate an IP address with DNS and geolocation lookups",
-        "keywords": ["investigate", "lookup", "trace", "check", "ip", "country", "dns", "location", "geo"],
+        "keywords": ["investigate", "lookup", "trace", "check", "ip", "country", "dns", "location", "geo", "remote"],
+        "params": ["ip_address"]
+    },
+# Add this to the API_ENDPOINTS list in processes/agent.py
+    {
+        "name": "get_services_by_port",
+        "endpoint": "/services/{port}",
+        "method": "GET",
+        "description": "Get information about network services that use a specific port number",
+        "keywords": ["port", "service", "services", "protocol", "tcp", "udp", "lookup", "what", "runs", "running"],
+        "params": ["port"]
+    },
+# Add this to the API_ENDPOINTS list in agent.py
+    {
+        "name": "classify_client",
+        "endpoint": "/classify/{ip_address}",
+        "method": "GET",
+        "description": "Classify a client device using machine learning to identify its type and purpose",
+        "keywords": ["classify", "identify", "client", "device", "type", "what", "is", "machine", "learning", "ml"],
         "params": ["ip_address"]
     }
 ]
@@ -366,7 +201,7 @@ class NLPProcessor:
         
         # Get the best matching endpoint
         best_endpoint = endpoint_scores[0][0]
-        logger.info(f"Selected intent: {best_endpoint['name']} with score: {endpoint_scores[0][1]}")
+        log_info(logger,f"Selected intent: {best_endpoint['name']} with score: {endpoint_scores[0][1]}")
         
         # Extract parameters (enhanced)
         params = {}
@@ -449,12 +284,28 @@ class NLPProcessor:
                     result = response.json()
                     
                     # Apply custom summarization for investigation endpoint
-                    if endpoint_name == "investigate_ip":
+                    if endpoint_name == "remote_ip":
                         return self.summarize_investigation_data(result)
                     
                     # Apply custom summarization for localhost endpoint  
                     if endpoint_name == "get_localhost_by_ip":
                         return self.summarize_localhost_data(result)
+                    
+                    # Apply custom summarization for port service endpoint
+                    if endpoint_name == "get_services_by_port":
+                        return self.summarize_port_service_data(result)
+                    
+                    # Apply custom summarization for configuration endpoint
+                    if endpoint_name == "get_configurations":
+                        return self.summarize_configuration_data(result)
+                    
+                    # Apply custom summarization for quickstats endpoint
+                    if endpoint_name == "get_statistics":
+                        return self.summarize_quickstats_data(result)
+                    
+                    # Apply custom summarization for classification endpoint
+                    if endpoint_name == "classify_device":
+                        return self.summarize_classification_data(result)
                     
                     return result
                 except json.JSONDecodeError:
@@ -463,7 +314,7 @@ class NLPProcessor:
                 return {"success": False, "message": f"API call failed with status {response.status_code}: {response.text}"}
                 
         except Exception as e:
-            logger.error(f"Error executing API call: {e}")
+            log_error(logger,f"Error executing API call: {e}")
             return {"success": False, "message": f"Error: {str(e)}"}
 
     def summarize_localhost_data(self, data):
@@ -491,26 +342,15 @@ class NLPProcessor:
             else:
                 summary += ". "
             
-            # Time information
-            first_seen = data.get("first_seen", "")
-            last_seen = data.get("last_seen", "")
-            if first_seen and last_seen:
-                summary += f"First seen on {first_seen} and last active on {last_seen}. "
-            
             # Description
             description = data.get("local_description", "")
             if description:
                 summary += f"User description: {description}. "
-            
-            # Network activity
-            times_seen = data.get("times_seen", 0)
-            if times_seen:
-                summary += f"Device has connected {times_seen} times. "
-            
-            # Alert information
-            alerts = data.get("alerts", 0)
-            if alerts:
-                summary += f"Has generated {alerts} security alerts. "
+
+            first_seen = data.get("first_seen", "")
+
+            if first_seen:
+                summary += f"Device was first seen on {first_seen}.  "
             
             # If any attributes are missing, add a note
             if not summary:
@@ -521,7 +361,7 @@ class NLPProcessor:
                 "summary": summary.strip()
             }
         except Exception as e:
-            logger.error(f"Error summarizing localhost data: {e}")
+            log_error(logger,f"Error summarizing localhost data: {e}")
             return {
                 "original_data": data,
                 "summary": f"Error creating summary: {str(e)}"
@@ -551,24 +391,216 @@ class NLPProcessor:
             else:
                 summary += "The country could not be determined. "
                 
-            # Additional context
-            if country and country != "United States" and country != "Canada":
-                summary += "Foreign IPs should be monitored carefully if connecting to sensitive systems."
+            return {
+                "original_data": data,
+                "summary": summary.strip()
+            }
+        except Exception as e:
+            log_error(logger,f"Error summarizing investigation data: {e}")
+            return {
+                "original_data": data,
+                "summary": f"Error creating summary: {str(e)}"
+            }
+    
+    def summarize_port_service_data(self, data):
+        """Create a human-readable summary of port service data"""
+        try:
+            # Return both original data and a summary
+            summary = ""
+            port = next(iter(data.get("params", {}).values()), "unknown")
+            
+            if not data:
+                return {
+                    "original_data": data,
+                    "summary": f"No service information found for port {port}."
+                }
+            
+            summary += f"Port {port} is used by: "
+            
+            protocols = []
+            for protocol, service in data.items():
+                service_name = service.get("service_name", "unknown service")
+                description = service.get("description", "")
+                
+                if description:
+                    protocols.append(f"{service_name} ({protocol.upper()}) - {description}")
+                else:
+                    protocols.append(f"{service_name} ({protocol.upper()})")
+            
+            if protocols:
+                summary += ", ".join(protocols)
+            else:
+                summary = f"Port {port} has no registered standard services."
+                
+            return {
+                "original_data": data,
+                "summary": summary
+            }
+        except Exception as e:
+            log_error(logger,f"Error summarizing port service data: {e}")
+            return {
+                "original_data": data,
+                "summary": f"Error creating summary: {str(e)}"
+            }
+    
+    def summarize_configuration_data(self, data):
+        """Create a human-readable summary of configuration data focusing on key variables"""
+        try:
+            # Return both original data and a summary
+            summary = "System Configuration Summary:\n\n"
+            
+            # Convert list to dictionary if needed
+            config_dict = {}
+            if isinstance(data, list):
+                # If data is a list of key-value pairs like [{"key": "Version", "value": "1.0"}, ...]
+                for item in data:
+                    if isinstance(item, dict) and "key" in item and "value" in item:
+                        config_dict[item["key"]] = item["value"]
+            else:
+                # If data is already a dictionary
+                config_dict = data
+            
+            # Extract key variables
+            version = config_dict.get("Version", "Unknown")
+            router_ip = config_dict.get("RouterIpAddress", "Not configured")
+            local_networks = config_dict.get("LocalNetworks", "")
+            send_errors = config_dict.get("SendErrorsToCloudApi", 0)
+            site_name = config_dict.get("SiteName", "Unknown Site")
+            
+            # Format the summary
+            summary += f"• Version: {version}\n"
+            summary += f"• Site Name: {site_name}\n"
+            summary += f"• Router IP Address: {router_ip}\n"
+            
+            # Format LocalNetworks (which might be a comma-separated list)
+            if local_networks:
+                networks = local_networks.split(',')
+                summary += f"• Local Networks: {', '.join(networks)}\n"
+            else:
+                summary += "• Local Networks: None configured\n"
+            
+            # Format SendErrorsToCloudApi as Yes/No
+            send_errors_text = "Yes" if str(send_errors) == "1" else "No"
+            summary += f"• Send Errors To Cloud API: {send_errors_text}\n"
             
             return {
                 "original_data": data,
                 "summary": summary.strip()
             }
         except Exception as e:
-            logger.error(f"Error summarizing investigation data: {e}")
+            log_error(logger, f"Error summarizing configuration data: {e}")
             return {
                 "original_data": data,
                 "summary": f"Error creating summary: {str(e)}"
             }
     
+    def summarize_quickstats_data(self, data):
+        """Create a human-readable summary of system quick statistics"""
+        try:
+            # Return both original data and a summary
+            summary = "System Statistics Summary:\n\n"
+            
+            # Alert statistics
+            total_alerts = data.get("total_alerts", 0)
+            ack_alerts = data.get("acknowledged_alerts", 0)
+            unack_alerts = data.get("unacknowledged_alerts", 0)
+            alert_percent = 0
+            if total_alerts > 0:
+                alert_percent = (ack_alerts / total_alerts) * 100
+                
+            summary += f"• Alerts: {total_alerts} total ({ack_alerts} acknowledged, {unack_alerts} unacknowledged)\n"
+            summary += f"• Alert acknowledgment rate: {alert_percent:.1f}%\n"
+            
+            # Host statistics
+            total_hosts = data.get("total_localhosts_count", 0)
+            ack_hosts = data.get("acknowledged_localhosts_count", 0)
+            unack_hosts = data.get("unacknowledged_localhosts_count", 0)
+            host_percent = 0
+            if total_hosts > 0:
+                host_percent = (ack_hosts / total_hosts) * 100
+                
+            summary += f"• Local hosts: {total_hosts} total ({ack_hosts} acknowledged, {unack_hosts} unacknowledged)\n"
+            summary += f"• Host acknowledgment rate: {host_percent:.1f}%\n"
+            
+            # Whitelist entries
+            whitelist_count = data.get("whitelist_count", 0)
+            summary += f"• Whitelist entries: {whitelist_count}\n"
+            
+            # System status assessment
+            if unack_alerts > 10:
+                summary += "\nSystem status: ATTENTION NEEDED - You have multiple unacknowledged alerts to review."
+            elif unack_hosts > 5:
+                summary += "\nSystem status: ACTION RECOMMENDED - You have several new hosts that need identification."
+            else:
+                summary += "\nSystem status: GOOD - Your system is well-maintained."
+            
+            return {
+                "original_data": data,
+                "summary": summary.strip()
+            }
+        except Exception as e:
+            log_error(logger, f"Error summarizing quickstats data: {e}")
+            return {
+                "original_data": data,
+                "summary": f"Error creating summary: {str(e)}"
+            }
+    
+    def summarize_classification_data(self, data):
+        """Create a human-readable summary of classification results"""
+        try:
+            # Return both original data and a summary
+            summary = ""
+            
+            # Handle empty or failed classification
+            if not data or "error" in data:
+                error_msg = data.get("error", "Unknown error") if isinstance(data, dict) else "Classification failed"
+                return {
+                    "original_data": data,
+                    "summary": f"Unable to classify device: {error_msg}"
+                }
+            
+            # Get basic classification information
+            device_type = data.get("device_type", "Unknown device type")
+            category = data.get("category", "Unknown category")
+            confidence = data.get("confidence", 0)
+            
+            # Format the classification summary
+            summary += f"Device classified as: {device_type}\n"
+            summary += f"Category: {category}\n"
+            
+            if confidence:
+                confidence_percent = float(confidence) * 100 if isinstance(confidence, (int, float)) else confidence
+                summary += f"Confidence: {confidence_percent}%\n"
+            
+            # Add manufacturer information if available
+            manufacturer = data.get("manufacturer")
+            if manufacturer:
+                summary += f"Manufacturer: {manufacturer}\n"
+            
+            # Add any available description
+            description = data.get("description")
+            if description:
+                summary += f"\nDescription: {description}\n"
+            
+            # Add any special notes or security considerations
+            notes = data.get("notes")
+            if notes:
+                summary += f"\nNotes: {notes}\n"
+                
+            return {
+                "original_data": data,
+                "summary": summary.strip()
+            }
+        except Exception as e:
+            log_error(logger, f"Error summarizing classification data: {e}")
+            return {
+                "original_data": data,
+                "summary": f"Error creating classification summary: {str(e)}"
+            }
+    
     def process_request(self, text):
         """Process a natural language request and execute the appropriate action"""
-        logger.info(f"Processing request: {text}")
+        log_info(logger,f"Processing request: {text}")
         
         # Extract intent and parameters
         intent_result = self.extract_intent_and_params(text)
@@ -579,7 +611,7 @@ class NLPProcessor:
         if not endpoint:
             return {"success": False, "message": "Could not determine intent from your request"}
         
-        logger.info(f"Detected intent: {endpoint} with params: {params}")
+        log_info(logger,f"Detected intent: {endpoint} with params: {params}")
         
         # Execute the API call
         return self.execute_api_call(endpoint, params)
@@ -599,9 +631,12 @@ def process_request():
     result = nlp_processor.process_request(text)
     return result
 
+
+
+
 def start_interactive_cli():
     """Start an interactive command-line interface"""
-    logger.info("Starting interactive CLI mode...")
+    log_info(logger,"Starting interactive CLI mode...")
     print("\n=== NetFlowIPS AI Agent CLI ===")
     print("Type 'exit' or 'quit' to exit, 'help' for available commands.")
     
@@ -653,8 +688,10 @@ def start_interactive_cli():
         except Exception as e:
             print(f"\nError: {str(e)}")
 
+
+
 if __name__ == "__main__":
-    logger.info("Starting NLP Agent with built-in processing only (OpenAI disabled)")
+    log_info(logger,"Starting NLP Agent with built-in processing only (OpenAI disabled)")
     
     # Check if we should start in CLI mode
     import sys

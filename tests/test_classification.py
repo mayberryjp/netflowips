@@ -18,8 +18,9 @@ src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
     
+
 from src.database import get_localhosts
-from src.client import export_client_definition
+from src.client import export_client_definition, classify_client
 from src.utils import dump_json, log_error, log_info
 
 # Configure logging
@@ -47,90 +48,6 @@ def save_client_data(ip_address, data):
     except IOError as e:
         logging.error(f"Failed to save client data for {ip_address}: {e}")
 
-def classify_client(machine_identifier, client_data):
-    """
-    Send client data to the classification API and get classification results.
-    
-    Args:
-        machine_identifier (str): Unique identifier for the machine
-        client_data (dict): Client data JSON to be classified
-        
-    Returns:
-        dict: Classification response or None if request failed
-    """
-    api_url = f"http://api.homelabids.com:8045/api/classify/{machine_identifier}"
-    
-    try:
-        log_info(logger, f"[INFO] Sending client data to classification API for machine {machine_identifier}")
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-        
-        # Make the API request
-        response = requests.post(
-            api_url,
-            json=client_data,
-            headers=headers,
-            timeout=30  # Timeout after 30 seconds
-        )
-        
-        # Check for successful response
-        response.raise_for_status()
-        
-        # Parse the JSON response
-        classification_result = response.json()
-        log_info(logger, f"[INFO] Successfully received classification for machine {machine_identifier}")
-        
-        return classification_result
-        
-    except requests.exceptions.HTTPError as e:
-        log_error(logger, f"[ERROR] HTTP error when classifying machine {machine_identifier}: {e}")
-        log_error(logger, f"[ERROR] Response content: {e.response.text if hasattr(e, 'response') else 'No response'}")
-    except requests.exceptions.ConnectionError as e:
-        log_error(logger, f"[ERROR] Connection error when classifying machine {machine_identifier}: {e}")
-    except requests.exceptions.Timeout as e:
-        log_error(logger, f"[ERROR] Timeout when classifying machine {machine_identifier}: {e}")
-    except requests.exceptions.RequestException as e:
-        log_error(logger, f"[ERROR] Request error when classifying machine {machine_identifier}: {e}")
-    except json.JSONDecodeError as e:
-        log_error(logger, f"[ERROR] Invalid JSON in classification response for machine {machine_identifier}: {e}")
-    except Exception as e:
-        log_error(logger, f"[ERROR] Unexpected error when classifying machine {machine_identifier}: {e}")
-    
-    return None
-
-def get_master_classification(ip_address):
-    """
-    Retrieves the expected classification category for a given IP address
-    from the master classification data.
-    
-    Args:
-        ip_address (str): The IP address to lookup
-        
-    Returns:
-        str: The expected category or None if not found
-    """
-    try:
-        # Import the master classification data
-        from local_descriptions_object import LOCAL_DESCRIPTIONS
-        
-        # Search for the IP address in the master data
-        for entry in LOCAL_DESCRIPTIONS:
-            if entry["ip_address"] == ip_address:
-                return entry["category"]
-        
-        # If no match was found
-        log_info(logger, f"[INFO] No master classification found for IP {ip_address}")
-        return None
-        
-    except ImportError as e:
-        log_error(logger, f"[ERROR] Failed to import master classification data: {e}")
-        return None
-    except Exception as e:
-        log_error(logger, f"[ERROR] Error retrieving master classification: {e}")
-        return None
 
 def main():
     # Statistics tracking
