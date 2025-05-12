@@ -310,7 +310,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "actions": get_row_count(CONST_CONSOLIDATED_DB, "actions"),
                 "services": get_row_count(CONST_CONSOLIDATED_DB, "services"),
                 "customtags": get_row_count(CONST_CONSOLIDATED_DB, "customtags"),
-                "customtags": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats")
+                "trafficstats": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats")
             },
             "tag_distribution": tag_distribution,
             "alert_categories": categories,
