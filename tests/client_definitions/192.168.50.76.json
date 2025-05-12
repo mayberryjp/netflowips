@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.76",
-    "export_date": "2025-05-12T09:34:51.384611",
+    "export_date": "2025-05-12T09:47:44.387101",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.76",
@@ -19,10 +19,10 @@
             "destination": "49.233.251.124",
             "port": 11111,
             "protocol": 6,
-            "flow_count": 26,
-            "total_packets": 835952,
-            "total_bytes": 141937874,
-            "first_seen": "2025-05-12 09:33:38",
+            "flow_count": 27,
+            "total_packets": 868104,
+            "total_bytes": 147397023,
+            "first_seen": "2025-05-12 09:36:10",
             "last_seen": "2025-04-19T04:48:55.869000+00:00"
         }
     ],

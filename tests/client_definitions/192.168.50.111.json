@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.111",
-    "export_date": "2025-05-12T09:35:04.888970",
+    "export_date": "2025-05-12T09:47:41.798200",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.111",
@@ -13,46 +13,53 @@
         "icon": null,
         "local_description": null
     },
-    "dns_queries": [],
+    "dns_queries": [
+        {
+            "domain": "ping.ui.com",
+            "times_queried": 2,
+            "first_query": "2025-05-12 09:47:02",
+            "last_query": "2025-05-12 09:47:02"
+        }
+    ],
     "flows": [
         {
             "destination": "239.254.127.63",
             "port": 48000,
             "protocol": 17,
-            "flow_count": 26,
-            "total_packets": 5902,
-            "total_bytes": 652184,
-            "first_seen": "2025-05-12 09:33:36",
+            "flow_count": 27,
+            "total_packets": 6129,
+            "total_bytes": 677268,
+            "first_seen": "2025-05-12 09:36:08",
             "last_seen": "2025-04-20T06:57:58.617000+00:00"
         },
         {
             "destination": "192.68.49.60",
             "port": 53,
             "protocol": 17,
-            "flow_count": 156,
-            "total_packets": 312,
-            "total_bytes": 17784,
-            "first_seen": "2025-05-12 09:33:39",
+            "flow_count": 162,
+            "total_packets": 324,
+            "total_bytes": 18468,
+            "first_seen": "2025-05-12 09:36:10",
             "last_seen": "2025-04-20T11:57:28.139000+00:00"
         },
         {
             "destination": "1.1.1.1",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 26,
-            "total_packets": 156,
-            "total_bytes": 13104,
-            "first_seen": "2025-05-12 09:33:37",
+            "flow_count": 27,
+            "total_packets": 162,
+            "total_bytes": 13608,
+            "first_seen": "2025-05-12 09:36:09",
             "last_seen": "2025-04-20T17:57:28.104000+00:00"
         },
         {
             "destination": "8.8.8.8",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 26,
-            "total_packets": 156,
-            "total_bytes": 13104,
-            "first_seen": "2025-05-12 09:33:37",
+            "flow_count": 27,
+            "total_packets": 162,
+            "total_bytes": 13608,
+            "first_seen": "2025-05-12 09:36:08",
             "last_seen": "2025-04-20T11:57:28.141000+00:00"
         }
     ],
