@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Folder to save client definitions
-OUTPUT_FOLDER = "client_definitions"
+OUTPUT_FOLDER = "tests\client_definitions/"
 
 def fetch_localhosts(api_url):
     """
@@ -24,7 +24,7 @@ def fetch_localhosts(api_url):
         response.raise_for_status()
         localhost_data = response.json()
         ip_addresses = [entry["ip_address"] for entry in localhost_data if "ip_address" in entry]
-        logging.info(f"Fetched {len(ip_addresses)} IP addresses from {api_url}/api/localhosts")
+        print(f"Fetched {len(ip_addresses)} IP addresses from {api_url}/api/localhosts")
         return ip_addresses
     except requests.exceptions.RequestException as e:
         logging.error(f"Failed to fetch localhost data from {api_url}: {e}")
@@ -64,35 +64,35 @@ def save_client_data(ip_address, data):
     try:
         with open(file_path, "w") as file:
             json.dump(data, file, indent=4)
-        logging.info(f"Saved client data for {ip_address} to {file_path}")
+        print(f"Saved client data for {ip_address} to {file_path}")
     except IOError as e:
         logging.error(f"Failed to save client data for {ip_address}: {e}")
 
 def main():
+
+
     # Array of API base URLs
     api_urls = [
         "http://192.168.49.80:8044",
         "http://192.168.230.236:8044",
-
-   #"http://127.0.0.1:8044"
+        "http://192.168.60.4:8044"
     ]
-
-
 
     # Loop through each API URL
     for api_url in api_urls:
-        logging.info(f"Processing API URL: {api_url}")
+        print(f"Processing API URL: {api_url}")
 
         # Step 1: Fetch localhost data
         ip_addresses = fetch_localhosts(api_url)
 
         # Step 2: Loop through each IP address and fetch client data
         for ip_address in ip_addresses:
-            logging.info(f"Fetching client data for IP: {ip_address} from {api_url}")
+            print(f"Fetching client data for IP: {ip_address} from {api_url}")
             client_data = fetch_client_data(api_url, ip_address)
             if client_data:
                 # Step 3: Save the client data to a file
                 save_client_data(ip_address, client_data)
 
 if __name__ == "__main__":
+    print ("starting main")
     main()

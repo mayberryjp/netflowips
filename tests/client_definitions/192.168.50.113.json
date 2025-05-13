@@ -1,0 +1,40 @@
+{
+    "ip_address": "192.168.50.113",
+    "export_date": "2025-05-13T01:40:00.303718",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "host_info": {
+        "ip_address": "192.168.50.113",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "coway.",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": "coway",
+        "icon": "AIR_PURIFIER",
+        "local_description": "Coway Air Purifier"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "15.164.35.18",
+            "port": 9090,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 317,
+            "total_bytes": 34689,
+            "first_seen": "2025-05-09 22:44:35",
+            "last_seen": "317611356"
+        },
+        {
+            "destination": "8.8.8.8",
+            "port": 53,
+            "protocol": 17,
+            "flow_count": 1,
+            "total_packets": 2,
+            "total_bytes": 132,
+            "first_seen": "2025-05-09 20:13:54",
+            "last_seen": "317611265"
+        }
+    ],
+    "actions": []
+}

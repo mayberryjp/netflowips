@@ -1,0 +1,70 @@
+{
+    "ip_address": "192.168.230.5",
+    "export_date": "2025-05-13T01:40:16.513676",
+    "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
+    "host_info": {
+        "ip_address": "192.168.230.5",
+        "mac_address": "d8:d6:68:99:3c:8e",
+        "mac_vendor": "Tuya Smart Inc.",
+        "dhcp_hostname": "tuya-shedwaterpump.832-5.com",
+        "dns_hostname": "tuya-shedwaterpump.832-5.com.",
+        "os_fingerprint": "lwIP_lwIP_None_99",
+        "lease_hostname": "tuya-shedwaterpump",
+        "icon": "WATER_PUMP",
+        "local_description": "Tuya Water Pump Relay"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "255.255.255.255",
+            "port": 6667,
+            "protocol": 17,
+            "flow_count": 490,
+            "total_packets": 79273,
+            "total_bytes": 18391336,
+            "first_seen": "2025-05-13 01:08:41",
+            "last_seen": "1803790767"
+        },
+        {
+            "destination": "100.21.156.247",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 8758,
+            "total_bytes": 687037,
+            "first_seen": "2025-05-12 18:19:41",
+            "last_seen": "2015742964"
+        },
+        {
+            "destination": "34.211.189.2",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 7534,
+            "total_bytes": 591141,
+            "first_seen": "2025-05-09 18:17:28",
+            "last_seen": "1792878917"
+        },
+        {
+            "destination": "54.69.37.156",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 164,
+            "total_packets": 1854,
+            "total_bytes": 213957,
+            "first_seen": "2025-05-12 18:16:33",
+            "last_seen": "2017687783"
+        },
+        {
+            "destination": "54.187.112.38",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 141,
+            "total_packets": 1602,
+            "total_bytes": 183736,
+            "first_seen": "2025-05-13 01:21:11",
+            "last_seen": "1806734354"
+        }
+    ],
+    "actions": []
+}

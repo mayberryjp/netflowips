@@ -377,4 +377,10 @@ LOCAL_DESCRIPTIONS = [
         "category": "SERVER",
         "local_description": "Azure Cloud Server Docker"
     },
+     {
+        "api_endpoint": "http://192.168.49.80:8044",
+        "ip_address": "192.168.50.3",
+        "category": "DRONE",
+        "local_description": "DJI Mavic 3"
+    },   
 ]

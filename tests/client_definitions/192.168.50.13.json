@@ -1,7 +1,7 @@
 {
     "ip_address": "192.168.50.13",
-    "export_date": "2025-05-13T09:13:18.672181",
-    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
+    "export_date": "2025-05-13T01:39:59.738910",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.13",
         "mac_address": null,
@@ -10,15 +10,21 @@
         "dns_hostname": "panasonic-hub.832-5.com.",
         "os_fingerprint": "Linux_Linux_3.X_100",
         "lease_hostname": "panasonic-hub",
-        "icon": null,
-        "local_description": null
+        "icon": "LIGHT_CONTROLLER",
+        "local_description": "Panasanic Advance Light Controller"
     },
     "dns_queries": [
         {
             "domain": "esvchk-s2.svrpf.jp",
-            "times_queried": 1,
-            "first_query": "2025-05-07 19:37:57",
-            "last_query": "2025-05-07 19:37:57"
+            "times_queried": 6,
+            "first_query": "2025-05-12 16:07:06",
+            "last_query": "2025-05-07 10:16:49"
+        },
+        {
+            "domain": "ntp.anshin-home.jp",
+            "times_queried": 4,
+            "first_query": "2025-05-12 04:03:13",
+            "last_query": "2025-05-08 03:44:26"
         }
     ],
     "flows": [
@@ -26,41 +32,41 @@
             "destination": "239.255.255.250",
             "port": 1900,
             "protocol": 17,
-            "flow_count": 28,
-            "total_packets": 18816,
-            "total_bytes": 6439776,
-            "first_seen": "2025-05-13 09:00:16",
-            "last_seen": "2025-04-20T06:27:55.393000+00:00"
-        },
-        {
-            "destination": "18.182.249.252",
-            "port": 443,
-            "protocol": 6,
-            "flow_count": 84,
-            "total_packets": 896,
-            "total_bytes": 142184,
-            "first_seen": "2025-05-13 09:00:18",
-            "last_seen": "2025-04-20T17:56:03.315000+00:00"
+            "flow_count": 291,
+            "total_packets": 2328,
+            "total_bytes": 796758,
+            "first_seen": "2025-05-13 01:30:34",
+            "last_seen": "98528239"
         },
         {
             "destination": "224.0.23.0",
             "port": 3610,
             "protocol": 17,
-            "flow_count": 1820,
-            "total_packets": 1820,
-            "total_bytes": 113204,
-            "first_seen": "2025-05-13 09:00:18",
-            "last_seen": "2025-04-20T06:57:09.609000+00:00"
+            "flow_count": 225,
+            "total_packets": 225,
+            "total_bytes": 14022,
+            "first_seen": "2025-05-13 01:05:36",
+            "last_seen": "101040718"
+        },
+        {
+            "destination": "18.182.249.252",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 7,
+            "total_packets": 77,
+            "total_bytes": 11970,
+            "first_seen": "2025-05-12 15:02:54",
+            "last_seen": "108135012"
         },
         {
             "destination": "13.115.31.26",
             "port": 123,
             "protocol": 17,
-            "flow_count": 28,
-            "total_packets": 28,
-            "total_bytes": 2128,
-            "first_seen": "2025-05-13 09:00:17",
-            "last_seen": "2025-04-21T00:56:58.655000+00:00"
+            "flow_count": 5,
+            "total_packets": 5,
+            "total_bytes": 380,
+            "first_seen": "2025-05-12 03:04:49",
+            "last_seen": "169398937"
         }
     ],
     "actions": []
