@@ -4,40 +4,40 @@ import logging
 
 
 
-def tag_whitelist(record, whitelist_entries):
+def tag_ignorelist(record, ignorelist_entries):
     """
-    Check if a single row matches any whitelist entry.
+    Check if a single row matches any ignorelist entry.
 
     Args:
         row: A single flow record
-        whitelist_entries: List of whitelist entries from database
+        ignorelist_entries: List of ignorelist entries from database
 
     Returns:
-        bool: True if the row matches a whitelist entry, False otherwise
+        bool: True if the row matches a ignorelist entry, False otherwise
     """
     logger = logging.getLogger(__name__)
-    #log_info(logger, "[INFO] Checking if the row is whitelisted")
+    #log_info(logger, "[INFO] Checking if the row is ignorelisted")
 
-    if not whitelist_entries:
+    if not ignorelist_entries:
         return None
 
    # src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
 
-    #log_info(logger, f"[INFO] Checking whitelist for src_ip: {src_ip}, dst_ip: {dst_ip}, src_port: {src_port}, dst_port: {dst_port}, protocol: {protocol}")
+    #log_info(logger, f"[INFO] Checking ignorelist for src_ip: {src_ip}, dst_ip: {dst_ip}, src_port: {src_port}, dst_port: {dst_port}, protocol: {protocol}")
 
-    for whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol in whitelist_entries:
-        #log_info(logger, f"[INFO] Checking against whitelist entry: {whitelist_id}, src_ip: {whitelist_src_ip}, dst_ip: {whitelist_dst_ip}, dst_port: {whitelist_dst_port}, protocol: {whitelist_protocol}")
-        # Check if the flow matches any whitelist entry
-        src_match = (whitelist_src_ip == record['src_ip'] or whitelist_src_ip == record['dst_ip'] or whitelist_src_ip == "*")
-        dst_match = (whitelist_dst_ip == record['dst_ip'] or whitelist_dst_ip == record['src_ip'] or whitelist_dst_ip == "*")
-        port_match = ((int(whitelist_dst_port) in (record['src_port'], record['dst_port'])) or whitelist_dst_port == "*")
-        protocol_match = ((int(whitelist_protocol) == record['protocol']) or (whitelist_protocol == "*"))
+    for ignorelist_id, ignorelist_src_ip, ignorelist_dst_ip, ignorelist_dst_port, ignorelist_protocol in ignorelist_entries:
+        #log_info(logger, f"[INFO] Checking against ignorelist entry: {ignorelist_id}, src_ip: {ignorelist_src_ip}, dst_ip: {ignorelist_dst_ip}, dst_port: {ignorelist_dst_port}, protocol: {ignorelist_protocol}")
+        # Check if the flow matches any ignorelist entry
+        src_match = (ignorelist_src_ip == record['src_ip'] or ignorelist_src_ip == record['dst_ip'] or ignorelist_src_ip == "*")
+        dst_match = (ignorelist_dst_ip == record['dst_ip'] or ignorelist_dst_ip == record['src_ip'] or ignorelist_dst_ip == "*")
+        port_match = ((int(ignorelist_dst_port) in (record['src_port'], record['dst_port'])) or ignorelist_dst_port == "*")
+        protocol_match = ((int(ignorelist_protocol) == record['protocol']) or (ignorelist_protocol == "*"))
 
         if src_match and dst_match and port_match and protocol_match:
-            #log_info(logger, f"[INFO] Row is whitelisted with ID: {whitelist_id}")
-            return f"IgnoreList;IgnoreList_{whitelist_id};"
+            #log_info(logger, f"[INFO] Row is ignorelisted with ID: {ignorelist_id}")
+            return f"IgnoreList;IgnoreList_{ignorelist_id};"
     
-    #log_info(logger, "[INFO] Row is not whitelisted")
+    #log_info(logger, "[INFO] Row is not ignorelisted")
     return None
 
 def tag_broadcast(record, broadcast_addresses):
@@ -121,7 +121,7 @@ def tag_linklocal(record, link_local_range):
 
 def tag_custom(record, tag_entries):
     """
-    Apply custom tags to flows based on matching criteria similar to whitelisting.
+    Apply custom tags to flows based on matching criteria similar to ignorelisting.
     
     Args:
         record: Flow record to check
@@ -139,7 +139,7 @@ def tag_custom(record, tag_entries):
     
     for tag_name, tag_src_ip, tag_dst_ip, tag_dst_port, tag_protocol in tag_entries:
         try:
-            # Check for matches using wildcard pattern similar to whitelist
+            # Check for matches using wildcard pattern similar to ignorelist
             src_match = (tag_src_ip == record['src_ip'] or tag_src_ip == record['dst_ip'] or tag_src_ip == "*")
             dst_match = (tag_dst_ip == record['dst_ip'] or tag_dst_ip == record['src_ip'] or tag_dst_ip == "*")
             
@@ -164,13 +164,13 @@ def tag_custom(record, tag_entries):
         return "".join(applied_tags)
     return None
     
-def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, config_dict, link_local_range):
+def apply_tags(record, ignorelist_entries, broadcast_addresses, tag_entries, config_dict, link_local_range):
     """
     Apply multiple tagging functions to one or more rows. For each row, append the tag to the tags position.
 
     Args:
         record: Flow record to tag
-        whitelist_entries: List of whitelist entries from the database
+        ignorelist_entries: List of ignorelist entries from the database
         broadcast_addresses: Set of broadcast addresses
         tag_entries: List of custom tag entries
 
@@ -182,10 +182,10 @@ def apply_tags(record, whitelist_entries, broadcast_addresses, tag_entries, conf
         record['tags'] = ""
 
     # Apply existing tags
-    if whitelist_entries:
-        whitelist_tag = tag_whitelist(record, whitelist_entries)
-        if whitelist_tag:
-            record['tags'] += f"{whitelist_tag}"
+    if ignorelist_entries:
+        ignorelist_tag = tag_ignorelist(record, ignorelist_entries)
+        if ignorelist_tag:
+            record['tags'] += f"{ignorelist_tag}"
 
     broadcast_tag = tag_broadcast(record, broadcast_addresses)
     if broadcast_tag:

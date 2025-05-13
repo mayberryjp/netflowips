@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.110",
-    "export_date": "2025-05-12T09:47:57.844119",
+    "export_date": "2025-05-13T09:13:46.109500",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.110",
@@ -16,8 +16,8 @@
     "dns_queries": [
         {
             "domain": "ping.ui.com",
-            "times_queried": 2,
-            "first_query": "2025-05-12 09:47:02",
+            "times_queried": 4,
+            "first_query": "2025-05-13 09:12:35",
             "last_query": "2025-05-12 09:47:02"
         }
     ],
@@ -26,30 +26,30 @@
             "destination": "239.254.127.63",
             "port": 48000,
             "protocol": 17,
-            "flow_count": 27,
-            "total_packets": 7587,
-            "total_bytes": 846396,
-            "first_seen": "2025-05-12 09:36:08",
+            "flow_count": 28,
+            "total_packets": 7868,
+            "total_bytes": 877744,
+            "first_seen": "2025-05-13 09:00:16",
             "last_seen": "2025-04-20T06:57:54.366000+00:00"
         },
         {
             "destination": "1.1.1.1",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 27,
-            "total_packets": 162,
-            "total_bytes": 13608,
-            "first_seen": "2025-05-12 09:36:09",
+            "flow_count": 28,
+            "total_packets": 168,
+            "total_bytes": 14112,
+            "first_seen": "2025-05-13 09:00:17",
             "last_seen": "2025-04-20T17:57:25.687000+00:00"
         },
         {
             "destination": "8.8.8.8",
             "port": 2048,
             "protocol": 1,
-            "flow_count": 27,
-            "total_packets": 162,
-            "total_bytes": 13608,
-            "first_seen": "2025-05-12 09:36:08",
+            "flow_count": 28,
+            "total_packets": 168,
+            "total_bytes": 14112,
+            "first_seen": "2025-05-13 09:00:16",
             "last_seen": "2025-04-20T11:57:25.701000+00:00"
         }
     ],

@@ -10,7 +10,7 @@
         "newflows": 0,
         "allflows": 0,
         "alerts": 0,
-        "whitelist": 1,
+        "ignorelist": 1,
         "localhosts": 0,
         "configuration": 57,
         "geolocation": 0,

@@ -15,8 +15,8 @@ rest:
       - name: HomelabIDS Localhosts Count
         value_template: "{{ value_json.total_localhosts_count }}"
         icon: mdi:server
-      - name: HomelabIDS Whitelist Count
-        value_template: "{{ value_json.whitelist_count }}"
+      - name: HomelabIDS IgnoreList Count
+        value_template: "{{ value_json.ignorelist_count }}"
         icon: mdi:shield-check-outline
       - name: HomelabIDS Acknowledged Localhosts Count
         value_template: "{{ value_json.acknowledged_localhosts_count }}"

@@ -23,7 +23,7 @@ CONST_DEFAULT_CONFIGS = [
     ('StartCollector','1'),
     ('CleanNewFlows','0'),
     ('DeadConnectionDetection','0'),
-    ('WhitelistEntries', ''),
+    ('IgnoreListEntries', ''),
     ('DnsResolverTimeout', 3),
     ('DnsResolverRetries', 1),
     ('PiholeUrl', 'http://192.168.49.80/api'),

@@ -65,7 +65,7 @@ def process_data():
                     reputation_data = load_reputation_data(config_dict)
                 
                 log_info(logger,f"Started removing IgnoreList flows")
-                # process whitelisted entries and remove from detection rows
+                # process ignorelisted entries and remove from detection rows
                 filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11])]
                 log_info(logger,f"Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
 

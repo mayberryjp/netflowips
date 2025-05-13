@@ -509,7 +509,7 @@ class NLPProcessor:
                 alert_percent = (ack_alerts / total_alerts) * 100
                 
             summary += f"• Alerts: {total_alerts} total ({ack_alerts} acknowledged, {unack_alerts} unacknowledged)\n"
-            summary += f"• Alert acknowledgment rate: {alert_percent:.1f}%\n"
+            summary += f"• Alert Acknowledgment Rate: {alert_percent:.1f}%\n"
             
             # Host statistics
             total_hosts = data.get("total_localhosts_count", 0)
@@ -519,12 +519,12 @@ class NLPProcessor:
             if total_hosts > 0:
                 host_percent = (ack_hosts / total_hosts) * 100
                 
-            summary += f"• Local hosts: {total_hosts} total ({ack_hosts} acknowledged, {unack_hosts} unacknowledged)\n"
-            summary += f"• Host acknowledgment rate: {host_percent:.1f}%\n"
+            summary += f"• Local Hosts: {total_hosts} total ({ack_hosts} acknowledged, {unack_hosts} unacknowledged)\n"
+            summary += f"• Host Acknowledgment Rate: {host_percent:.1f}%\n"
             
-            # Whitelist entries
-            whitelist_count = data.get("whitelist_count", 0)
-            summary += f"• Whitelist entries: {whitelist_count}\n"
+            # IgnoreList entries
+            ignorelist_count = data.get("ignorelist_count", 0)
+            summary += f"• IgnoreList Entries: {ignorelist_count}\n"
             
             # System status assessment
             if unack_alerts > 10:

@@ -38,7 +38,7 @@ from src.const import (
     CONST_CONSOLIDATED_DB,
     CONST_CREATE_ALLFLOWS_SQL,
     CONST_CREATE_ALERTS_SQL,
-    CONST_CREATE_WHITELIST_SQL,
+    CONST_CREATE_IGNORELIST_SQL,
     CONST_CREATE_CONFIG_SQL,
     CONST_CREATE_NEWFLOWS_SQL,
     CONST_CREATE_ACTIONS_SQL,
@@ -55,7 +55,7 @@ from src.utils import log_info
 
 from src.database import (
     get_config_settings,
-    get_whitelist,
+    get_ignorelist,
     connect_to_db,
     update_allflows,
     update_traffic_stats,
@@ -64,7 +64,7 @@ from src.database import (
     init_configurations_from_sitepy,
     get_row_count,
     get_alerts_summary,
-    import_whitelists,
+    import_ignorelists,
     store_machine_unique_identifier, 
     store_version,
 )
@@ -270,7 +270,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
         end_time: Test end timestamp
         duration: Test duration in seconds
         total_rows: Total number of rows processed
-        filtered_rows: Number of rows after whitelist filtering
+        filtered_rows: Number of rows after ignorelist filtering
         detection_durations: Dictionary containing durations for detection functions
     """
     logger = logging.getLogger(__name__)
@@ -300,7 +300,7 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "newflows": get_row_count(CONST_CONSOLIDATED_DB, 'flows'),
                 "allflows": get_row_count(CONST_CONSOLIDATED_DB, 'allflows'),
                 "alerts": get_row_count(CONST_CONSOLIDATED_DB, 'alerts'),
-                "whitelist": get_row_count(CONST_CONSOLIDATED_DB, 'whitelist'),
+                "ignorelist": get_row_count(CONST_CONSOLIDATED_DB, 'ignorelist'),
                 "localhosts": get_row_count(CONST_CONSOLIDATED_DB, 'localhosts'),
                 "configuration": get_row_count(CONST_CONSOLIDATED_DB, 'configuration'),
                 "geolocation": get_row_count(CONST_CONSOLIDATED_DB, 'geolocation'),
@@ -356,9 +356,9 @@ def main():
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
         delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IGNORELIST_SQL, "ignorelist")
         create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
-        import_whitelists(config_dict)
+        import_ignorelists(config_dict)
         import_custom_tags(config_dict)
 
     store_machine_unique_identifier()
@@ -369,7 +369,7 @@ def main():
 
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_SERVICES_SQL, "services")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IGNORELIST_SQL, "ignorelist")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")
@@ -394,7 +394,7 @@ def main():
 
     log_info(logger, f"[INFO] Fetched {len(rows)} rows from {CONST_CONSOLIDATED_DB}")
 
-    whitelist_entries = get_whitelist()
+    ignorelist_entries = get_ignorelist()
     customtag_entries = get_custom_tags()
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
@@ -418,7 +418,7 @@ def main():
         row['tags'] = ""  # Initialize an empty string for tags
 
     # Apply tags
-    tagged_rows_as_dicts = [apply_tags(row, whitelist_entries, broadcast_addresses, customtag_entries, config_dict, CONST_LINK_LOCAL_RANGE) for row in rows_as_dicts]
+    tagged_rows_as_dicts = [apply_tags(row, ignorelist_entries, broadcast_addresses, customtag_entries, config_dict, CONST_LINK_LOCAL_RANGE) for row in rows_as_dicts]
 
     # Convert back to arrays for use in update_allflows
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]
@@ -426,7 +426,7 @@ def main():
     update_allflows(tagged_rows, config_dict)
     update_traffic_stats(tagged_rows, config_dict)
 
-    filtered_rows = [row for row in tagged_rows if 'Whitelist' not in str(row[11])]
+    filtered_rows = [row for row in tagged_rows if 'IgnoreList' not in str(row[11])]
     log_info(logger, f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
 
     filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]

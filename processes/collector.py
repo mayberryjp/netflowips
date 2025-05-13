@@ -9,8 +9,8 @@ src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 sys.path.insert(0, "/database")
-from src.const import CONST_CREATE_SERVICES_SQL, CONST_CREATE_ACTIONS_SQL, CONST_CREATE_GEOLOCATION_SQL, CONST_CREATE_REPUTATIONLIST_SQL, CONST_CREATE_TORNODES_SQL, CONST_CREATE_PIHOLE_SQL, CONST_CREATE_LOCALHOSTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, CONST_CREATE_WHITELIST_SQL, VERSION, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE, CONST_CREATE_CONFIG_SQL
-from src.database import store_site_name, store_version, delete_all_records, import_custom_tags, create_table, init_configurations_from_variable,store_machine_unique_identifier,import_whitelists, create_table, get_config_settings, init_configurations_from_sitepy
+from src.const import CONST_CREATE_SERVICES_SQL, CONST_CREATE_ACTIONS_SQL, CONST_CREATE_GEOLOCATION_SQL, CONST_CREATE_REPUTATIONLIST_SQL, CONST_CREATE_TORNODES_SQL, CONST_CREATE_PIHOLE_SQL, CONST_CREATE_LOCALHOSTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, CONST_CREATE_IGNORELIST_SQL, VERSION, CONST_CREATE_NEWFLOWS_SQL, IS_CONTAINER, CONST_SITE, CONST_CREATE_CONFIG_SQL
+from src.database import store_site_name, store_version, delete_all_records, import_custom_tags, create_table, init_configurations_from_variable,store_machine_unique_identifier,import_ignorelists, create_table, get_config_settings, init_configurations_from_sitepy
 from src.netflow import handle_netflow_v5
 from src.utils import log_info, log_error, dump_json
 import logging
@@ -35,9 +35,9 @@ if __name__ == "__main__":
         log_info(logger, f"[INFO] Loading site-specific configuration from {site_config_path}. Leaving this file will overwrite the config database every time, so be careful. It's usually only meant for a one time bootstrapping of a new site with a full config.")
         delete_all_records(CONST_CONSOLIDATED_DB, "configuration")
         config_dict = init_configurations_from_sitepy()
-        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+        create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IGNORELIST_SQL, "ignorelist")
         create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
-        import_whitelists(config_dict)
+        import_ignorelists(config_dict)
         import_custom_tags(config_dict)
     else:
         log_info(logger, f"[INFO] No site-specific configuration found at {site_config_path}. This is OK. ")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_SERVICES_SQL, "services")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CONFIG_SQL, "configuration")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_WHITELIST_SQL, "whitelist")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IGNORELIST_SQL, "ignorelist")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_CUSTOMTAGS_SQL, "customtags")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")

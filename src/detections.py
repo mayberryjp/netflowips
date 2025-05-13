@@ -825,7 +825,7 @@ def detect_vpn_traffic(rows, config_dict):
     # Get local networks
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     
-    # Get whitelisted VPN servers if configured
+    # Get ignorelisted VPN servers if configured
     approved_vpn_servers = set(config_dict.get("ApprovedVpnServersList", "").split(","))
     
     vpn_flows = {}  # Track potential VPN flows by source IP
@@ -971,7 +971,7 @@ def detect_high_risk_ports(rows, config_dict):
     # Get local networks
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     
-    # Get whitelisted destinations if configured
+    # Get ignorelisted destinations if configured
     approved_destinations = set(config_dict.get("ApprovedHighRiskDestinations", "").split(","))
     
     total = len(rows)

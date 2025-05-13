@@ -434,7 +434,7 @@ def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrich
 
 def get_custom_tags():
     """
-    Retrieve active entries from the customtags table in the whitelist database.
+    Retrieve active entries from the customtags table in the ignorelist database.
 
     Returns:
         list: List of tuples containing (tag_id, src_ip, dst_ip, dst_port, protocol, tag_name)
@@ -444,7 +444,7 @@ def get_custom_tags():
     try:
         conn = connect_to_db(CONST_CONSOLIDATED_DB, "customtags")
         if not conn:
-            log_error(logger, "[ERROR] Unable to connect to whitelist database")
+            log_error(logger, "[ERROR] Unable to connect to ignorelist database")
             return None
 
         cursor = conn.cursor()
@@ -467,9 +467,9 @@ def get_custom_tags():
             disconnect_from_db(conn)
 
 
-def get_whitelist():
+def get_ignorelist():
     """
-    Retrieve active entries from the whitelist database.
+    Retrieve active entries from the ignorelist database.
     
     Returns:
         list: List of tuples containing (alert_id, category, insert_date)
@@ -477,25 +477,25 @@ def get_whitelist():
     """
     logger = logging.getLogger(__name__)
     try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "ignorelist")
         if not conn:
-            log_error(logger, "[ERROR] Unable to connect to whitelist database")
+            log_error(logger, "[ERROR] Unable to connect to ignorelist database")
             return None
 
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol
-            FROM whitelist 
-            WHERE whitelist_enabled = 1
+            SELECT ignorelist_id, ignorelist_src_ip, ignorelist_dst_ip, ignorelist_dst_port, ignorelist_protocol
+            FROM ignorelist 
+            WHERE ignorelist_enabled = 1
         """)
-        whitelist = cursor.fetchall()
+        ignorelist = cursor.fetchall()
 
-        log_info(logger, f"[INFO] Retrieved {len(whitelist)} active whitelist entries")
+        log_info(logger, f"[INFO] Retrieved {len(ignorelist)} active ignorelist entries")
         
-        return whitelist
+        return ignorelist
 
     except sqlite3.Error as e:
-        log_error(logger, f"[ERROR] Error retrieving whitelist entries: {e}")
+        log_error(logger, f"[ERROR] Error retrieving ignorelist entries: {e}")
         return None
     finally:
         if conn:
@@ -575,7 +575,7 @@ def get_alerts_summary():
 
 def import_custom_tags(config_dict):
     """
-    Import custom tag entries into the customtags table in the whitelist database.
+    Import custom tag entries into the customtags table in the ignorelist database.
 
     Args:
         config_dict (dict): Configuration dictionary containing tag entries.
@@ -592,7 +592,7 @@ def import_custom_tags(config_dict):
 
     conn = connect_to_db(CONST_CONSOLIDATED_DB, "customtags")
     if not conn:
-        log_error(logger, "[ERROR] Unable to connect to whitelist database.")
+        log_error(logger, "[ERROR] Unable to connect to ignorelist database.")
         return
 
     try:
@@ -628,62 +628,62 @@ def import_custom_tags(config_dict):
     finally:
         disconnect_from_db(conn)
 
-def import_whitelists(config_dict):
+def import_ignorelists(config_dict):
     """
-    Import whitelist entries into the whitelist database from a config_dict entry.
+    Import ignorelist entries into the ignorelist database from a config_dict entry.
 
     Args:
-        config_dict (dict): Configuration dictionary containing whitelist entries.
-                            Expected format: "WhitelistEntries" -> JSON string of list of tuples
+        config_dict (dict): Configuration dictionary containing ignorelist entries.
+                            Expected format: "IgnoreListEntries" -> JSON string of list of tuples
                             Each tuple: (src_ip, dst_ip, dst_port, protocol)
     """
     logger = logging.getLogger(__name__)
-    whitelist_entries_json = config_dict.get("WhitelistEntries", "[]")
-    if not whitelist_entries_json:
-        log_info(logger, "[INFO] No whitelist entries found in config_dict.")
+    ignorelist_entries_json = config_dict.get("IgnoreListEntries", "[]")
+    if not ignorelist_entries_json:
+        log_info(logger, "[INFO] No ignorelist entries found in config_dict.")
         return
-    #print(f"[INFO] whitelist_entries_json: {whitelist_entries_json}")
-    whitelist_entries = json.loads(whitelist_entries_json)
+    #print(f"[INFO] ignorelist_entries_json: {ignorelist_entries_json}")
+    ignorelist_entries = json.loads(ignorelist_entries_json)
 
-    if not whitelist_entries:
-        log_info(logger, "[INFO] No whitelist entries found in config_dict.")
+    if not ignorelist_entries:
+        log_info(logger, "[INFO] No ignorelist entries found in config_dict.")
         return
 
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "ignorelist")
     if not conn:
-        log_error(logger, "[ERROR] Unable to connect to whitelist database.")
+        log_error(logger, "[ERROR] Unable to connect to ignorelist database.")
         return
 
     try:
         cursor = conn.cursor()
 
-        # Insert whitelist entries into the database if they don't already exist
-        for entry in whitelist_entries:
-            whitelist_id, src_ip, dst_ip, dst_port, protocol = entry
+        # Insert ignorelist entries into the database if they don't already exist
+        for entry in ignorelist_entries:
+            ignorelist_id, src_ip, dst_ip, dst_port, protocol = entry
 
-            # Check if the whitelist entry already exists
+            # Check if the ignorelist entry already exists
             cursor.execute("""
-                SELECT COUNT(*) FROM whitelist
-                WHERE whitelist_id = ? AND whitelist_src_ip = ? AND whitelist_dst_ip = ? AND whitelist_dst_port = ? AND whitelist_protocol = ?
-            """, (whitelist_id, src_ip, dst_ip, dst_port, protocol))
+                SELECT COUNT(*) FROM ignorelist
+                WHERE ignorelist_id = ? AND ignorelist_src_ip = ? AND ignorelist_dst_ip = ? AND ignorelist_dst_port = ? AND ignorelist_protocol = ?
+            """, (ignorelist_id, src_ip, dst_ip, dst_port, protocol))
             exists = cursor.fetchone()[0]
 
             if exists:
-                log_info(logger, f"[INFO] Whitelist entry already exists: {entry}")
+                log_info(logger, f"[INFO] IgnoreList entry already exists: {entry}")
                 continue
 
-            # Insert the new whitelist entry
+            # Insert the new ignorelist entry
             cursor.execute("""
-                INSERT INTO whitelist (
-                    whitelist_id, whitelist_src_ip, whitelist_dst_ip, whitelist_dst_port, whitelist_protocol, whitelist_enabled, whitelist_added, whitelist_insert_date
+                INSERT INTO ignorelist (
+                    ignorelist_id, ignorelist_src_ip, ignorelist_dst_ip, ignorelist_dst_port, ignorelist_protocol, ignorelist_enabled, ignorelist_added, ignorelist_insert_date
                 ) VALUES (?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), datetime('now', 'localtime'))
-            """, (whitelist_id, src_ip, dst_ip, dst_port, protocol))
+            """, (ignorelist_id, src_ip, dst_ip, dst_port, protocol))
 
         conn.commit()
-        log_info(logger, f"[INFO] Imported {len(whitelist_entries)} whitelist entries into the database.")
+        log_info(logger, f"[INFO] Imported {len(ignorelist_entries)} ignorelist entries into the database.")
 
     except sqlite3.Error as e:
-        log_error(logger, f"[ERROR] Error importing whitelist entries: {e}")
+        log_error(logger, f"[ERROR] Error importing ignorelist entries: {e}")
     finally:
         disconnect_from_db(conn)
 
@@ -818,11 +818,11 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
 
 def collect_database_counts():
     """
-    Collects counts from the alerts, localhosts, and whitelist tables.
+    Collects counts from the alerts, localhosts, and ignorelist tables.
 
     Returns:
         dict: A dictionary containing the counts for acknowledged alerts, unacknowledged alerts,
-              total alerts, localhosts entries, and whitelist entries.
+              total alerts, localhosts entries, and ignorelist entries.
     """
     logger = logging.getLogger(__name__)
     counts = {
@@ -832,7 +832,7 @@ def collect_database_counts():
         "unacknowledged_localhosts_count": 0,
         "acknowledged_localhosts_count": 0,
         "total_localhosts_count": 0,
-        "whitelist_count": 0,
+        "ignorelist_count": 0,
 
     }
 
@@ -875,24 +875,24 @@ def collect_database_counts():
         else:
             log_error(logger, "[ERROR] Unable to connect to localhosts database")
 
-        # Connect to the whitelist database
-        conn_whitelist = connect_to_db(CONST_CONSOLIDATED_DB, "whitelist")
-        if conn_whitelist:
-            cursor = conn_whitelist.cursor()
-            # Count entries in whitelist
-            cursor.execute("SELECT COUNT(*) FROM whitelist")
-            counts["whitelist_count"] = cursor.fetchone()[0]
+        # Connect to the ignorelist database
+        conn_ignorelist = connect_to_db(CONST_CONSOLIDATED_DB, "ignorelist")
+        if conn_ignorelist:
+            cursor = conn_ignorelist.cursor()
+            # Count entries in ignorelist
+            cursor.execute("SELECT COUNT(*) FROM ignorelist")
+            counts["ignorelist_count"] = cursor.fetchone()[0]
 
-            conn_whitelist.close()
+            conn_ignorelist.close()
         else:
-            log_error(logger, "[ERROR] Unable to connect to whitelist database")
+            log_error(logger, "[ERROR] Unable to connect to ignorelist database")
 
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Database error: {e}")
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error: {e}")
 
-    conn_whitelist.close()
+    conn_ignorelist.close()
     return counts
 
 def get_alerts_by_category(category_name):

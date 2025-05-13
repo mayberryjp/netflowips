@@ -5,7 +5,7 @@ import os
 from src.utils import log_info, log_error, calculate_broadcast
 import logging
 from datetime import datetime, timezone
-from src.database import connect_to_db, get_whitelist, get_config_settings, disconnect_from_db
+from src.database import connect_to_db, get_ignorelist, get_config_settings, disconnect_from_db
 from src.tags import apply_tags
 from queue import Queue
 import threading
@@ -96,7 +96,7 @@ def process_netflow_packets():
     
     while True:
         try:
-            whitelist = get_whitelist()
+            ignorelist = get_ignorelist()
             config_dict = get_config_settings()
 
             if not config_dict:
@@ -147,7 +147,7 @@ def process_netflow_packets():
                         offset += 48
                         
                         # Apply tags and update flow database
-                        record = apply_tags(record, whitelist, broadcast_addresses, tag_entries, config_dict, CONST_LINK_LOCAL_RANGE)
+                        record = apply_tags(record, ignorelist, broadcast_addresses, tag_entries, config_dict, CONST_LINK_LOCAL_RANGE)
                         update_newflow(record)
                         total_flows += 1
                         

@@ -1,4 +1,4 @@
-VERSION="v0.2.7"
+VERSION="v0.2.81"
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
 CONST_API_LISTEN_PORT=8044
@@ -68,17 +68,17 @@ CONST_CREATE_ALERTS_SQL='''
     )
 '''
 
-CONST_CREATE_WHITELIST_SQL='''
-    CREATE TABLE IF NOT EXISTS whitelist (
-        whitelist_id TEXT PRIMARY KEY,
-        whitelist_src_ip TEXT,
-        whitelist_dst_ip TEXT,
-        whitelist_dst_port INTEGER,
-        whitelist_protocol INTEGER,
-        whitelist_insert_date TEXT,
-        whitelist_enabled INTEGER DEFAULT 1,
-        whitelist_description TEXT,
-        whitelist_added TEXT
+CONST_CREATE_IGNORELIST_SQL='''
+    CREATE TABLE IF NOT EXISTS ignorelist (
+        ignorelist_id TEXT PRIMARY KEY,
+        ignorelist_src_ip TEXT,
+        ignorelist_dst_ip TEXT,
+        ignorelist_dst_port INTEGER,
+        ignorelist_protocol INTEGER,
+        ignorelist_insert_date TEXT,
+        ignorelist_enabled INTEGER DEFAULT 1,
+        ignorelist_description TEXT,
+        ignorelist_added TEXT
     )'''
 
 CONST_CREATE_CUSTOMTAGS_SQL='''
@@ -200,7 +200,7 @@ CONST_INSTALL_CONFIGS = [
     ('StartCollector','1'),
     ('CleanNewFlows','0'),
     ('DeadConnectionDetection','0'),
-    ('WhitelistEntries', ''),
+    ('IgnoreListEntries', ''),
     ('DnsResolverTimeout', 3),
     ('DnsResolverRetries', 1),
     ('PiholeUrl', 'http://192.168.49.80/api'),
@@ -238,7 +238,7 @@ CONST_INSTALL_CONFIGS = [
     ('AlertOnCustomTags','0'),
     ('SendConfigurationToCloudApi','0'),
     ('ApprovedHighRiskDestinations', ''),
-    ('WhitelistEntries', '[]'),
+    ('IgnoreListEntries', '[]'),
     ('MaxMindAPIKey', ''),
     ('RemoveLinkLocalFlows', '0'),
     ('ImportServicesList','1')

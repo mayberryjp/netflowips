@@ -678,8 +678,8 @@ def get_alerts_by_ip(ip_address):
         return {"error": str(e)}
 
 # API for CONST_CONSOLIDATED_DB
-@app.route('/api/whitelist', method=['GET', 'POST'])
-def whitelist():
+@app.route('/api/ignorelist', method=['GET', 'POST'])
+def ignorelist():
     db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name)
     if not conn:
@@ -690,45 +690,45 @@ def whitelist():
 
     if request.method == 'GET':
         try:
-            # Fetch all whitelist entries
-            cursor.execute("SELECT * FROM whitelist")
+            # Fetch all IgnoreList entries
+            cursor.execute("SELECT * FROM ignorelist")
             rows = cursor.fetchall()
             disconnect_from_db(conn)
             set_json_response()
-            log_info(logger, "Fetched all whitelist entries successfully.")
-            return json.dumps([{"whitelist_id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
+            log_info(logger, "Fetched all ignorelist entries successfully.")
+            return json.dumps([{"ignorelist_id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
         except sqlite3.Error as e:
             disconnect_from_db(conn)
-            log_error(logger, f"Error fetching whitelist entries: {e}")
+            log_error(logger, f"Error fetching ignorelist entries: {e}")
             response.status = 500
             return {"error": str(e)}
 
     elif request.method == 'POST':
-        # Add a new whitelist entry
+        # Add a new ignorelist entry
         data = request.json
-        whitelist_id = data.get("whitelist_id")
+        ignorelist_id = data.get("ignorelist_id")
         src_ip = data.get('src_ip')
         dst_ip = data.get('dst_ip')
         dst_port = data.get('dst_port')
         protocol = data.get('protocol')
         try:
-            cursor.execute("INSERT INTO whitelist (whitelist_id, src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
-                           (whitelist_id, src_ip, dst_ip, dst_port, protocol))
+            cursor.execute("INSERT INTO ignorelist (ignorelist_id, src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
+                           (ignorelist_id, src_ip, dst_ip, dst_port, protocol))
             conn.commit()
             disconnect_from_db(conn)
             set_json_response()
-            log_info(logger, f"Added new whitelist entry: {whitelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
-            return {"message": "Whitelist entry added successfully"}
+            log_info(logger, f"Added new ignorelist entry: {ignorelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
+            return {"message": "IngoreList entry added successfully"}
         except sqlite3.Error as e:
             disconnect_from_db(conn)
-            log_error(logger, f"Error adding whitelist entry: {e}")
+            log_error(logger, f"Error adding ignorelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
-@app.route('/api/whitelist/<id>', method=['PUT', 'DELETE'])
-def modify_whitelist(id):
+@app.route('/api/ignorelist/<id>', method=['PUT', 'DELETE'])
+def modify_ignorelist(id):
     db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "whitelist")
+    conn = connect_to_db(db_name, "ignorelist")
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
@@ -736,38 +736,38 @@ def modify_whitelist(id):
     cursor = conn.cursor()
 
     if request.method == 'PUT':
-        # Update a whitelist entry
+        # Update a ignorelist entry
         data = request.json
         src_ip = data.get('src_ip')
         dst_ip = data.get('dst_ip')
         dst_port = data.get('dst_port')
         protocol = data.get('protocol')
         try:
-            cursor.execute("UPDATE whitelist SET src_ip = ?, dst_ip = ?, dst_port = ?, protocol = ? WHERE id = ?", 
+            cursor.execute("UPDATE ignorelist SET src_ip = ?, dst_ip = ?, dst_port = ?, protocol = ? WHERE id = ?", 
                            (src_ip, dst_ip, dst_port, protocol, id))
             conn.commit()
             disconnect_from_db(conn)
             set_json_response()
-            log_info(logger, f"Updated whitelist entry: {id}")
-            return {"message": "Whitelist entry updated successfully"}
+            log_info(logger, f"Updated ignorelist entry: {id}")
+            return {"message": "IgnoreList entry updated successfully"}
         except sqlite3.Error as e:
             disconnect_from_db(conn)
-            log_error(logger, f"Error updating whitelist entry: {e}")
+            log_error(logger, f"Error updating ignorelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
     elif request.method == 'DELETE':
-        # Delete a whitelist entry
+        # Delete a ignorelist entry
         try:
-            cursor.execute("DELETE FROM whitelist WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM ignorelist WHERE id = ?", (id,))
             conn.commit()
             disconnect_from_db(conn)
             set_json_response()
-            log_info(logger, f"Deleted whitelist entry: {id}")
-            return {"message": "Whitelist entry deleted successfully"}
+            log_info(logger, f"Deleted ignorelist entry: {id}")
+            return {"message": "IgnoreList entry deleted successfully"}
         except sqlite3.Error as e:
             disconnect_from_db(conn)
-            log_error(logger, f"Error deleting whitelist entry: {e}")
+            log_error(logger, f"Error deleting ignorelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -955,7 +955,7 @@ def get_localhost(ip_address):
 @app.route('/api/homeassistant', method=['GET'])
 def get_database_counts():
     """
-    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    API endpoint to get counts from the alerts, localhosts, and ignorelist tables.
     """
     logger = logging.getLogger(__name__)
     try:
@@ -973,7 +973,7 @@ def get_database_counts():
 @app.route('/api/homepage', method=['GET'])
 def get_database_counts():
     """
-    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    API endpoint to get counts from the alerts, localhosts, and ignorelist tables.
     """
     logger = logging.getLogger(__name__)
     try:
@@ -990,7 +990,7 @@ def get_database_counts():
 @app.route('/api/quickstats', method=['GET'])
 def get_database_counts():
     """
-    API endpoint to get counts from the alerts, localhosts, and whitelist tables.
+    API endpoint to get counts from the alerts, localhosts, and ignorelist tables.
     """
     logger = logging.getLogger(__name__)
     try:

@@ -10,7 +10,7 @@
         "newflows": 47067,
         "allflows": 47067,
         "alerts": 2792,
-        "whitelist": 1,
+        "ignorelist": 1,
         "localhosts": 26,
         "configuration": 57,
         "geolocation": 0,
