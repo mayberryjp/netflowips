@@ -129,6 +129,17 @@ CONST_CREATE_LOCALHOSTS_SQL = """
     )
 """
 
+CONST_CREATE_IPASN_SQL="""
+        CREATE TABLE IF NOT EXISTS asn (
+            network TEXT PRIMARY KEY,
+            start_ip INTEGER,
+            end_ip INTEGER,
+            netmask INTEGER,
+            asn TEXT,
+            isp_name TEXT
+        )
+    """
+
 CONST_CREATE_TRAFFICSTATS_SQL = """
     CREATE TABLE IF NOT EXISTS trafficstats (
         ip_address TEXT NOT NULL,

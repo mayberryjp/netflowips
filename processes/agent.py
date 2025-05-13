@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration 
 class Config:
-    API_BASE_URL = "http://localhost:8044/api"
-    OPENAI_API_KEY = None  # Set to None to disable OpenAI
-    OPENAI_MODEL = "gpt-3.5-turbo"
+    API_BASE_URL = "http://127.0.0.1:8044/api"
 
 app = Bottle()
 
