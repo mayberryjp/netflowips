@@ -11,7 +11,7 @@ if str(src_dir) not in sys.path:
 from bottle import Bottle, request, response, hook, route
 import sqlite3
 import json
-from src.database import get_config_settings, get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
+from src.database import get_localhosts_all, get_config_settings, get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
 from src.const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from src.utils import log_info, log_warn, log_error  # Import logging functions
 import logging
@@ -170,6 +170,16 @@ def get_alerts_by_category_api(category_name):
             log_info(logger, f"[INFO] No alerts found for category: {category_name}")
             return json.dumps([])
         
+        # Get all localhost information
+        localhosts = get_localhosts_all()
+        
+        # Create a lookup dictionary for faster access to local descriptions
+        localhost_descriptions = {}
+        for localhost in localhosts:
+            ip = localhost.get("ip_address")
+            if ip:
+                localhost_descriptions[ip] = localhost.get("local_description", "")
+
         # Format the response
         formatted_alerts = [{
             "id": row[0],
@@ -180,7 +190,8 @@ def get_alerts_by_category_api(category_name):
             "times_seen": row[6],
             "first_seen": row[7],
             "last_seen": row[8],
-            "acknowledged": bool(row[9])
+            "acknowledged": bool(row[9]),
+            "local_description": localhost_descriptions.get(row[1], "")
         } for row in alerts]
         
         set_json_response()
@@ -380,6 +391,16 @@ def get_recent_alerts_by_ip(ip_address):
 
     cursor = conn.cursor()
 
+    # Get all localhost information
+    localhosts = get_localhosts_all()
+    
+    # Create a lookup dictionary for faster access to local descriptions
+    localhost_descriptions = {}
+    for localhost in localhosts:
+        ip = localhost.get("ip_address")
+        if ip:
+            localhost_descriptions[ip] = localhost.get("local_description", "")
+            
     try:
         # Fetch the most recent alerts for the specified IP address
         cursor.execute("""
@@ -406,7 +427,8 @@ def get_recent_alerts_by_ip(ip_address):
             "times_seen": row[6],
             "first_seen": row[7],
             "last_seen": row[8],
-            "acknowledged": bool(row[9])
+            "acknowledged": bool(row[9]),
+            "local_descriptoin": localhost_descriptions.get(row[1], "")
         } for row in rows]
         
         set_json_response()
@@ -565,10 +587,20 @@ def get_recent_alerts():
     logger = logging.getLogger(__name__)
     db_name = CONST_CONSOLIDATED_DB
     conn = connect_to_db(db_name, "alerts")
-    
+
     if not conn:
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
+
+    # Get all localhost information
+    localhosts = get_localhosts_all()
+    
+    # Create a lookup dictionary for faster access to local descriptions
+    localhost_descriptions = {}
+    for localhost in localhosts:
+        ip = localhost.get("ip_address")
+        if ip:
+            localhost_descriptions[ip] = localhost.get("local_description", "")
 
     cursor = conn.cursor()
 
@@ -597,7 +629,8 @@ def get_recent_alerts():
             "times_seen": row[6],
             "first_seen": row[7],
             "last_seen": row[8],
-            "acknowledged": bool(row[9])
+            "acknowledged": bool(row[9]),
+            "local_description": localhost_descriptions.get(row[1], "")
         } for row in rows]
         
         set_json_response()
@@ -633,6 +666,16 @@ def get_alerts_by_ip(ip_address):
         log_error(logger, f"Unable to connect to the database: {db_name}")
         return {"error": "Unable to connect to the database"}
 
+    # Get all localhost information
+    localhosts = get_localhosts_all()
+    
+    # Create a lookup dictionary for faster access to local descriptions
+    localhost_descriptions = {}
+    for localhost in localhosts:
+        ip = localhost.get("ip_address")
+        if ip:
+            localhost_descriptions[ip] = localhost.get("local_description", "")
+
     cursor = conn.cursor()
 
     try:
@@ -660,7 +703,8 @@ def get_alerts_by_ip(ip_address):
             "times_seen": row[6],
             "first_seen": row[7],
             "last_seen": row[8],
-            "acknowledged": bool(row[9])
+            "acknowledged": bool(row[9]),
+            "local_description": localhost_descriptions.get(row[1], "")
         } for row in rows]
         
         set_json_response()

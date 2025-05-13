@@ -740,6 +740,48 @@ def update_tag_to_allflows(table_name, tag, src_ip, dst_ip, dst_port):
     finally:
         disconnect_from_db(conn)
 
+def get_localhosts_all():
+    """
+    Retrieve all localhost records with complete details from the localhosts database.
+
+    Returns:
+        list: A list of dictionaries containing all columns for each localhost entry,
+              or an empty list if an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
+
+    if not conn:
+        log_error(logger, "[ERROR] Unable to connect to localhosts database")
+        return []
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT ip_address, first_seen, last_seen, times_seen, original_flow, 
+                   mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description
+            FROM localhosts
+        """)
+        
+        # Get column names from cursor description
+        columns = [column[0] for column in cursor.description]
+        
+        # Convert rows to list of dictionaries with column names as keys
+        localhosts = []
+        for row in cursor.fetchall():
+            localhost_dict = dict(zip(columns, row))
+            localhosts.append(localhost_dict)
+            
+        log_info(logger, f"[INFO] Retrieved {len(localhosts)} localhost records with full details")
+        return localhosts
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Failed to retrieve localhost records: {e}")
+        return []
+    finally:
+        disconnect_from_db(conn)
+
 def get_localhosts():
     """
     Retrieve all local hosts from the localhosts database.
