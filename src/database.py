@@ -758,12 +758,12 @@ def get_localhosts_all():
     try:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT ip_address, first_seen, last_seen, times_seen, original_flow, 
+            SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
-                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
             FROM localhosts
         """)
-        
+
         # Get column names from cursor description
         columns = [column[0] for column in cursor.description]
         
