@@ -11,7 +11,7 @@ if str(src_dir) not in sys.path:
 from bottle import Bottle, request, response, hook, route
 import sqlite3
 import json
-from src.database import get_localhosts_all, get_config_settings, get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip  # Import the function
+from src.database import get_recent_alerts_by_ip, get_localhosts_all, get_config_settings, get_all_actions, insert_action, update_action_acknowledged, connect_to_db, collect_database_counts, disconnect_from_db, get_traffic_stats_for_ip, get_all_alerts, get_localhost_by_ip, get_ignorelist  # Import the function
 from src.const import IS_CONTAINER, CONST_API_LISTEN_ADDRESS, CONST_API_LISTEN_PORT, CONST_CONSOLIDATED_DB
 from src.utils import log_info, log_warn, log_error  # Import logging functions
 import logging
@@ -60,45 +60,68 @@ def set_json_response():
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/configurations', method=['GET', 'POST'])
 def configurations():
+    """
+    API endpoint to get all configurations or add a new configuration.
+    
+    Returns:
+        JSON array containing all configurations for GET requests or
+        a success/error message for POST requests.
+    """
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "configurations")
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
-
-    cursor = conn.cursor()
-
+    
     if request.method == 'GET':
         try:
-            # Fetch all configurations
-            cursor.execute("SELECT * FROM configuration")
-            rows = cursor.fetchall()
-            disconnect_from_db(conn)
+            # Use the existing function to get all configurations
+            config_dict = get_config_settings()
+            
+            if not config_dict:
+                log_error(logger, "[ERROR] Failed to retrieve configuration settings")
+                response.status = 500
+                return {"error": "Failed to retrieve configuration settings"}
+            
+            # Transform dictionary to list of key-value pairs to maintain API compatibility
+            config_list = [{"key": key, "value": value} for key, value in config_dict.items()]
+            
             set_json_response()
-            log_info(logger, "Fetched all configurations successfully.")
-            return json.dumps([{"key": row[0], "value": row[1]} for row in rows])
-        except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error fetching configurations: {e}")
+            log_info(logger, "[INFO] Fetched all configurations successfully")
+            return json.dumps(config_list)
+            
+        except Exception as e:
+            log_error(logger, f"[ERROR] Failed to fetch configurations: {e}")
             response.status = 500
             return {"error": str(e)}
-
+    
     elif request.method == 'POST':
-        # Add a new configuration
+        # For POST requests, we still need to implement direct database access
+        # since there's no matching function in database.py
         data = request.json
         key = data.get('key')
         value = data.get('value')
+        
+        if not key or value is None:
+            response.status = 400
+            return {"error": "Key and value are required"}
+        
         try:
+            db_name = CONST_CONSOLIDATED_DB
+            conn = connect_to_db(db_name, "configurations")
+            if not conn:
+                log_error(logger, f"[ERROR] Unable to connect to the database: {db_name}")
+                return {"error": "Unable to connect to the database"}
+    
+            cursor = conn.cursor()
             cursor.execute("INSERT INTO configuration (key, value) VALUES (?, ?)", (key, value))
             conn.commit()
             disconnect_from_db(conn)
+            
             set_json_response()
-            log_info(logger, f"Added new configuration: {key}")
+            log_info(logger, f"[INFO] Added new configuration: {key}")
             return {"message": "Configuration added successfully"}
+            
         except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error adding configuration: {e}")
+            if 'conn' in locals() and conn:
+                disconnect_from_db(conn)
+            log_error(logger, f"[ERROR] Error adding configuration: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -210,27 +233,46 @@ def get_alerts_by_category_api(category_name):
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/alerts', method=['GET'])
 def alerts():
+    """
+    API endpoint to get all alerts.
+
+    Returns:
+        JSON array containing all alerts.
+    """
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "alerts")
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
-
-    cursor = conn.cursor()
-
+    
     if request.method == 'GET':
         try:
-            # Fetch all alerts
-            cursor.execute("SELECT * FROM alerts")
-            rows = cursor.fetchall()
-            disconnect_from_db(conn)
+            # Use the database function to get all alerts
+            all_alerts = get_all_alerts()
+            
+            if not all_alerts:
+                log_warn(logger, "[WARN] No alerts found in the database")
+                set_json_response()
+                return json.dumps([])
+            
+            # Format the response to match the expected structure
+            formatted_alerts = []
+            for alert in all_alerts:
+                formatted_alert = {
+                    "id": alert.get("id"),
+                    "ip_address": alert.get("ip_address"),
+                    "category": alert.get("category"),
+                    "enrichment_1": alert.get("alert_enrichment_1"),
+                    "enrichment_2": alert.get("alert_enrichment_2"),
+                    "times_seen": alert.get("times_seen"),
+                    "first_seen": alert.get("first_seen"),
+                    "last_seen": alert.get("last_seen"),
+                    "acknowledged": alert.get("acknowledged")
+                }
+                formatted_alerts.append(formatted_alert)
+            
             set_json_response()
-            log_info(logger, "Fetched all alerts successfully.")
-            return json.dumps([{"id": row[0], "ip_address": row[1], "category": row[3], "enrichment_1": row[4], "enrichment_2": row[5], "times_seen": row[6], "first_seen": row[7], "last_seen": row[8], "acknowledged": row[9]} for row in rows])
-        except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error fetching alerts: {e}")
+            log_info(logger, f"[INFO] Fetched {len(formatted_alerts)} alerts successfully")
+            return json.dumps(formatted_alerts)
+            
+        except Exception as e:
+            log_error(logger, f"[ERROR] Failed to fetch alerts: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -370,7 +412,7 @@ def summarize_alerts():
         return {"error": str(e)}
 
 @app.route('/api/alerts/recent/<ip_address>', method=['GET'])
-def get_recent_alerts_by_ip(ip_address):
+def get_recent_alerts_by_ip_api(ip_address):
     """
     API endpoint to get the most recent alerts for a specific IP address.
     Returns alerts sorted by last_seen timestamp in descending order.
@@ -382,69 +424,38 @@ def get_recent_alerts_by_ip(ip_address):
         JSON object containing the most recent alerts for the specified IP address.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "alerts")
     
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
-
-    cursor = conn.cursor()
-
-    # Get all localhost information
-    localhosts = get_localhosts_all()
-    
-    # Create a lookup dictionary for faster access to local descriptions
-    localhost_descriptions = {}
-    for localhost in localhosts:
-        ip = localhost.get("ip_address")
-        if ip:
-            localhost_descriptions[ip] = localhost.get("local_description", "")
-            
     try:
-        # Fetch the most recent alerts for the specified IP address
-        cursor.execute("""
-            SELECT id, ip_address, flow, category, 
-                   alert_enrichment_1, alert_enrichment_2,
-                   times_seen, first_seen, last_seen, acknowledged
-            FROM alerts 
-            WHERE ip_address = ?
-            ORDER BY last_seen DESC 
-            LIMIT 100
-        """, (ip_address,))
+        # Use the database function to get recent alerts
+        alerts = get_recent_alerts_by_ip(ip_address)
         
-        rows = cursor.fetchall()
-        disconnect_from_db(conn)
+        if not alerts:
+            log_info(logger, f"[INFO] No recent alerts found for IP address: {ip_address}")
+            set_json_response()
+            return json.dumps([])
         
-        # Format the response
-        alerts = [{
-            "id": row[0],
-            "ip_address": row[1],
-            "flow": row[2],
-            "category": row[3],
-            "enrichment_1": row[4],
-            "enrichment_2": row[5],
-            "times_seen": row[6],
-            "first_seen": row[7],
-            "last_seen": row[8],
-            "acknowledged": bool(row[9]),
-            "local_descriptoin": localhost_descriptions.get(row[1], "")
-        } for row in rows]
+        # Get all localhost information for local descriptions
+        localhosts = get_localhosts_all()
+        
+        # Create a lookup dictionary for faster access to local descriptions
+        localhost_descriptions = {}
+        for localhost in localhosts:
+            ip = localhost.get("ip_address")
+            if ip:
+                localhost_descriptions[ip] = localhost.get("local_description", "")
+        
+        # Add local description to each alert
+        for alert in alerts:
+            alert["local_description"] = localhost_descriptions.get(alert.get("ip_address"), "")
         
         set_json_response()
         log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts for IP address {ip_address}")
         return json.dumps(alerts, indent=2)
         
-    except sqlite3.Error as e:
-        disconnect_from_db(conn)
-        log_error(logger, f"[ERROR] Database error fetching recent alerts for IP {ip_address}: {e}")
-        response.status = 500
-        return {"error": str(e)}
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to get recent alerts for IP {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
-
 
 @app.route('/api/alerts/summary/<ip_address>', method=['GET'])
 def summarize_alerts_by_ip_address(ip_address):
@@ -724,29 +735,47 @@ def get_alerts_by_ip(ip_address):
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/ignorelist', method=['GET', 'POST'])
 def ignorelist():
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name)
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
-
-    cursor = conn.cursor()
-
+    """
+    API endpoint to get all ignorelist entries or add a new entry.
+    
+    Returns:
+        JSON array containing all ignorelist entries for GET requests or
+        a success/error message for POST requests.
+    """
+    logger = logging.getLogger(__name__)
+    
     if request.method == 'GET':
         try:
-            # Fetch all IgnoreList entries
-            cursor.execute("SELECT * FROM ignorelist")
-            rows = cursor.fetchall()
-            disconnect_from_db(conn)
+            # Use the database function to get all ignorelist entries
+            ignorelist_entries = get_ignorelist()
+            
+            if ignorelist_entries is None:
+                log_error(logger, "[ERROR] Failed to retrieve ignorelist entries")
+                response.status = 500
+                return {"error": "Failed to retrieve ignorelist entries"}
+            
+            # Format the response to match the expected structure
+            formatted_entries = []
+            for entry in ignorelist_entries:
+                formatted_entry = {
+                    "ignorelist_id": entry[0],
+                    "src_ip": entry[1],
+                    "dst_ip": entry[2],
+                    "dst_port": entry[3],
+                    "protocol": entry[4],
+                    "added": datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Use current time as fallback
+                }
+                formatted_entries.append(formatted_entry)
+            
             set_json_response()
-            log_info(logger, "Fetched all ignorelist entries successfully.")
-            return json.dumps([{"ignorelist_id": row[0], "src_ip": row[1], "dst_ip": row[2], "dst_port": row[3], "protocol": row[4], "added": row[5]} for row in rows])
-        except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error fetching ignorelist entries: {e}")
+            log_info(logger, f"[INFO] Fetched {len(formatted_entries)} ignorelist entries successfully")
+            return json.dumps(formatted_entries)
+            
+        except Exception as e:
+            log_error(logger, f"[ERROR] Failed to fetch ignorelist entries: {e}")
             response.status = 500
             return {"error": str(e)}
-
+    
     elif request.method == 'POST':
         # Add a new ignorelist entry
         data = request.json
@@ -755,17 +784,36 @@ def ignorelist():
         dst_ip = data.get('dst_ip')
         dst_port = data.get('dst_port')
         protocol = data.get('protocol')
+        
+        if not ignorelist_id or not src_ip or not dst_ip:
+            response.status = 400
+            return {"error": "Required fields missing (ignorelist_id, src_ip, dst_ip)"}
+        
         try:
-            cursor.execute("INSERT INTO ignorelist (ignorelist_id, src_ip, dst_ip, dst_port, protocol) VALUES (?, ?, ?, ?)", 
-                           (ignorelist_id, src_ip, dst_ip, dst_port, protocol))
+            db_name = CONST_CONSOLIDATED_DB
+            conn = connect_to_db(db_name, "ignorelist")
+            if not conn:
+                log_error(logger, f"[ERROR] Unable to connect to the database: {db_name}")
+                return {"error": "Unable to connect to the database"}
+    
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO ignorelist (
+                    ignorelist_id, ignorelist_src_ip, ignorelist_dst_ip, ignorelist_dst_port, 
+                    ignorelist_protocol, ignorelist_enabled, ignorelist_added, ignorelist_insert_date
+                ) VALUES (?, ?, ?, ?, ?, 1, datetime('now', 'localtime'), datetime('now', 'localtime'))
+            """, (ignorelist_id, src_ip, dst_ip, dst_port, protocol))
             conn.commit()
             disconnect_from_db(conn)
+            
             set_json_response()
-            log_info(logger, f"Added new ignorelist entry: {ignorelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
-            return {"message": "IngoreList entry added successfully"}
+            log_info(logger, f"[INFO] Added new ignorelist entry: {ignorelist_id} {src_ip} -> {dst_ip}:{dst_port}/{protocol}")
+            return {"message": "IgnoreList entry added successfully"}
+            
         except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error adding ignorelist entry: {e}")
+            if 'conn' in locals() and conn:
+                disconnect_from_db(conn)
+            log_error(logger, f"[ERROR] Error adding ignorelist entry: {e}")
             response.status = 500
             return {"error": str(e)}
 
@@ -818,46 +866,32 @@ def modify_ignorelist(id):
 # API for CONST_CONSOLIDATED_DB
 @app.route('/api/localhosts', method=['GET'])
 def localhosts():
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "localhosts")
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
+    """
+    API endpoint to get all local hosts.
 
-    cursor = conn.cursor()
-
-    if request.method == 'GET':
-        try:
-            # Fetch all local hosts
-            cursor.execute("SELECT * FROM localhosts")
-            rows = cursor.fetchall()
-            disconnect_from_db(conn)
+    Returns:
+        JSON array containing all local hosts.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Use the existing function to get all localhosts
+        localhosts_data = get_localhosts_all()
+        
+        if not localhosts_data:
+            log_warn(logger, "[WARN] No local hosts found in the database")
+            # Return empty array rather than error
             set_json_response()
-            log_info(logger, "Fetched all local hosts successfully.")
-            return json.dumps([
-                {
-                    "ip_address": row[0],
-                    "first_seen": row[1],
-                    "original_flow": row[2],
-                    "mac_address": row[3],
-                    "mac_vendor": row[4],
-                    "dhcp_hostname": row[5],
-                    "dns_hostname": row[6],
-                    "os_fingerprint": row[7],
-                    "local_description": row[8],
-                    "lease_hostname": row[9],
-                    "lease_hwaddr": row[10],
-                    "lease_clientid": row[11],
-                    "icon": row[12],                # New column
-                    "tags": row[13],                # New column
-                    "acknowledged": row[14]         # New column
-                } for row in rows
-            ])
-        except sqlite3.Error as e:
-            disconnect_from_db(conn)
-            log_error(logger, f"Error fetching local hosts: {e}")
-            response.status = 500
-            return {"error": str(e)}
+            return json.dumps([])
+        
+        set_json_response()
+        log_info(logger, f"[INFO] Fetched {len(localhosts_data)} local hosts successfully")
+        return json.dumps(localhosts_data, indent=2)
+        
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to fetch local hosts: {e}")
+        response.status = 500
+        return {"error": str(e)}
 
 @app.route('/api/localhosts/<ip_address>', method=['PUT'])
 def modify_localhost(ip_address):
@@ -946,54 +980,24 @@ def get_localhost(ip_address):
         JSON object containing the local host's details or an error message.
     """
     logger = logging.getLogger(__name__)
-    db_name = CONST_CONSOLIDATED_DB
-    conn = connect_to_db(db_name, "localhosts")
     
-    if not conn:
-        log_error(logger, f"Unable to connect to the database: {db_name}")
-        return {"error": "Unable to connect to the database"}
-
-    cursor = conn.cursor()
-
     try:
-        # Fetch the local host with the specified IP address
-        cursor.execute("SELECT * FROM localhosts WHERE ip_address = ?", (ip_address,))
-        row = cursor.fetchone()
-        disconnect_from_db(conn)
-
-        if row:
-            # Format the response
-            localhost = {
-                "ip_address": row[0],
-                "first_seen": row[1],
-                "original_flow": row[2],
-                "mac_address": row[3],
-                "mac_vendor": row[4],
-                "dhcp_hostname": row[5],
-                "dns_hostname": row[6],
-                "os_fingerprint": row[7],
-                "local_description": row[8],
-                "lease_hostname": row[9],
-                "lease_hwaddr": row[10],
-                "lease_clientid": row[11],
-                "icon": row[12],                # New column
-                "tags": row[13],                # New column
-                "acknowledged": row[14]         # New column
-            }
+        # Call the database function to get the localhost details
+        localhost = get_localhost_by_ip(ip_address)
+        
+        if localhost:
             set_json_response()
-            log_info(logger, f"Fetched local host details for IP address: {ip_address}")
+            log_info(logger, f"[INFO] Fetched local host details for IP address: {ip_address}")
             return json.dumps(localhost, indent=2)
         else:
-            log_warn(logger, f"No local host found for IP address: {ip_address}")
+            log_warn(logger, f"[WARN] No local host found for IP address: {ip_address}")
             response.status = 404
             return {"error": f"No local host found for IP address: {ip_address}"}
-
-    except sqlite3.Error as e:
-        disconnect_from_db(conn)
-        log_error(logger, f"Error fetching local host for IP address {ip_address}: {e}")
+            
+    except Exception as e:
+        log_error(logger, f"[ERROR] Failed to fetch local host for IP address {ip_address}: {e}")
         response.status = 500
         return {"error": str(e)}
-    
 
 
 @app.route('/api/homeassistant', method=['GET'])

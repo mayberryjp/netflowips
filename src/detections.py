@@ -374,7 +374,7 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
                     config_dict,
                     "GeolocationFlowsDetection",
                     message,
-                    src_ip,
+                    local_ip,
                     row,
                     "Flow involves an IP in a banned country",
                     remote_ip,

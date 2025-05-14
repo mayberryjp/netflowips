@@ -782,6 +782,62 @@ def get_localhosts_all():
     finally:
         disconnect_from_db(conn)
 
+def get_localhost_by_ip(ip_address):
+    """
+    Retrieve complete details for a specific localhost record by IP address.
+
+    Args:
+        ip_address (str): The IP address of the localhost to retrieve.
+
+    Returns:
+        dict: A dictionary containing all columns for the specified localhost,
+              or None if the localhost is not found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the localhosts database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to localhosts database.")
+            return None
+
+        cursor = conn.cursor()
+        
+        # Query for the specific IP address
+        cursor.execute("""
+            SELECT ip_address, first_seen, original_flow, 
+                   mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
+            FROM localhosts
+            WHERE ip_address = ?
+        """, (ip_address,))
+        
+        row = cursor.fetchone()
+        
+        if not row:
+            log_info(logger, f"[INFO] No localhost found with IP address: {ip_address}")
+            return None
+            
+        # Get column names from cursor description
+        columns = [column[0] for column in cursor.description]
+        
+        # Convert row to dictionary with column names as keys
+        localhost_dict = dict(zip(columns, row))
+        
+        log_info(logger, f"[INFO] Retrieved details for localhost with IP: {ip_address}")
+        return localhost_dict
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving localhost with IP {ip_address}: {e}")
+        return None
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving localhost with IP {ip_address}: {e}")
+        return None
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 def get_localhosts():
     """
     Retrieve all local hosts from the localhosts database.
@@ -856,6 +912,120 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         return False
     finally:
         disconnect_from_db(conn)
+
+
+def get_recent_alerts_by_ip(ip_address):
+    """
+    Retrieve the most recent 100 alerts for a specific IP address from the alerts table.
+
+    Args:
+        ip_address (str): The IP address to filter alerts by.
+
+    Returns:
+        list: A list of dictionaries containing the most recent 100 alerts for the specified IP.
+              Returns an empty list if no data is found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the alerts database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database.")
+            return []
+
+        cursor = conn.cursor()
+        
+        # Retrieve alerts for the specified IP address, most recent first, limited to 100
+        cursor.execute("""
+            SELECT id, ip_address, flow, category, 
+                   alert_enrichment_1, alert_enrichment_2,
+                   times_seen, first_seen, last_seen, acknowledged
+            FROM alerts 
+            WHERE ip_address = ?
+            ORDER BY last_seen DESC 
+            LIMIT 100
+        """, (ip_address,))
+        
+        rows = cursor.fetchall()
+        
+        # Get column names from cursor description
+        columns = [column[0] for column in cursor.description]
+        
+        # Format the results as a list of dictionaries
+        alerts = []
+        for row in rows:
+            alert_dict = dict(zip(columns, row))
+            # Parse JSON if flow is stored as a string
+            if 'flow' in alert_dict and isinstance(alert_dict['flow'], str):
+                try:
+                    alert_dict['flow'] = json.loads(alert_dict['flow'])
+                except:
+                    pass  # Keep as string if JSON parsing fails
+            alerts.append(alert_dict)
+
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts for IP address {ip_address}.")
+        return alerts
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving alerts for IP {ip_address}: {e}")
+        return []
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving alerts for IP {ip_address}: {e}")
+        return []
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def get_all_alerts():
+    """
+    Retrieve all records from the alerts table.
+
+    Returns:
+        list: A list of dictionaries containing all records from the alerts table.
+              Returns an empty list if no data is found or an error occurs.
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database.")
+            return []
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM alerts")
+        rows = cursor.fetchall()
+
+        # Get column names from cursor description
+        columns = [column[0] for column in cursor.description]
+        
+        # Format the results as a list of dictionaries
+        alerts = []
+        for row in rows:
+            alert_dict = dict(zip(columns, row))
+            # Parse JSON if flow is stored as a string
+            if 'flow' in alert_dict and isinstance(alert_dict['flow'], str):
+                try:
+                    alert_dict['flow'] = json.loads(alert_dict['flow'])
+                except:
+                    pass  # Keep as string if JSON parsing fails
+            alerts.append(alert_dict)
+
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts from the database.")
+        return alerts
+
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while retrieving alerts: {e}")
+        return []
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while retrieving alerts: {e}")
+        return []
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+
+
 
 
 def collect_database_counts():
