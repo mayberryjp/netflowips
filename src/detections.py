@@ -21,8 +21,7 @@ def update_local_hosts(rows, config_dict):
 
     try:
 
-        
-        existing_localhosts = set(row[0] for row in get_localhosts())
+        existing_localhosts = get_localhosts()
         log_info(logger, f"[INFO] Loaded {len(existing_localhosts)} existing local hosts into memory")
     
         for row in rows:
@@ -822,9 +821,9 @@ def detect_tor_traffic(rows, config_dict):
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     
     try:
-        rows = get_all_tor_nodes()
+        tor_rows = get_all_tor_nodes()
 
-        tor_nodes = set(row[0] for row in rows)
+        tor_nodes = set(row[0] for row in tor_rows)
         
         for row in rows:
             src_ip, dst_ip, src_port, dst_port, protocol, *_ = row

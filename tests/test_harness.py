@@ -620,8 +620,9 @@ def main():
                 classified_clients += 1
                 
                 # Get API classification result
-                api_category = result.get("best_match", "UNKNOWN")[0]
-                
+                best_match = result.get("best_match", ["UNKNOWN"])
+                api_category = best_match[0] if best_match and isinstance(best_match, (list, tuple)) else "UNKNOWN"
+                                
                 # Get expected classification from master data
                 expected_category = get_master_classification(eachip)
                 

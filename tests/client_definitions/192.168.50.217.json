@@ -1,62 +1,49 @@
 {
     "ip_address": "192.168.50.217",
-    "export_date": "2025-05-19T11:30:42.137006",
-    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
+    "export_date": "2025-05-19T22:01:55.610481",
+    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.217",
-        "mac_address": "fc:e8:c0:f8:78:a3",
-        "mac_vendor": "Espressif Inc.",
-        "dhcp_hostname": "slzb-06p7.local",
-        "dns_hostname": "slzb-06p7.local.",
-        "os_fingerprint": "lwIP_lwIP_None_90",
-        "lease_hostname": "slzb-06p7",
-        "icon": "ZIGBEE_RADIO",
-        "local_description": "SLZB-06P7 POE Adapter"
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": null,
+        "os_fingerprint": null,
+        "lease_hostname": null,
+        "icon": null,
+        "local_description": null
     },
-    "dns_queries": [
-        {
-            "domain": "google.com",
-            "times_queried": 949,
-            "first_query": "2025-05-19 11:02:11",
-            "last_query": "2025-05-07 06:40:14"
-        },
-        {
-            "domain": "updates.smlight.tech",
-            "times_queried": 14,
-            "first_query": "2025-05-17 02:45:21",
-            "last_query": "2025-05-07 21:35:11"
-        }
-    ],
+    "dns_queries": [],
     "flows": [
         {
             "destination": "224.0.0.251",
             "port": 5353,
             "protocol": 17,
-            "flow_count": 298,
-            "total_packets": 358,
-            "total_bytes": 108562,
-            "first_seen": "2025-05-19 08:07:20",
-            "last_seen": "97807196"
+            "flow_count": 4,
+            "total_packets": 196,
+            "total_bytes": 59020,
+            "first_seen": "2025-05-19 21:42:30",
+            "last_seen": "2025-04-20T07:06:30.756000+00:00"
         },
         {
             "destination": "45.83.192.98",
             "port": 443,
             "protocol": 6,
-            "flow_count": 12,
-            "total_packets": 154,
-            "total_bytes": 14596,
-            "first_seen": "2025-05-19 01:03:57",
-            "last_seen": "147979503"
+            "flow_count": 8,
+            "total_packets": 100,
+            "total_bytes": 9608,
+            "first_seen": "2025-05-19 21:42:31",
+            "last_seen": "2025-04-20T08:29:18.989000+00:00"
         },
         {
             "destination": "224.0.0.251",
             "port": 0,
             "protocol": 2,
-            "flow_count": 12,
-            "total_packets": 24,
-            "total_bytes": 1104,
-            "first_seen": "2025-05-18 17:03:25",
-            "last_seen": "133576607"
+            "flow_count": 4,
+            "total_packets": 16,
+            "total_bytes": 736,
+            "first_seen": "2025-05-19 21:42:30",
+            "last_seen": "2025-04-20T17:00:37.082000+00:00"
         }
     ],
     "actions": []
