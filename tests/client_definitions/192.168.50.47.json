@@ -1,52 +1,106 @@
 {
     "ip_address": "192.168.50.47",
-    "export_date": "2025-05-18T18:21:53.385936",
-    "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
+    "export_date": "2025-05-19T10:33:33.580904",
+    "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.47",
         "mac_address": null,
         "mac_vendor": null,
         "dhcp_hostname": null,
         "dns_hostname": "plug8.832-5.com.",
-        "os_fingerprint": null,
+        "os_fingerprint": "lwIP_lwIP_None_99",
         "lease_hostname": null,
-        "icon": null,
+        "icon": "Tuya Smart Plug",
         "local_description": "plug8"
     },
     "dns_queries": [
         {
             "domain": "m2.tuyaus.com",
-            "times_queried": 8,
-            "first_query": "2025-05-18 16:50:21",
-            "last_query": "2025-05-18 16:25:53"
-        },
-        {
-            "domain": "a3.tuyaus.com",
             "times_queried": 2,
-            "first_query": "2025-05-18 16:50:21",
-            "last_query": "2025-05-18 16:25:53"
+            "first_query": "2025-05-18 00:29:15",
+            "last_query": "2025-05-18 00:29:15"
         }
     ],
     "flows": [
         {
+            "destination": "54.68.229.105",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 11,
+            "total_packets": 28912,
+            "total_bytes": 2431163,
+            "first_seen": "2025-05-17 22:51:40",
+            "last_seen": "16399"
+        },
+        {
             "destination": "255.255.255.255",
             "port": 67,
             "protocol": 17,
-            "flow_count": 49,
-            "total_packets": 686,
-            "total_bytes": 230496,
-            "first_seen": "2025-05-18 18:14:48",
-            "last_seen": "2025-04-20T07:36:25.273000+00:00"
+            "flow_count": 103,
+            "total_packets": 103,
+            "total_bytes": 34608,
+            "first_seen": "2025-05-19 07:54:22",
+            "last_seen": "100306729"
+        },
+        {
+            "destination": "54.69.37.156",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 8,
+            "total_packets": 81,
+            "total_bytes": 10269,
+            "first_seen": "2025-05-18 05:09:08",
+            "last_seen": "158821"
         },
         {
             "destination": "255.255.255.255",
             "port": 6667,
             "protocol": 17,
-            "flow_count": 49,
-            "total_packets": 196,
-            "total_bytes": 42336,
-            "first_seen": "2025-05-18 18:14:49",
-            "last_seen": "2025-04-20T13:14:31.877000+00:00"
+            "flow_count": 9,
+            "total_packets": 35,
+            "total_bytes": 7560,
+            "first_seen": "2025-05-14 02:55:53",
+            "last_seen": "175086504"
+        },
+        {
+            "destination": "34.218.147.23",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 4,
+            "total_packets": 37,
+            "total_bytes": 4610,
+            "first_seen": "2025-05-16 08:16:06",
+            "last_seen": "162644"
+        },
+        {
+            "destination": "54.187.112.38",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 9,
+            "total_bytes": 1141,
+            "first_seen": "2025-05-18 07:23:52",
+            "last_seen": "173994"
+        },
+        {
+            "destination": "35.161.158.54",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 1,
+            "total_bytes": 109,
+            "first_seen": "2025-05-17 23:13:08",
+            "last_seen": "50480"
+        },
+        {
+            "destination": "224.0.0.1",
+            "port": 0,
+            "protocol": 2,
+            "flow_count": 1,
+            "total_packets": 2,
+            "total_bytes": 92,
+            "first_seen": "2025-05-08 06:15:17",
+            "last_seen": "181063240"
         }
     ],
     "actions": []
