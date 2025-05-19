@@ -59,7 +59,7 @@ def process_data():
                 if config_dict.get('ReputationListDetection', 0) > 0:
                     reputation_data = load_reputation_data()
                 
-                log_info(logger,f"Started removing IgnoreList flows")
+                log_info(logger,f"[INFO] Started removing IgnoreList flows")
                 # process ignorelisted entries and remove from detection rows
                 filtered_rows = [row for row in newflows if 'IgnoreList' not in str(row[11])]
                 log_info(logger,f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
