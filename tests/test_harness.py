@@ -480,7 +480,7 @@ def main():
     start = datetime.now()
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
-    detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
+    #detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
     detection_durations['detect_geolocation_flows'] = int((datetime.now() - start).total_seconds())
 
     log_info(logger, "[INFO] Preparing to download pihole dns query logs...")
