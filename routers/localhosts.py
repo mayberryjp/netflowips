@@ -113,12 +113,25 @@ def setup_localhosts_routes(app):
         
         try:
             # Call the database function to get the localhost details
-            localhost = get_localhost_by_ip(ip_address)
+            host_record = get_localhost_by_ip(ip_address)
             
-            if localhost:
+            if host_record:
+                # Ensure it's a properly formatted dictionary with all fields
+                localhost_dict = {
+                    "ip_address": host_record[0],
+                    "mac_address": host_record[3],
+                    "mac_vendor": host_record[4],
+                    "dhcp_hostname": host_record[5],
+                    "dns_hostname": host_record[6],
+                    "os_fingerprint": host_record[7],
+                    "lease_hostname": host_record[8],
+                    "icon": host_record[13],
+                    "local_description": host_record[12]
+                }
+                
                 response.content_type = 'application/json'
                 log_info(logger, f"[INFO] Fetched local host details for IP address: {ip_address}")
-                return json.dumps(localhost, indent=2)
+                return json.dumps(localhost_dict, indent=2)
             else:
                 log_warn(logger, f"[WARN] No local host found for IP address: {ip_address}")
                 response.status = 404
