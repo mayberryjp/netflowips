@@ -126,7 +126,8 @@ def setup_localhosts_routes(app):
                     "os_fingerprint": host_record[7],
                     "lease_hostname": host_record[8],
                     "icon": host_record[13],
-                    "local_description": host_record[12]
+                    "local_description": host_record[12],
+                    "first_seen": host_record[1],
                 }
                 
                 response.content_type = 'application/json'
