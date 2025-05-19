@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.217",
-    "export_date": "2025-05-19T18:03:06.185850",
+    "export_date": "2025-05-19T18:48:00.293578",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.217",
@@ -17,8 +17,8 @@
         {
             "domain": "google.com",
             "times_queried": 3,
-            "first_query": "2025-05-19 17:59:53",
-            "last_query": "2025-05-19 17:59:53"
+            "first_query": "2025-05-19 18:37:10",
+            "last_query": "2025-05-19 18:37:10"
         }
     ],
     "flows": [
@@ -26,30 +26,30 @@
             "destination": "224.0.0.251",
             "port": 5353,
             "protocol": 17,
-            "flow_count": 2,
-            "total_packets": 98,
-            "total_bytes": 29510,
-            "first_seen": "2025-05-19 17:52:49",
+            "flow_count": 1,
+            "total_packets": 49,
+            "total_bytes": 14755,
+            "first_seen": "2025-05-19 18:25:12",
             "last_seen": "2025-04-20T07:06:30.756000+00:00"
         },
         {
             "destination": "45.83.192.98",
             "port": 443,
             "protocol": 6,
-            "flow_count": 4,
-            "total_packets": 50,
-            "total_bytes": 4804,
-            "first_seen": "2025-05-19 17:52:51",
+            "flow_count": 2,
+            "total_packets": 25,
+            "total_bytes": 2402,
+            "first_seen": "2025-05-19 18:25:13",
             "last_seen": "2025-04-20T08:29:18.989000+00:00"
         },
         {
             "destination": "224.0.0.251",
             "port": 0,
             "protocol": 2,
-            "flow_count": 2,
-            "total_packets": 8,
-            "total_bytes": 368,
-            "first_seen": "2025-05-19 17:52:50",
+            "flow_count": 1,
+            "total_packets": 4,
+            "total_bytes": 184,
+            "first_seen": "2025-05-19 18:25:12",
             "last_seen": "2025-04-20T17:00:37.082000+00:00"
         }
     ],

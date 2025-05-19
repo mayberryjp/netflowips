@@ -20,6 +20,7 @@ from routers.ignorelist import *
 from routers.localhosts import *
 from routers.services import *
 from routers.trafficstats import *
+from routers.integrations import *
 
 # Initialize the Bottle app
 app = Bottle()
@@ -29,6 +30,7 @@ setup_agent_routes(app)
 setup_alerts_routes(app)
 setup_configurations_routes(app)
 setup_ignorelist_routes(app)
+setup_integrations_routes(app)
 setup_localhosts_routes(app)
 setup_services_routes(app)
 setup_trafficstats_routes(app)

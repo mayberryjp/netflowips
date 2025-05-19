@@ -1,15 +1,6 @@
-# 1. dump my localhosts
-# 2. send my localhosts to one of the two APIs for /classification
-# 3. get the classification results 
-# 4. add to a new object with classification results for test harness logging
-
-import logging
-import os
 import sys
-import json
+import os
 from pathlib import Path
-import requests
-
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
@@ -17,8 +8,10 @@ if parent_dir not in sys.path:
 src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
-    
-
+from bottle import Bottle, request, response, hook, route
+import logging
+# Import DNS lookup function
+from init import *
 from database.localhosts import get_localhosts
 from src.client import export_client_definition, classify_client
 from test_harness import get_master_classification

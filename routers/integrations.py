@@ -15,7 +15,7 @@ import logging
 from init import *
 app = Bottle()
 
-    def setup_integrations_routes(app):
+def setup_integrations_routes(app):
     @app.route('/api/client/<ip_address>', method=['GET'])
     def get_client_info(ip_address):
         """
