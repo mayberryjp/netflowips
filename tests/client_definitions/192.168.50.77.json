@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.77",
-    "export_date": "2025-05-19T11:01:54.068291",
+    "export_date": "2025-05-19T11:30:42.048346",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.77",
@@ -9,9 +9,9 @@
         "dhcp_hostname": null,
         "dns_hostname": "Presence-Sensor-FP2-4749.832-5.com.",
         "os_fingerprint": "Eve Systems_embedded_None_92",
-        "lease_hostname": null,
-        "icon": "Aqara FP2",
-        "local_description": "Presence-Sensor-FP2-4749"
+        "lease_hostname": "Presence-Sensor-FP2-4749",
+        "icon": "PRESENCE_SENSOR",
+        "local_description": "Aqara FP2"
     },
     "dns_queries": [
         {

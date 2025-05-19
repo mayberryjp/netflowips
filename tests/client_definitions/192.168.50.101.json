@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.101",
-    "export_date": "2025-05-19T11:01:53.556567",
+    "export_date": "2025-05-19T11:30:41.532703",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.101",
@@ -9,15 +9,15 @@
         "dhcp_hostname": "refrigerator.832-5.com",
         "dns_hostname": "refrigerator.832-5.com.",
         "os_fingerprint": "2N_embedded_None_96",
-        "lease_hostname": null,
-        "icon": "Sharp Refrigerator",
-        "local_description": "refrigerator"
+        "lease_hostname": "refrigerator",
+        "icon": "REFRIGERATOR",
+        "local_description": "Sharp Refrigerator"
     },
     "dns_queries": [
         {
             "domain": "hms.cloudlabs.sharp.co.jp",
-            "times_queried": 728,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 758,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {

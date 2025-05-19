@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.87",
-    "export_date": "2025-05-19T11:01:52.384952",
+    "export_date": "2025-05-19T11:30:40.292248",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.87",
@@ -9,39 +9,39 @@
         "dhcp_hostname": "amazondot.832-5.com",
         "dns_hostname": "amazondot.832-5.com.",
         "os_fingerprint": "Linux_Linux_4.X_95",
-        "lease_hostname": null,
-        "icon": "Amazon Bedroom Echo Dot",
-        "local_description": "amazondot"
+        "lease_hostname": "amazondot",
+        "icon": "HOME_ASSISTANT",
+        "local_description": "Amazon Bedroom Echo Dot"
     },
     "dns_queries": [
         {
             "domain": "d3p8zr0ffa9t17.cloudfront.net",
-            "times_queried": 2912,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 2957,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "fireoscaptiveportal.com",
-            "times_queried": 2903,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 2948,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "api.amazonalexa.com",
-            "times_queried": 1982,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 2014,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "a2ds1q2tpdj48u.us-east-1.prod.service.minerva.devices.a2z.com",
-            "times_queried": 1088,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 1105,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "api.amazon.com",
-            "times_queried": 262,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 266,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -52,8 +52,8 @@
         },
         {
             "domain": "msh.amazon.com",
-            "times_queried": 80,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 82,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 09:15:20"
         },
         {
@@ -69,6 +69,12 @@
             "last_query": "2025-05-07 13:22:33"
         },
         {
+            "domain": "todo-ta-g7g.amazon.com",
+            "times_queried": 15,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-08 00:39:48"
+        },
+        {
             "domain": "device-messaging-na.amazon.com",
             "times_queried": 14,
             "first_query": "2025-05-19 09:51:53",
@@ -79,12 +85,6 @@
             "times_queried": 14,
             "first_query": "2025-05-15 14:33:15",
             "last_query": "2025-05-07 20:33:39"
-        },
-        {
-            "domain": "todo-ta-g7g.amazon.com",
-            "times_queried": 14,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-08 00:39:48"
         },
         {
             "domain": "ntp-g7g.amazon.com",

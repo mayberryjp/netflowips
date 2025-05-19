@@ -21,6 +21,7 @@ def update_local_hosts(rows, config_dict):
 
     try:
 
+        
         existing_localhosts = set(row[0] for row in get_localhosts())
         log_info(logger, f"[INFO] Loaded {len(existing_localhosts)} existing local hosts into memory")
     

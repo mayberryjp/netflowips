@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.25",
-    "export_date": "2025-05-19T11:01:52.470850",
+    "export_date": "2025-05-19T11:30:40.385745",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.25",
@@ -9,27 +9,27 @@
         "dhcp_hostname": "jrzfold.832-5.com",
         "dns_hostname": "jrzfold.832-5.com.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Samsung ZFold",
-        "local_description": "jrzfold"
+        "lease_hostname": "jrzfold",
+        "icon": "MOBILE_PHONE",
+        "local_description": "Samsung ZFold"
     },
     "dns_queries": [
         {
             "domain": "mobile.pipe.aria.microsoft.com",
-            "times_queried": 1935,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 1941,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "jm-msg-global.aliexpress.com",
-            "times_queried": 1026,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 1027,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "w3-reporting.reddit.com",
-            "times_queried": 682,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 685,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 10:16:49"
         },
         {
@@ -46,20 +46,20 @@
         },
         {
             "domain": "dns.wechat.com",
-            "times_queried": 474,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 482,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "play.googleapis.com",
-            "times_queried": 446,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 448,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "app-measurement.com",
-            "times_queried": 382,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 384,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -76,8 +76,8 @@
         },
         {
             "domain": "mtalk.google.com",
-            "times_queried": 337,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 340,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -87,15 +87,15 @@
             "last_query": "2025-05-07 06:40:14"
         },
         {
-            "domain": "adashx4ae.ut.taobao.com",
-            "times_queried": 300,
-            "first_query": "2025-05-19 09:51:53",
+            "domain": "spot-pa.googleapis.com",
+            "times_queried": 304,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
-            "domain": "spot-pa.googleapis.com",
-            "times_queried": 300,
-            "first_query": "2025-05-19 09:51:53",
+            "domain": "adashx4ae.ut.taobao.com",
+            "times_queried": 302,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -112,14 +112,14 @@
         },
         {
             "domain": "ae01.alicdn.com",
-            "times_queried": 261,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 262,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "gql-fed.reddit.com",
-            "times_queried": 243,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 245,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 10:16:49"
         },
         {
@@ -129,21 +129,21 @@
             "last_query": "2025-05-07 11:18:35"
         },
         {
+            "domain": "inbox.google.com",
+            "times_queried": 223,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 08:02:09"
+        },
+        {
             "domain": "alb.reddit.com",
             "times_queried": 222,
             "first_query": "2025-05-16 14:41:20",
             "last_query": "2025-05-07 12:20:25"
         },
         {
-            "domain": "inbox.google.com",
-            "times_queried": 219,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 08:02:09"
-        },
-        {
             "domain": "mail.google.com",
-            "times_queried": 218,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 220,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -154,14 +154,14 @@
         },
         {
             "domain": "gateway.instagram.com",
-            "times_queried": 211,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 212,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 11:18:35"
         },
         {
             "domain": "crashlyticsreports-pa.googleapis.com",
-            "times_queried": 206,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 207,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -171,16 +171,16 @@
             "last_query": "2025-05-07 06:40:14"
         },
         {
+            "domain": "i.instagram.com",
+            "times_queried": 203,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 11:18:35"
+        },
+        {
             "domain": "play-fe.googleapis.com",
             "times_queried": 202,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-07 06:40:14"
-        },
-        {
-            "domain": "i.instagram.com",
-            "times_queried": 201,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 11:18:35"
         },
         {
             "domain": "android.googleapis.com",
@@ -196,14 +196,14 @@
         },
         {
             "domain": "www.googleapis.com",
-            "times_queried": 185,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 186,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "e.reddit.com",
-            "times_queried": 184,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 185,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 10:16:49"
         },
         {
@@ -226,8 +226,8 @@
         },
         {
             "domain": "youtubei.googleapis.com",
-            "times_queried": 146,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 147,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -249,16 +249,22 @@
             "last_query": "2025-05-07 12:20:25"
         },
         {
+            "domain": "federatedcompute-pa.googleapis.com",
+            "times_queried": 137,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 08:02:09"
+        },
+        {
             "domain": "image-util.benzinga.com",
             "times_queried": 137,
             "first_query": "2025-05-16 14:41:20",
             "last_query": "2025-05-07 11:18:35"
         },
         {
-            "domain": "federatedcompute-pa.googleapis.com",
-            "times_queried": 136,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 08:02:09"
+            "domain": "fitness.googleapis.com",
+            "times_queried": 134,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "www.gstatic.com",
@@ -273,15 +279,9 @@
             "last_query": "2025-05-07 12:20:25"
         },
         {
-            "domain": "fitness.googleapis.com",
-            "times_queried": 133,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 06:40:14"
-        },
-        {
             "domain": "api.pinterest.com",
-            "times_queried": 127,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 128,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 11:18:35"
         },
         {
@@ -292,8 +292,8 @@
         },
         {
             "domain": "mail-attachment.googleusercontent.com",
-            "times_queried": 122,
-            "first_query": "2025-05-19 06:39:46",
+            "times_queried": 123,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 08:02:09"
         },
         {
@@ -304,8 +304,8 @@
         },
         {
             "domain": "android.apis.google.com",
-            "times_queried": 105,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 106,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -321,6 +321,12 @@
             "last_query": "2025-05-08 14:43:27"
         },
         {
+            "domain": "peoplestack-pa.googleapis.com",
+            "times_queried": 102,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 09:15:20"
+        },
+        {
             "domain": "androidattestationvalidation-pa.googleapis.com",
             "times_queried": 101,
             "first_query": "2025-05-13 15:15:02",
@@ -333,15 +339,9 @@
             "last_query": "2025-05-07 15:26:04"
         },
         {
-            "domain": "peoplestack-pa.googleapis.com",
-            "times_queried": 98,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 09:15:20"
-        },
-        {
             "domain": "dldir1v6.qq.com",
-            "times_queried": 97,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 98,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -370,8 +370,8 @@
         },
         {
             "domain": "google-analytics.com",
-            "times_queried": 89,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 90,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 09:15:20"
         },
         {
@@ -387,6 +387,12 @@
             "last_query": "2025-05-07 06:40:14"
         },
         {
+            "domain": "trk.pinterest.com",
+            "times_queried": 80,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 11:18:35"
+        },
+        {
             "domain": "i.ytimg.com",
             "times_queried": 79,
             "first_query": "2025-05-16 23:44:26",
@@ -397,12 +403,6 @@
             "times_queried": 78,
             "first_query": "2025-05-16 14:41:20",
             "last_query": "2025-05-07 12:20:25"
-        },
-        {
-            "domain": "trk.pinterest.com",
-            "times_queried": 78,
-            "first_query": "2025-05-17 12:24:46",
-            "last_query": "2025-05-07 11:18:35"
         },
         {
             "domain": "api.weather.com",
@@ -525,16 +525,16 @@
             "last_query": "2025-05-07 12:20:25"
         },
         {
+            "domain": "firebaselogging-pa.googleapis.com",
+            "times_queried": 59,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 09:15:20"
+        },
+        {
             "domain": "mdds-i-tc.fidelity.com",
             "times_queried": 59,
             "first_query": "2025-05-16 20:43:34",
             "last_query": "2025-05-07 13:22:33"
-        },
-        {
-            "domain": "firebaselogging-pa.googleapis.com",
-            "times_queried": 58,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 09:15:20"
         },
         {
             "domain": "i.redd.it",
@@ -549,16 +549,16 @@
             "last_query": "2025-05-07 11:18:35"
         },
         {
+            "domain": "taskassist-pa.googleapis.com",
+            "times_queried": 56,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 11:18:35"
+        },
+        {
             "domain": "cdn.ampproject.org",
             "times_queried": 55,
             "first_query": "2025-05-16 14:41:20",
             "last_query": "2025-05-07 13:22:33"
-        },
-        {
-            "domain": "taskassist-pa.googleapis.com",
-            "times_queried": 55,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 11:18:35"
         },
         {
             "domain": "collect.ureca-lab.com",
@@ -579,16 +579,16 @@
             "last_query": "2025-05-07 11:18:35"
         },
         {
+            "domain": "diagmon-apigw.samsung.com.cn",
+            "times_queried": 53,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 06:40:14"
+        },
+        {
             "domain": "ecawsgateway.fidelity.com",
             "times_queried": 53,
             "first_query": "2025-05-16 20:43:34",
             "last_query": "2025-05-07 11:18:35"
-        },
-        {
-            "domain": "diagmon-apigw.samsung.com.cn",
-            "times_queried": 52,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "telemetry.api.swiftkey.com",
@@ -603,6 +603,12 @@
             "last_query": "2025-05-07 12:20:25"
         },
         {
+            "domain": "i.pinimg.com",
+            "times_queried": 51,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 11:18:35"
+        },
+        {
             "domain": "sdk.iad-01.braze.com",
             "times_queried": 51,
             "first_query": "2025-05-14 17:26:18",
@@ -615,15 +621,9 @@
             "last_query": "2025-05-07 11:18:35"
         },
         {
-            "domain": "i.pinimg.com",
-            "times_queried": 50,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 11:18:35"
-        },
-        {
             "domain": "firebaseremoteconfig.googleapis.com",
-            "times_queried": 48,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 49,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -639,16 +639,16 @@
             "last_query": "2025-05-07 14:24:26"
         },
         {
+            "domain": "mobileconfiguration-pa.googleapis.com",
+            "times_queried": 45,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 09:15:20"
+        },
+        {
             "domain": "googlehomefoyer-pa.googleapis.com",
             "times_queried": 44,
             "first_query": "2025-05-19 06:39:46",
             "last_query": "2025-05-07 13:22:33"
-        },
-        {
-            "domain": "mobileconfiguration-pa.googleapis.com",
-            "times_queried": 44,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 09:15:20"
         },
         {
             "domain": "styles.redditmedia.com",
@@ -969,6 +969,12 @@
             "last_query": "2025-05-07 17:29:06"
         },
         {
+            "domain": "chromesyncpasswords-pa.googleapis.com",
+            "times_queried": 20,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 20:33:39"
+        },
+        {
             "domain": "cloud.video.alibaba.com",
             "times_queried": 20,
             "first_query": "2025-05-17 15:26:20",
@@ -1021,12 +1027,6 @@
             "times_queried": 20,
             "first_query": "2025-05-17 12:24:46",
             "last_query": "2025-05-07 08:02:09"
-        },
-        {
-            "domain": "chromesyncpasswords-pa.googleapis.com",
-            "times_queried": 19,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 20:33:39"
         },
         {
             "domain": "clouddisk.alibaba.com",
@@ -1113,6 +1113,12 @@
             "last_query": "2025-05-07 12:20:25"
         },
         {
+            "domain": "dls.di.atlas.samsung.com",
+            "times_queried": 16,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-07 14:24:26"
+        },
+        {
             "domain": "yt3.ggpht.com",
             "times_queried": 16,
             "first_query": "2025-05-14 14:25:14",
@@ -1123,12 +1129,6 @@
             "times_queried": 15,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-08 06:51:40"
-        },
-        {
-            "domain": "dls.di.atlas.samsung.com",
-            "times_queried": 15,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-07 14:24:26"
         },
         {
             "domain": "gcp-img.slatic.net",
@@ -2343,6 +2343,30 @@
             "last_query": "2025-05-07 20:33:39"
         },
         {
+            "domain": "tos-dev-getdata.samsung-dict.com",
+            "times_queried": 4,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 07:04:04"
+        },
+        {
+            "domain": "tos-prod-getdata.samsung-dict.com",
+            "times_queried": 4,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 07:04:04"
+        },
+        {
+            "domain": "tos-stg-getdata.samsung-dict.com",
+            "times_queried": 4,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 07:04:04"
+        },
+        {
+            "domain": "umc-cdn.secb2b.com",
+            "times_queried": 4,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 07:04:04"
+        },
+        {
             "domain": "us-ummt.alibaba.com",
             "times_queried": 4,
             "first_query": "2025-05-12 04:03:13",
@@ -2859,30 +2883,6 @@
             "last_query": "2025-05-10 05:53:09"
         },
         {
-            "domain": "tos-dev-getdata.samsung-dict.com",
-            "times_queried": 3,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 07:04:04"
-        },
-        {
-            "domain": "tos-prod-getdata.samsung-dict.com",
-            "times_queried": 3,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 07:04:04"
-        },
-        {
-            "domain": "tos-stg-getdata.samsung-dict.com",
-            "times_queried": 3,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 07:04:04"
-        },
-        {
-            "domain": "umc-cdn.secb2b.com",
-            "times_queried": 3,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 07:04:04"
-        },
-        {
             "domain": "video.twimg.com",
             "times_queried": 3,
             "first_query": "2025-05-13 21:16:57",
@@ -2911,6 +2911,12 @@
             "times_queried": 3,
             "first_query": "2025-05-16 14:41:20",
             "last_query": "2025-05-07 12:20:25"
+        },
+        {
+            "domain": "z-m-gateway.facebook.com",
+            "times_queried": 3,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-19 09:36:00"
         },
         {
             "domain": "0.gravatar.com",
@@ -3913,12 +3919,6 @@
             "times_queried": 2,
             "first_query": "2025-05-09 13:30:53",
             "last_query": "2025-05-09 13:30:53"
-        },
-        {
-            "domain": "z-m-gateway.facebook.com",
-            "times_queried": 2,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-19 09:36:00"
         },
         {
             "domain": "1.datadog.pool.ntp.org",
@@ -5947,6 +5947,16 @@
             "last_seen": "103337470"
         },
         {
+            "destination": "172.217.161.202",
+            "port": 443,
+            "protocol": 17,
+            "flow_count": 236,
+            "total_packets": 7113,
+            "total_bytes": 3266633,
+            "first_seen": "2025-05-19 11:02:14",
+            "last_seen": "10630056"
+        },
+        {
             "destination": "110.163.41.160",
             "port": 443,
             "protocol": 17,
@@ -5965,16 +5975,6 @@
             "total_bytes": 3257935,
             "first_seen": "2025-05-19 08:33:14",
             "last_seen": "107998270"
-        },
-        {
-            "destination": "172.217.161.202",
-            "port": 443,
-            "protocol": 17,
-            "flow_count": 235,
-            "total_packets": 7095,
-            "total_bytes": 3257095,
-            "first_seen": "2025-05-19 06:55:04",
-            "last_seen": "10630056"
         },
         {
             "destination": "157.240.31.63",

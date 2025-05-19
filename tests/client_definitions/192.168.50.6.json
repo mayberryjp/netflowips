@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.6",
-    "export_date": "2025-05-19T11:01:54.436684",
+    "export_date": "2025-05-19T11:30:42.363501",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.6",
@@ -9,45 +9,51 @@
         "dhcp_hostname": null,
         "dns_hostname": "galaxy-tab.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Hiace Galaxy Tablet Samsung",
-        "local_description": "galaxy-tab"
+        "lease_hostname": "galaxy-tab",
+        "icon": "TABLET",
+        "local_description": "Hiace Galaxy Tablet Samsung"
     },
     "dns_queries": [
         {
             "domain": "www.google.com",
-            "times_queried": 112,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 118,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 18:58:46"
         },
         {
             "domain": "play.googleapis.com",
-            "times_queried": 98,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 104,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
             "domain": "mobilemaps-pa-gz.googleapis.com",
-            "times_queried": 84,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 88,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
             "domain": "connectivitycheck.gstatic.com",
-            "times_queried": 72,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 76,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 18:58:46"
         },
         {
             "domain": "www.googleapis.com",
-            "times_queried": 51,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 53,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
             "domain": "play-fe.googleapis.com",
-            "times_queried": 49,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 51,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-11 23:00:48"
+        },
+        {
+            "domain": "in.appcenter.ms",
+            "times_queried": 47,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
@@ -57,10 +63,10 @@
             "last_query": "2025-05-11 23:00:48"
         },
         {
-            "domain": "in.appcenter.ms",
-            "times_queried": 46,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-11 23:00:48"
+            "domain": "youtubei.googleapis.com",
+            "times_queried": 40,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
         },
         {
             "domain": "gae2-spclient.spotify.com",
@@ -75,27 +81,21 @@
             "last_query": "2025-05-11 23:00:48"
         },
         {
-            "domain": "youtubei.googleapis.com",
-            "times_queried": 37,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
             "domain": "android.googleapis.com",
-            "times_queried": 33,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 34,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
             "domain": "dcg.microsoft.com",
-            "times_queried": 33,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 34,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
             "domain": "i.ytimg.com",
-            "times_queried": 33,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 34,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
@@ -111,6 +111,12 @@
             "last_query": "2025-05-12 07:04:04"
         },
         {
+            "domain": "prod-lt-playstoregatewayadapter-pa.googleapis.com",
+            "times_queried": 28,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
             "domain": "translate-pa.googleapis.com",
             "times_queried": 28,
             "first_query": "2025-05-19 09:51:53",
@@ -123,9 +129,15 @@
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "prod-lt-playstoregatewayadapter-pa.googleapis.com",
-            "times_queried": 26,
-            "first_query": "2025-05-19 09:51:53",
+            "domain": "playstoregatewayadapter-pa.googleapis.com",
+            "times_queried": 25,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
+            "domain": "app-measurement.com",
+            "times_queried": 24,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
@@ -135,21 +147,21 @@
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "playstoregatewayadapter-pa.googleapis.com",
-            "times_queried": 24,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
-            "domain": "app-measurement.com",
-            "times_queried": 23,
-            "first_query": "2025-05-18 03:30:22",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
             "domain": "play-lh.googleusercontent.com",
+            "times_queried": 24,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
+            "domain": "mtalk.google.com",
             "times_queried": 23,
-            "first_query": "2025-05-19 09:51:53",
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-11 18:58:46"
+        },
+        {
+            "domain": "android.clients.google.com",
+            "times_queried": 22,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
@@ -159,32 +171,20 @@
             "last_query": "2025-05-11 23:00:48"
         },
         {
-            "domain": "mtalk.google.com",
-            "times_queried": 22,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-11 18:58:46"
-        },
-        {
-            "domain": "android.clients.google.com",
-            "times_queried": 21,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
             "domain": "firebase-settings.crashlytics.com",
             "times_queried": 21,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "searchnotifications-pa.googleapis.com",
+            "domain": "play.samsungcloud.com",
             "times_queried": 20,
-            "first_query": "2025-05-19 09:51:53",
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
-            "domain": "play.samsungcloud.com",
-            "times_queried": 19,
+            "domain": "searchnotifications-pa.googleapis.com",
+            "times_queried": 20,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-11 23:00:48"
         },
@@ -202,8 +202,8 @@
         },
         {
             "domain": "dls-udc.dqa.samsung.com",
-            "times_queried": 16,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 17,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-11 23:00:48"
         },
         {
@@ -267,16 +267,22 @@
             "last_query": "2025-05-11 23:00:48"
         },
         {
+            "domain": "dls.di.atlas.samsung.com",
+            "times_queried": 12,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-11 23:00:48"
+        },
+        {
             "domain": "locationhistory-pa.googleapis.com",
             "times_queried": 12,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "dls.di.atlas.samsung.com",
-            "times_queried": 11,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-11 23:00:48"
+            "domain": "playatoms-pa.googleapis.com",
+            "times_queried": 12,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
         },
         {
             "domain": "firebaseinstallations.googleapis.com",
@@ -291,15 +297,15 @@
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "playatoms-pa.googleapis.com",
+            "domain": "oneclient.sfx.ms",
             "times_queried": 11,
-            "first_query": "2025-05-19 00:37:52",
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
-            "domain": "oneclient.sfx.ms",
+            "domain": "ers.samsungcloud.com",
             "times_queried": 10,
-            "first_query": "2025-05-19 09:51:53",
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-12 04:03:13"
         },
         {
@@ -321,12 +327,6 @@
             "last_query": "2025-05-12 22:08:49"
         },
         {
-            "domain": "ers.samsungcloud.com",
-            "times_queried": 9,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
             "domain": "federatedcompute-pa.googleapis.com",
             "times_queried": 9,
             "first_query": "2025-05-19 09:51:53",
@@ -345,6 +345,18 @@
             "last_query": "2025-05-12 04:03:13"
         },
         {
+            "domain": "beacons.gcp.gvt2.com",
+            "times_queried": 8,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-16 23:44:26"
+        },
+        {
+            "domain": "beacons.gvt2.com",
+            "times_queried": 8,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-15 20:35:12"
+        },
+        {
             "domain": "lamssettings-pa.googleapis.com",
             "times_queried": 8,
             "first_query": "2025-05-19 09:51:53",
@@ -355,18 +367,6 @@
             "times_queried": 8,
             "first_query": "2025-05-18 18:36:04",
             "last_query": "2025-05-12 07:04:04"
-        },
-        {
-            "domain": "beacons.gcp.gvt2.com",
-            "times_queried": 7,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-16 23:44:26"
-        },
-        {
-            "domain": "beacons.gvt2.com",
-            "times_queried": 7,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-15 20:35:12"
         },
         {
             "domain": "footprints-pa.googleapis.com",
@@ -385,6 +385,12 @@
             "times_queried": 7,
             "first_query": "2025-05-19 00:37:52",
             "last_query": "2025-05-12 19:07:58"
+        },
+        {
+            "domain": "safebrowsing.googleapis.com",
+            "times_queried": 7,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 13:05:49"
         },
         {
             "domain": "time.google.com",
@@ -409,12 +415,6 @@
             "times_queried": 6,
             "first_query": "2025-05-18 03:30:22",
             "last_query": "2025-05-13 04:15:52"
-        },
-        {
-            "domain": "safebrowsing.googleapis.com",
-            "times_queried": 6,
-            "first_query": "2025-05-18 09:32:09",
-            "last_query": "2025-05-12 13:05:49"
         },
         {
             "domain": "suggestqueries.google.com",
@@ -453,10 +453,34 @@
             "last_query": "2025-05-12 04:03:13"
         },
         {
+            "domain": "poll.gras.samsungdm.com",
+            "times_queried": 5,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
             "domain": "rr3---sn-3pm7kn7z.googlevideo.com",
             "times_queried": 5,
             "first_query": "2025-05-18 03:30:22",
             "last_query": "2025-05-16 02:37:07"
+        },
+        {
+            "domain": "tos-dev-getdata.samsung-dict.com",
+            "times_queried": 5,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
+            "domain": "tos-prod-getdata.samsung-dict.com",
+            "times_queried": 5,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
+        },
+        {
+            "domain": "tos-stg-getdata.samsung-dict.com",
+            "times_queried": 5,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-12 04:03:13"
         },
         {
             "domain": "calendarpushsubscription-pa.googleapis.com",
@@ -501,12 +525,6 @@
             "last_query": "2025-05-16 02:37:07"
         },
         {
-            "domain": "poll.gras.samsungdm.com",
-            "times_queried": 4,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
             "domain": "rr1---sn-ouuqvjvhv-ioqe7.googlevideo.com",
             "times_queried": 4,
             "first_query": "2025-05-16 05:38:01",
@@ -517,24 +535,6 @@
             "times_queried": 4,
             "first_query": "2025-05-19 09:51:53",
             "last_query": "2025-05-16 23:44:26"
-        },
-        {
-            "domain": "tos-dev-getdata.samsung-dict.com",
-            "times_queried": 4,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
-            "domain": "tos-prod-getdata.samsung-dict.com",
-            "times_queried": 4,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
-        },
-        {
-            "domain": "tos-stg-getdata.samsung-dict.com",
-            "times_queried": 4,
-            "first_query": "2025-05-19 09:51:53",
-            "last_query": "2025-05-12 04:03:13"
         },
         {
             "domain": "userlocation.googleapis.com",
@@ -613,6 +613,12 @@
             "times_queried": 3,
             "first_query": "2025-05-18 03:30:22",
             "last_query": "2025-05-13 01:09:43"
+        },
+        {
+            "domain": "voledevice-pa.googleapis.com",
+            "times_queried": 3,
+            "first_query": "2025-05-19 11:02:11",
+            "last_query": "2025-05-15 11:31:40"
         },
         {
             "domain": "alt2-mtalk.google.com",
@@ -751,12 +757,6 @@
             "times_queried": 2,
             "first_query": "2025-05-17 18:27:27",
             "last_query": "2025-05-16 02:37:07"
-        },
-        {
-            "domain": "voledevice-pa.googleapis.com",
-            "times_queried": 2,
-            "first_query": "2025-05-16 11:40:00",
-            "last_query": "2025-05-15 11:31:40"
         },
         {
             "domain": "www.googleadservices.com",

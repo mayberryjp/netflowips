@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.27",
-    "export_date": "2025-05-19T11:01:51.592195",
+    "export_date": "2025-05-19T11:30:39.425432",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.27",
@@ -9,21 +9,21 @@
         "dhcp_hostname": "newpetkit.832-5.com",
         "dns_hostname": "newpetkit.832-5.com.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Petkit Duo",
-        "local_description": "newpetkit"
+        "lease_hostname": "newpetkit",
+        "icon": "PET_FEEDER",
+        "local_description": "Petkit Duo"
     },
     "dns_queries": [
         {
             "domain": "api.petkt.com",
-            "times_queried": 8905,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 9079,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "upload.qiniup.com",
-            "times_queried": 2893,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 2937,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -44,10 +44,10 @@
             "destination": "134.70.124.2",
             "port": 443,
             "protocol": 6,
-            "flow_count": 1481,
-            "total_packets": 1827938,
-            "total_bytes": 2532356648,
-            "first_seen": "2025-05-19 08:27:21",
+            "flow_count": 1482,
+            "total_packets": 1828144,
+            "total_bytes": 2532633129,
+            "first_seen": "2025-05-19 11:02:14",
             "last_seen": "1006960"
         },
         {
@@ -94,10 +94,10 @@
             "destination": "128.1.157.230",
             "port": 80,
             "protocol": 6,
-            "flow_count": 419,
-            "total_packets": 9060,
-            "total_bytes": 8918816,
-            "first_seen": "2025-05-19 08:10:51",
+            "flow_count": 420,
+            "total_packets": 9102,
+            "total_bytes": 8971458,
+            "first_seen": "2025-05-19 11:02:14",
             "last_seen": "10028174"
         },
         {

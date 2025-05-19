@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.49",
-    "export_date": "2025-05-19T11:01:52.748194",
+    "export_date": "2025-05-19T11:30:40.662829",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.49",
@@ -9,21 +9,21 @@
         "dhcp_hostname": "emporiavue.832-5.com",
         "dns_hostname": "emporiavue.832-5.com.",
         "os_fingerprint": "Garmin_embedded_None_96",
-        "lease_hostname": null,
-        "icon": "Emporia Vue Gen 2",
-        "local_description": "emporiavue"
+        "lease_hostname": "emporiavue",
+        "icon": "ENERGY_MONITOR",
+        "local_description": "Emporia Vue Gen 2"
     },
     "dns_queries": [
         {
             "domain": "pool.ntp.org",
-            "times_queried": 490,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 499,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 10:16:49"
         },
         {
             "domain": "time.google.com",
-            "times_queried": 137,
-            "first_query": "2025-05-19 09:51:53",
+            "times_queried": 140,
+            "first_query": "2025-05-19 11:02:11",
             "last_query": "2025-05-07 06:40:14"
         },
         {

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.220",
-    "export_date": "2025-05-19T11:01:51.347557",
+    "export_date": "2025-05-19T11:30:39.146280",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.220",
@@ -10,8 +10,8 @@
         "dns_hostname": "frigate.",
         "os_fingerprint": "Linux_Linux_4.X_100",
         "lease_hostname": null,
-        "icon": "Frigate Unbuntu Server/Docker",
-        "local_description": null
+        "icon": "SERVER",
+        "local_description": "Frigate Unbuntu Server/Docker"
     },
     "dns_queries": [
         {
@@ -86,10 +86,10 @@
             "destination": "192.168.52.5",
             "port": 443,
             "protocol": 6,
-            "flow_count": 16462,
-            "total_packets": 272313,
-            "total_bytes": 38470226,
-            "first_seen": "2025-05-19 08:50:55",
+            "flow_count": 16463,
+            "total_packets": 272328,
+            "total_bytes": 38472490,
+            "first_seen": "2025-05-19 11:02:14",
             "last_seen": "100001519"
         },
         {
@@ -1883,6 +1883,16 @@
             "last_seen": "341996897"
         },
         {
+            "destination": "34.216.59.139",
+            "port": 8883,
+            "protocol": 6,
+            "flow_count": 138,
+            "total_packets": 2030,
+            "total_bytes": 356034,
+            "first_seen": "2025-05-19 11:02:14",
+            "last_seen": "1007879"
+        },
+        {
             "destination": "35.166.11.152",
             "port": 8883,
             "protocol": 6,
@@ -2051,16 +2061,6 @@
             "total_bytes": 346304,
             "first_seen": "2025-05-16 09:40:54",
             "last_seen": "105117"
-        },
-        {
-            "destination": "34.216.59.139",
-            "port": 8883,
-            "protocol": 6,
-            "flow_count": 134,
-            "total_packets": 1974,
-            "total_bytes": 346010,
-            "first_seen": "2025-05-19 06:10:16",
-            "last_seen": "1007879"
         },
         {
             "destination": "54.213.34.170",
@@ -7143,6 +7143,16 @@
             "last_seen": "222036002"
         },
         {
+            "destination": "34.208.162.154",
+            "port": 8883,
+            "protocol": 6,
+            "flow_count": 41,
+            "total_packets": 583,
+            "total_bytes": 103603,
+            "first_seen": "2025-05-19 11:02:14",
+            "last_seen": "1605194"
+        },
+        {
             "destination": "44.242.38.165",
             "port": 8883,
             "protocol": 6,
@@ -7301,16 +7311,6 @@
             "total_bytes": 101568,
             "first_seen": "2025-05-19 06:38:32",
             "last_seen": "15773394"
-        },
-        {
-            "destination": "34.208.162.154",
-            "port": 8883,
-            "protocol": 6,
-            "flow_count": 40,
-            "total_packets": 567,
-            "total_bytes": 100924,
-            "first_seen": "2025-05-19 08:22:37",
-            "last_seen": "33541075"
         },
         {
             "destination": "35.161.238.94",

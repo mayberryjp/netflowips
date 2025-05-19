@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.65",
-    "export_date": "2025-05-19T11:01:54.228865",
+    "export_date": "2025-05-19T11:30:42.170941",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.65",
@@ -9,9 +9,9 @@
         "dhcp_hostname": null,
         "dns_hostname": "garminscale.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Garmin Scale",
-        "local_description": "garminscale2"
+        "lease_hostname": "garminscale2",
+        "icon": "SCALE",
+        "local_description": "Garmin Scale"
     },
     "dns_queries": [
         {

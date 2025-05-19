@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.4",
-    "export_date": "2025-05-19T11:01:54.247743",
+    "export_date": "2025-05-19T11:30:42.193121",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.4",
@@ -9,9 +9,9 @@
         "dhcp_hostname": null,
         "dns_hostname": "nest-doorbell-frontyard.832-5.com.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Nest Doorbell Frontyard",
-        "local_description": "nest-doorbell-frontyard"
+        "lease_hostname": "nest-doorbell-frontyard",
+        "icon": "DOORBELL_CAMERA",
+        "local_description": "Nest Doorbell Frontyard"
     },
     "dns_queries": [
         {

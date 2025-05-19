@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.54",
-    "export_date": "2025-05-19T11:01:54.098814",
+    "export_date": "2025-05-19T11:30:42.077257",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.54",
@@ -9,9 +9,9 @@
         "dhcp_hostname": null,
         "dns_hostname": "rinnai.832-5.com.",
         "os_fingerprint": "Bell Labs_Plan 9_None_85",
-        "lease_hostname": null,
-        "icon": "Rinnai Water Heater",
-        "local_description": "rinnai"
+        "lease_hostname": "rinnai",
+        "icon": "WATER_HEATER",
+        "local_description": "Rinnai Water Heater"
     },
     "dns_queries": [
         {

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.82",
-    "export_date": "2025-05-19T11:01:52.766259",
+    "export_date": "2025-05-19T11:30:40.709350",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.82",
@@ -10,20 +10,20 @@
         "dns_hostname": "huaweip70.",
         "os_fingerprint": "No OS fingerprint detected",
         "lease_hostname": null,
-        "icon": "Huawei Pura Ultra 70",
-        "local_description": null
+        "icon": "MOBILE_PHONE",
+        "local_description": "Huawei Pura Ultra 70"
     },
     "dns_queries": [
         {
             "domain": "grs.dbankcloud.com",
-            "times_queried": 297,
-            "first_query": "2025-05-19 09:51:47",
+            "times_queried": 299,
+            "first_query": "2025-05-19 11:02:12",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "connectivitycheck.platform.hicloud.com",
-            "times_queried": 131,
-            "first_query": "2025-05-19 09:51:47",
+            "times_queried": 135,
+            "first_query": "2025-05-19 11:02:12",
             "last_query": "2025-05-07 06:40:14"
         },
         {
@@ -40,8 +40,8 @@
         },
         {
             "domain": "g.whatsapp.net",
-            "times_queried": 38,
-            "first_query": "2025-05-19 09:51:47",
+            "times_queried": 40,
+            "first_query": "2025-05-19 11:02:12",
             "last_query": "2025-05-07 06:40:14"
         },
         {

@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.110",
-    "export_date": "2025-05-19T11:01:52.914752",
+    "export_date": "2025-05-19T11:30:40.872475",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.110",
@@ -10,8 +10,8 @@
         "dns_hostname": "unifi1.",
         "os_fingerprint": "Linux_Linux_5.X_100",
         "lease_hostname": null,
-        "icon": "Unifi U6 Pro AP",
-        "local_description": null
+        "icon": "WIFI_ACCESS_POINT",
+        "local_description": "Unifi U6 Pro AP"
     },
     "dns_queries": [
         {

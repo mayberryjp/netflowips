@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.17",
-    "export_date": "2025-05-19T11:01:53.652685",
+    "export_date": "2025-05-19T11:30:41.626771",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.17",
@@ -9,9 +9,9 @@
         "dhcp_hostname": "jrlaptop",
         "dns_hostname": "jrlaptop.",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "Thinkpad X1 Laptop",
-        "local_description": "jrlaptopwifi"
+        "lease_hostname": "jrlaptopwifi",
+        "icon": "LAPTOP",
+        "local_description": "Thinkpad X1 Laptop"
     },
     "dns_queries": [
         {

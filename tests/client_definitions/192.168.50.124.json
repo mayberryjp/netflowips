@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.124",
-    "export_date": "2025-05-19T11:01:52.654572",
+    "export_date": "2025-05-19T11:30:40.569902",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.124",
@@ -9,39 +9,39 @@
         "dhcp_hostname": "outdoor-alexa.832-5.com",
         "dns_hostname": "outdoor-alexa.832-5.com.",
         "os_fingerprint": "Linux_Linux_3.X_95",
-        "lease_hostname": null,
-        "icon": "Outdoor Alexa Echo Dot",
-        "local_description": "outdoor-alexa"
+        "lease_hostname": "outdoor-alexa",
+        "icon": "HOME_ASSISTANT",
+        "local_description": "Outdoor Alexa Echo Dot"
     },
     "dns_queries": [
         {
             "domain": "web.diagnostic.networking.aws.dev",
-            "times_queried": 2917,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 2962,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "api.amazonalexa.com",
-            "times_queried": 1973,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 2002,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "a32doymun6dtxa.us-east-1.prod.service.minerva.devices.a2z.com",
-            "times_queried": 1027,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 1043,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "api.amazon.com",
-            "times_queried": 257,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 261,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 06:40:14"
         },
         {
             "domain": "msh.amazon.com",
-            "times_queried": 82,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 83,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 08:02:09"
         },
         {
@@ -58,8 +58,8 @@
         },
         {
             "domain": "d2zprwa9w8uwyf.cloudfront.net",
-            "times_queried": 29,
-            "first_query": "2025-05-19 03:38:49",
+            "times_queried": 30,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 11:18:35"
         },
         {
@@ -82,8 +82,8 @@
         },
         {
             "domain": "dss-na.amazon.com",
-            "times_queried": 13,
-            "first_query": "2025-05-19 09:51:51",
+            "times_queried": 14,
+            "first_query": "2025-05-19 11:02:08",
             "last_query": "2025-05-07 13:22:33"
         },
         {
@@ -93,16 +93,16 @@
             "last_query": "2025-05-08 04:48:32"
         },
         {
+            "domain": "ffs-provisioner-config.amazon-dss.com",
+            "times_queried": 11,
+            "first_query": "2025-05-19 11:02:08",
+            "last_query": "2025-05-07 13:22:33"
+        },
+        {
             "domain": "device-messaging-na.amazon.com",
             "times_queried": 10,
             "first_query": "2025-05-19 06:39:46",
             "last_query": "2025-05-08 05:50:07"
-        },
-        {
-            "domain": "ffs-provisioner-config.amazon-dss.com",
-            "times_queried": 10,
-            "first_query": "2025-05-19 09:51:51",
-            "last_query": "2025-05-07 13:22:33"
         },
         {
             "domain": "softwareupdates.amazon.com",
@@ -140,10 +140,10 @@
             "destination": "3.163.195.32",
             "port": 443,
             "protocol": 6,
-            "flow_count": 1478,
-            "total_packets": 32429,
-            "total_bytes": 4020871,
-            "first_seen": "2025-05-19 08:48:33",
+            "flow_count": 1479,
+            "total_packets": 32456,
+            "total_bytes": 4024105,
+            "first_seen": "2025-05-19 11:02:14",
             "last_seen": "1023412"
         },
         {

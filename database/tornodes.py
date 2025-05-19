@@ -35,8 +35,13 @@ def get_all_tor_nodes():
         # Retrieve all Tor node IP addresses
         cursor.execute("SELECT ip_address FROM tornodes")
         
-        # Extract IP addresses from result rows
-        tor_nodes = [row[0] for row in cursor.fetchall()]
+        # Initialize empty array for tor nodes
+        tor_nodes = []
+        
+        # Extract IP addresses one by one and add to array
+        for row in cursor.fetchall():
+            ip_address = row[0]  # Extract just the IP address
+            tor_nodes.append(ip_address)  # Add it to the array
         
         log_info(logger, f"[INFO] Retrieved {len(tor_nodes)} Tor node IP addresses from database.")
         return tor_nodes

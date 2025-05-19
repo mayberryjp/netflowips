@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.3",
-    "export_date": "2025-05-19T11:01:54.480601",
+    "export_date": "2025-05-19T11:30:42.407842",
     "instance_identifier": "9a72641185275de6aee6384294035d373d4c94dc73c430210b6c1a3770519bb7",
     "host_info": {
         "ip_address": "192.168.50.3",
@@ -9,9 +9,9 @@
         "dhcp_hostname": null,
         "dns_hostname": "NXDOMAIN",
         "os_fingerprint": "No OS fingerprint detected",
-        "lease_hostname": null,
-        "icon": "DJI Mavic 3",
-        "local_description": "djimavic3"
+        "lease_hostname": "djimavic3",
+        "icon": "DRONE",
+        "local_description": "DJI Mavic 3"
     },
     "dns_queries": [],
     "flows": [
