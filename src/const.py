@@ -1,4 +1,5 @@
-VERSION="v0.2.122"
+VERSION="v0.2.710"
+# v3 is after consolidating database, v4 is moving to ORM, v5 is moving to constructor, v6 is integrating agent
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
 CONST_API_LISTEN_PORT=8044
@@ -11,7 +12,7 @@ CONST_SITE= 'TESTPPE'
 CONST_LINK_LOCAL_RANGE = ["169.254.0.0/16"]
 CONST_REINITIALIZE_DB = 0
 CONST_CREATE_NEWFLOWS_SQL='''
-    CREATE TABLE IF NOT EXISTS flows (
+    CREATE TABLE IF NOT EXISTS newflows (
         src_ip TEXT,
         dst_ip TEXT,
         src_port INTEGER,
@@ -97,7 +98,8 @@ CONST_CREATE_CUSTOMTAGS_SQL='''
 CONST_CREATE_CONFIG_SQL='''
     CREATE TABLE IF NOT EXISTS configuration (
         key TEXT PRIMARY KEY,
-        value INTEGER
+        value INT,
+        last_changed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )'''
 
 CONST_CREATE_GEOLOCATION_SQL="""
@@ -233,7 +235,7 @@ CONST_INSTALL_CONFIGS = [
     ('ManyDestinationsDetection','0'),
     ('MaxPortsPerDestination','15'),
     ('PortScanDetection','0'),
-    ('IntegrationFetchInterval',3660),
+    ('IntegrationFetchInterval',86400),
     ('TorFlowDetection','0'),
     ('TorNodesUrl','https://www.dan.me.uk/torlist/?full'),
     ('HighBandwidthFlowDetection','0'),

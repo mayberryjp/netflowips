@@ -2,15 +2,15 @@ import socket
 import struct
 from src.const import CONST_LINK_LOCAL_RANGE, CONST_COLLECTOR_LISTEN_ADDRESS, CONST_COLLECTOR_LISTEN_PORT, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import os
-from src.utils import log_info, log_error, calculate_broadcast
 import logging
 from datetime import datetime, timezone
-from src.database import connect_to_db, get_ignorelist, get_config_settings, disconnect_from_db
 from src.tags import apply_tags
 from queue import Queue
+from init import *
 import threading
 import time
 import json
+
 
 if (IS_CONTAINER):
     COLLECTOR_LISTEN_ADDRESS=os.getenv("COLLECTOR_LISTEN_ADDRESS", CONST_COLLECTOR_LISTEN_ADDRESS)
@@ -20,26 +20,7 @@ if (IS_CONTAINER):
 netflow_queue = Queue()
 
 # Update or insert flow in the DB
-def update_newflow(record):
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "flows")
-    c = conn.cursor()
-    now = datetime.now(timezone.utc).isoformat()
 
-    c.execute('''
-        INSERT INTO flows (
-            src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1,?)
-        ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
-        DO UPDATE SET 
-            packets = packets + excluded.packets,
-            bytes = bytes + excluded.bytes,
-            flow_end = excluded.flow_end,
-            last_seen = excluded.last_seen,
-            times_seen = times_seen + 1
-    ''', (record['src_ip'], record['dst_ip'], record['src_port'], record['dst_port'],record['protocol'], record['packets'], record['bytes'], record['start_time'], record['end_time'], now,  record['tags']))
-
-    conn.commit()
-    disconnect_from_db(conn)
 
 def parse_netflow_v5_header(data):
     # Unpack the header into its individual fields
@@ -148,7 +129,7 @@ def process_netflow_packets():
                         
                         # Apply tags and update flow database
                         record = apply_tags(record, ignorelist, broadcast_addresses, tag_entries, config_dict, CONST_LINK_LOCAL_RANGE)
-                        update_newflow(record)
+                        update_new_flow(record)
                         total_flows += 1
                         
                 log_info(logger, f"[INFO] Processed {total_flows} flows from {len(packets)} packets")

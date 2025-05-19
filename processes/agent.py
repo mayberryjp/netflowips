@@ -1,5 +1,4 @@
 import sys
-import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
@@ -9,6 +8,8 @@ src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
+from init import *
+
 import os
 import json
 import logging
@@ -17,7 +18,6 @@ import re
 from datetime import datetime
 from difflib import get_close_matches
 from bottle import Bottle, request, response, run
-from src.utils import log_error, log_info
 
 # Set up logging
 logger = logging.getLogger(__name__)

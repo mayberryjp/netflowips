@@ -3,12 +3,20 @@ import logging
 import sys
 from pathlib import Path
 
+import os
+import sqlite3
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+# Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from src.utils import log_info, log_error
+sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
 
 def authenticate_pihole(pihole_url, api_token):
     """

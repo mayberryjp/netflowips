@@ -1,12 +1,13 @@
 import sqlite3
 import json
 from datetime import datetime, timedelta
-from src.utils import log_info, is_ip_in_range, log_warn, log_error, ip_to_int # Assuming log_info and is_ip_in_range are defined in utils
-from src.const import CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB # Assuming constants are defined in const
-from src.database import  connect_to_db, log_alert_to_db, update_tag_to_allflows, disconnect_from_db
+from database.alerts import log_alert_to_db
+from database.allflows import update_tag_to_allflows
 from src.notifications import send_telegram_message  # Import notification functions
 import logging
 import requests
+from src.const import CONST_CONSOLIDATED_DB
+from init import *
 
 def update_local_hosts(rows, config_dict):
     """
@@ -16,21 +17,13 @@ def update_local_hosts(rows, config_dict):
     logger = logging.getLogger(__name__)
     log_info(logger,"[INFO] Starting to update local hosts")
     # Connect to the localhosts database
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
     LOCAL_NETWORKS=set(config_dict['LocalNetworks'].split(','))
-    if not conn:
-        log_error(logger, "[ERROR] Unable to connect to localhosts database")
-        return
 
     try:
-        localhosts_cursor = conn.cursor()
 
-        # Load all existing local hosts into memory
-        localhosts_cursor.execute("SELECT ip_address FROM localhosts")
-        existing_localhosts = set(row[0] for row in localhosts_cursor.fetchall())
+        existing_localhosts = set(row[0] for row in get_localhosts())
         log_info(logger, f"[INFO] Loaded {len(existing_localhosts)} existing local hosts into memory")
     
-
         for row in rows:
             for range_index in (0, 1):  # Assuming the IP addresses are in the first two columns
                 ip_address = row[range_index]
@@ -42,11 +35,8 @@ def update_local_hosts(rows, config_dict):
                     # Add the new IP to localhosts.db
                     first_seen = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     original_flow = json.dumps(row)  # Encode the original flow as JSON
-                    localhosts_cursor.execute(
-                        "INSERT INTO localhosts (ip_address, first_seen, original_flow) VALUES (?, ?, ?)",
-                        (ip_address, first_seen, original_flow)
-                    )
-                    conn.commit()
+                    insert_localhost_basic(ip_address, original_flow)
+
                     existing_localhosts.add(ip_address)  # Add to in-memory set
                     log_info(logger, f"[INFO] Added new IP to localhosts.db: {ip_address}")
                     
@@ -66,8 +56,7 @@ def update_local_hosts(rows, config_dict):
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error in update_local_hosts: {e}")
-    finally:
-        disconnect_from_db(conn)
+
 
     log_info(logger,"[INFO] Finished updating local hosts")
 
@@ -82,15 +71,10 @@ def detect_new_outbound_connections(rows, config_dict):
     """
     logger = logging.getLogger(__name__)
     log_info(logger,f"[INFO] Preparing to detect new outbound connections")
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
 
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
-    if not conn:
-        log_error(logger, "[ERROR] Unable to connect to alerts database")
-        return
 
     try:
-        alerts_cursor = conn.cursor()
 
         for row in rows:
             src_ip, dst_ip, src_port, dst_port, protocol = row[0:5]
@@ -107,13 +91,9 @@ def detect_new_outbound_connections(rows, config_dict):
                 # Create a unique identifier for this connection
                 alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_NewOutboundDetection"
                 
-                # Check if this connection has been alerted before
-                alerts_cursor.execute("""
-                    SELECT COUNT(*) FROM alerts 
-                    WHERE id = ?
-                """, (alert_id,))
-                
-                exists = alerts_cursor.fetchone()[0] > 0
+                count = get_alert_count_by_id(alert_id)
+
+                exists = count > 0
                 
                 if not exists:
                     message = (f"New outbound connection detected:\n"
@@ -137,8 +117,6 @@ def detect_new_outbound_connections(rows, config_dict):
 
     except Exception as e:
         log_error(logger, f"[ERROR] Error in detect_new_outbound_connections: {e}")
-    finally:
-        disconnect_from_db(conn)
     
     log_info(logger,f"[INFO] Finished detecting new outbound connections")
 
@@ -600,109 +578,50 @@ def detect_dead_connections(config_dict):
     """
     logger = logging.getLogger(__name__)
     log_info(logger, f"[INFO] Started detecting unresponsive destinations")
-    try:
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
-        if not conn:
-            log_error(logger, "[ERROR] Unable to connect to allflows database")
-            return
 
-        cursor = conn.cursor()
+    # Get local networks from the configuration
+    LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    dead_connections = get_dead_connections_from_database()
 
-        # Get local networks from the configuration
-        LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
+    log_info(logger, f"[INFO] Found {len(dead_connections)} potential dead connections")
 
-        # Query for dead connections
-        cursor.execute("""
-                WITH ConnectionPairs AS (
-                    SELECT 
-                        a1.src_ip as initiator_ip,
-                        a1.dst_ip as responder_ip,
-                        a1.src_port as initiator_port,
-                        a1.dst_port as responder_port,
-                        a1.protocol as connection_protocol,
-                        a1.packets as forward_packets,
-                        a1.bytes as forward_bytes,
-                        a1.times_seen as forward_seen,
-                        a1.tags as row_tags,
-                        COALESCE(a2.packets, 0) as reverse_packets,
-                        COALESCE(a2.bytes, 0) as reverse_bytes,
-                        COALESCE(a2.times_seen, 0) as reverse_seen
-                    FROM allflows a1
-                    LEFT JOIN allflows a2 ON 
-                        a2.src_ip = a1.dst_ip 
-                        AND a2.dst_ip = a1.src_ip
-                        AND a2.src_port = a1.dst_port
-                        AND a2.dst_port = a1.src_port
-                        AND a2.protocol = a1.protocol
-                )
-                SELECT 
-                    initiator_ip,
-                    responder_ip,
-                    responder_port,
-                    forward_packets,
-                    reverse_packets,
-                    connection_protocol,
-                    row_tags,
-                    COUNT(*) as connection_count,
-                    sum(forward_packets) as f_packets,
-                    sum(reverse_packets) as r_packets
-                FROM ConnectionPairs
-                WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
-                AND row_tags not like '%DeadConnectionDetection%'
-                AND responder_ip NOT LIKE '224%'  -- Exclude multicast
-                AND responder_ip NOT LIKE '239%'  -- Exclude multicast
-                AND responder_ip NOT LIKE '255%'  -- Exclude broadcast
-                GROUP BY initiator_ip, responder_ip, responder_port, connection_protocol
-                HAVING 
-                    f_packets > 2
-                    AND r_packets < 1
-        """)
+    for row in dead_connections:
+        src_ip = row[0]
+        dst_ip = row[1]
+        dst_port = row[2]
+        protocol = row[5]
+        row_tags = row[6]  # Existing tags for the flow
 
-        dead_connections = cursor.fetchall()
-        log_info(logger, f"[INFO] Found {len(dead_connections)} potential dead connections")
+        # Skip if src_ip is not in LOCAL_NETWORKS
+        if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
+            continue
 
-        for row in dead_connections:
-            src_ip = row[0]
-            dst_ip = row[1]
-            dst_port = row[2]
-            protocol = row[5]
-            row_tags = row[6]  # Existing tags for the flow
-
-            # Skip if src_ip is not in LOCAL_NETWORKS
-            if not is_ip_in_range(src_ip, LOCAL_NETWORKS):
-                continue
-
-            alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
-            
-            message = (f"Dead Connection Detected:\n"
-                      f"Source: {src_ip}\n"
-                      f"Destination: {dst_ip}:{dst_port}\n"
-                      f"Protocol: {protocol}\n")
-            
-            log_info(logger, f"[INFO] Dead connection detected: {src_ip}->{dst_ip}:{dst_port} {protocol}")
-            
-            # Add a Tag to the matching row using update_tag
-            if not update_tag_to_allflows("allflows", "DeadConnectionDetection;", src_ip, dst_ip, dst_port):
-                log_error(logger, f"[ERROR] Failed to add tag for flow: {src_ip} -> {dst_ip}:{dst_port}")
+        alert_id = f"{src_ip}_{dst_ip}_{protocol}_{dst_port}_DeadConnection"
+        
+        message = (f"Dead Connection Detected:\n"
+                    f"Source: {src_ip}\n"
+                    f"Destination: {dst_ip}:{dst_port}\n"
+                    f"Protocol: {protocol}\n")
+        
+        log_info(logger, f"[INFO] Dead connection detected: {src_ip}->{dst_ip}:{dst_port} {protocol}")
+        
+        # Add a Tag to the matching row using update_tag
+        if not update_tag_to_allflows("allflows", "DeadConnectionDetection;", src_ip, dst_ip, dst_port):
+            log_error(logger, f"[ERROR] Failed to add tag for flow: {src_ip} -> {dst_ip}:{dst_port}")
 
 
-            handle_alert(
-                config_dict,
-                "DeadConnectionDetection",
-                message,
-                src_ip,
-                row,
-                "Dead Connection Detected",
-                dst_ip,
-                dst_port,
-                alert_id
-            )
+        handle_alert(
+            config_dict,
+            "DeadConnectionDetection",
+            message,
+            src_ip,
+            row,
+            "Dead Connection Detected",
+            dst_ip,
+            dst_port,
+            alert_id
+        )
 
-    except sqlite3.Error as e:
-        log_error(logger, f"[ERROR] Database error in detect_dead_connections: {e}")
-    finally:
-        if 'conn' in locals():
-            disconnect_from_db(conn)
     log_info(logger, f"[INFO] Finished detecting unresponsive destinations")
 
 def detect_reputation_flows(rows, config_dict, reputation_data):
@@ -902,11 +821,9 @@ def detect_tor_traffic(rows, config_dict):
     LOCAL_NETWORKS = set(config_dict['LocalNetworks'].split(','))
     
     try:
-        # Get current Tor nodes
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "tornodes")
-        cursor = conn.cursor()
-        cursor.execute("SELECT ip_address FROM tornodes")
-        tor_nodes = set(row[0] for row in cursor.fetchall())
+        rows = get_all_tor_nodes()
+
+        tor_nodes = set(row[0] for row in rows)
         
         for row in rows:
             src_ip, dst_ip, src_port, dst_port, protocol, *_ = row
@@ -936,9 +853,7 @@ def detect_tor_traffic(rows, config_dict):
                     
     except Exception as e:
         log_error(logger, f"[ERROR] Error in detect_tor_traffic: {e}")
-    finally:
-        if 'conn' in locals():
-            disconnect_from_db(conn)
+
     log_info(logger,"[INFO] Finished detecting traffic to tor nodes")
 
 
@@ -1295,7 +1210,7 @@ def detect_custom_tag(rows, config_dict):
                        f"Protocol: {protocol}\n"
                        f"Matching Tags: {', '.join(matching_tags)}")
 
-            log_info(logger, f"[INFO] Custom tag alert detected: {src_ip} -> {dst_ip}:{dst_port} ")
+            log_info(logger, f"[INFO] Custom tag alert detected: {src_ip} -> {dst_ip}:{dst_port} Tags: {', '.join(matching_tags)} ")
 
             # Call the reusable function
             handle_alert(

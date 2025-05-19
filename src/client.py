@@ -5,9 +5,8 @@ from enum import Enum
 import logging
 from datetime import datetime
 import requests
-from src.utils import log_info, log_error, log_warn
-from src.database import get_machine_unique_identifier_from_db, get_localhosts, get_config_settings, connect_to_db, disconnect_from_db
 from src.const import CONST_CONSOLIDATED_DB
+from init import *
 
 class ActionType(Enum):
     """Placeholder for action types"""
@@ -38,13 +37,8 @@ def export_client_definition(client_ip):
         }
         
         # Get host information from localhosts.db
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
-        localhosts_cursor = conn.cursor()
-        localhosts_cursor.execute(
-            "SELECT * FROM localhosts WHERE ip_address = ?", 
-            (client_ip,)
-        )
-        host_record = localhosts_cursor.fetchone()
+        host_record = get_localhost_by_ip(client_ip)
+
         if host_record:
             client_data["host_info"] = {
                 "ip_address": host_record[0],
@@ -58,18 +52,7 @@ def export_client_definition(client_ip):
                 "local_description": host_record[8]
             }
         
-        # Get DNS queries with counts from dnsqueries.db
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "pihole")
-        dns_cursor = conn.cursor()
-        dns_cursor.execute("""
-            SELECT domain, sum(times_seen) as query_count, 
-                   MAX(last_seen) as last_query,
-                   MIN(first_seen) as first_query
-            FROM pihole 
-            WHERE client_ip = ?
-            GROUP BY domain
-            ORDER BY query_count DESC
-        """, (client_ip,))
+        dns_rows = get_client_dns_queries(client_ip)
         
         client_data["dns_queries"] = [
             {
@@ -78,25 +61,11 @@ def export_client_definition(client_ip):
                 "first_query": row[2],
                 "last_query": row[3]
             }
-            for row in dns_cursor.fetchall()
+            for row in dns_rows
         ]
         
-        # Get flows with aggregated statistics from allflows.db
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
-        flows_cursor = conn.cursor()
-        flows_cursor.execute("""
-            SELECT dst_ip, dst_port, protocol,
-                   sum(times_seen) as flow_count,
-                   SUM(packets) as total_packets,
-                   SUM(bytes) as total_bytes,
-                   MAX(last_seen) as last_flow,
-                   MIN(flow_start) as first_flow
-            FROM allflows 
-            WHERE src_ip = ?
-            GROUP BY dst_ip, dst_port, protocol
-            ORDER BY total_bytes DESC
-        """, (client_ip,))
-        
+        flows_rows = get_flows_by_source_ip(client_ip)
+
         client_data["flows"] = [
             {
                 "destination": row[0],
@@ -108,7 +77,7 @@ def export_client_definition(client_ip):
                 "first_seen": row[6],
                 "last_seen": row[7]
             }
-            for row in flows_cursor.fetchall()
+            for row in flows_rows
         ]
         
         return client_data
@@ -116,11 +85,6 @@ def export_client_definition(client_ip):
     except Exception as e:
         log_error(logger, f"[ERROR] Failed to export client definition for {client_ip}: {e}")
         return None
-    finally:
-        # Close all database connections
-        for conn in [conn, conn, conn]:
-            if 'conn' in locals() and conn:
-                disconnect_from_db(conn)
 
 def upload_client_definition(ip_address, client_data, machine_id):
     """

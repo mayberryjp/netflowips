@@ -6,13 +6,22 @@ import sys
 from src.const import CONST_CONSOLIDATED_DB
 from pathlib import Path
 
+import os
+import sqlite3
+import sys
+from datetime import datetime, timedelta
+from database.reputation import insert_reputation, get_all_reputation_records
+from pathlib import Path
+# Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from src.utils import log_info, log_error
-from src.database import connect_to_db, disconnect_from_db
+sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
+
 
 def import_reputation_list(config_dict):
     """
@@ -48,6 +57,7 @@ def import_reputation_list(config_dict):
 
             try:
                 network = ip_network(line)
+
                 # Exclude networks in the excluded list
                 if any(network.overlaps(excluded) for excluded in excluded_networks):
                     log_info(logger, f"[INFO] Excluding network: {line}")
@@ -57,24 +67,11 @@ def import_reputation_list(config_dict):
                 start_ip = int(network.network_address)
                 end_ip = int(network.broadcast_address)
                 netmask = network.prefixlen
-
+                insert_reputation(str(network), start_ip, end_ip, netmask)
                 processed_networks.append((str(network), start_ip, end_ip, netmask))
             except ValueError:
                 log_error(logger, f"[ERROR] Invalid network entry in reputation list: {line}")
 
-        log_info(logger, f"[INFO] Processed {len(processed_networks)} networks from reputation list.")
-
-        # Connect to the geolocations.db database
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "reputationlist")
-        cursor = conn.cursor()
-
-        # Insert the processed networks into the reputation table
-        cursor.executemany("""
-            INSERT OR IGNORE INTO reputationlist (network, start_ip, end_ip, netmask)
-            VALUES (?, ?, ?, ?)
-        """, processed_networks)
-
-        conn.commit()
         log_info(logger, f"[INFO] Imported {len(processed_networks)} networks into the reputation table.")
     except requests.exceptions.RequestException as e:
         log_error(logger, f"[ERROR] Failed to download reputation list: {e}")
@@ -82,12 +79,9 @@ def import_reputation_list(config_dict):
         log_error(logger, f"[ERROR] Database error: {e}")
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error: {e}")
-    finally:
-        if 'conn' in locals():
-            disconnect_from_db(conn)
 
 
-def load_reputation_data(config_dict):
+def load_reputation_data():
     """
     Load reputation list data from the database into memory.
 
@@ -95,16 +89,7 @@ def load_reputation_data(config_dict):
         list: A list of tuples containing (network, country_name).
     """
     logger = logging.getLogger(__name__)
-    geolocation_data = []
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "reputationlist")
-    if conn:
-        try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT network, start_ip, end_ip, netmask FROM reputationlist")
-            geolocation_data = cursor.fetchall()
-            log_info(logger, f"[INFO] Loaded {len(geolocation_data)} reputationlist entries into memory.")
-        except sqlite3.Error as e:
-            log_error(logger, f"[ERROR] Error loading reputationlist data: {e}")
-        finally:
-            disconnect_from_db(conn)
+
+    geolocation_data = get_all_reputation_records()
+
     return geolocation_data

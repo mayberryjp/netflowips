@@ -19,9 +19,8 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
     
 
-from src.database import get_localhosts
+from database.localhosts import get_localhosts
 from src.client import export_client_definition, classify_client
-from src.utils import dump_json, log_error, log_info
 from test_harness import get_master_classification
 
 # Configure logging

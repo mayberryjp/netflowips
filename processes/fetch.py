@@ -13,15 +13,13 @@ sys.path.insert(0, "/database")
 import time
 import logging
 from integrations.tor import update_tor_nodes
-from src.utils import log_info, log_error
-from src.database import get_config_settings, delete_old_traffic_stats
-from integrations.maxmind import create_geolocation_db
+from integrations.geolocation import create_geolocation_db
 from src.client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
 from integrations.services import create_services_db
 from src.const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
-
+from init import *
 
 if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
@@ -77,7 +75,7 @@ def main():
         try: 
             if config_dict.get('StorePiHoleDnsQueryHistory', 0) > 0:
                 log_info(logger, "[INFO] Fetching pihole dns query history...")
-                get_pihole_ftl_logs(20000,config_dict)
+                get_pihole_ftl_logs(50000,config_dict)
                 log_info(logger, "[INFO] Pihole dns query history finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")

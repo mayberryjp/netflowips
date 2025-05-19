@@ -12,9 +12,10 @@ sys.path.insert(0, "/database")
 import psutil
 import time
 from datetime import datetime
-from src.utils import log_error, log_info
 import logging
 from src.detached import insert_action_detached
+from init import *
+
 
 # List of required Python script names
 required_scripts = ["processor.py", "discovery.py", "api.py", "collector.py","fetch.py"]

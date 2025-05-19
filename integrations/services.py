@@ -3,9 +3,20 @@ import csv
 import logging
 import io
 import sqlite3
-from src.utils import log_info, log_error
-from src.database import connect_to_db, disconnect_from_db
-from src.const import CONST_CONSOLIDATED_DB, CONST_CREATE_SERVICES_SQL
+import os
+import sqlite3
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+# Set up path for imports
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
 
 def create_services_db():
     """
@@ -31,19 +42,11 @@ def create_services_db():
             log_error(logger, f"[ERROR] Failed to download IANA services CSV: {response.status_code}")
             return False
         
-        # Step 2: Connect to the database
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "services")
-        if not conn:
-            log_error(logger, f"[ERROR] Failed to connect to the database {CONST_CONSOLIDATED_DB}.")
-            return False
-            
-        cursor = conn.cursor()
-        
         # Step 4: Parse and insert the CSV data
         log_info(logger, "[INFO] Parsing and inserting IANA services data...")
         
+        delete_all_records(CONST_CONSOLIDATED_DB, "services")
         # Clear existing data
-        cursor.execute("DELETE FROM services")
         
         # Parse CSV
         csv_data = io.StringIO(response.text)
@@ -64,32 +67,17 @@ def create_services_db():
             try:
                 # Convert port to integer
                 port_int = int(port_number)
-                
-                cursor.execute("""
-                    INSERT OR REPLACE INTO services 
-                    (port_number, protocol, service_name, description) 
-                    VALUES (?, ?, ?, ?)
-                """, (port_int, protocol, service_name, description))
+                insert_service(port_int, protocol, service_name, description)
                 
                 count += 1
                 
                 # Commit in batches to avoid large transactions
                 if count % 1000 == 0:
-                    conn.commit()
                     log_info(logger, f"[INFO] Processed {count} service entries...")
                     
             except ValueError:
                 # Skip rows where port cannot be converted to integer
                 continue
-        
-        # Final commit
-        conn.commit()
-        
-        # Create index for faster lookups
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_port_protocol ON services (port_number, protocol)")
-        conn.commit()
-        
-        disconnect_from_db(conn)
         
         log_info(logger, f"[INFO] Successfully loaded {count} IANA service entries into the database.")
         return True
@@ -103,9 +91,6 @@ def create_services_db():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error creating services database: {e}")
         return False
-    finally:
-        if 'conn' in locals() and conn:
-            disconnect_from_db(conn)
 
 def get_all_services():
     """
@@ -129,26 +114,10 @@ def get_all_services():
     """
     logger = logging.getLogger(__name__)
     
+    rows = get_all_services_database()
     try:
         # Connect to the database
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "services")
-        if not conn:
-            log_error(logger, "[ERROR] Failed to connect to the services database.")
-            return {}
-            
-        cursor = conn.cursor()
-        
-        # Query all services
-        log_info(logger, "[INFO] Retrieving all service entries from database...")
-        cursor.execute("""
-            SELECT port_number, protocol, service_name, description 
-            FROM services 
-            ORDER BY port_number, protocol
-        """)
-        
-        # Fetch all rows
-        rows = cursor.fetchall()
-        
+
         # Convert rows to nested dictionary for fast lookups
         services_dict = {}
         for row in rows:
@@ -176,6 +145,3 @@ def get_all_services():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error retrieving services: {e}")
         return {}
-    finally:
-        if 'conn' in locals() and conn:
-            disconnect_from_db(conn)

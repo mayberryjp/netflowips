@@ -3,17 +3,22 @@ import logging
 import sys
 import time
 import sqlite3
-from src.database import connect_to_db, disconnect_from_db
 from pathlib import Path
 
-
+import os
+import sqlite3
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+# Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-from src.utils import log_info, log_error
-from src.const import CONST_CREATE_PIHOLE_SQL, CONST_CONSOLIDATED_DB
+sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
 
 
 def authenticate_pihole(pihole_url, api_token):
@@ -94,11 +99,6 @@ def get_pihole_ftl_logs(page_size, config_dict):
     headers = {"sid": f"{session_id}"}
 
     try:
-        # Connect to the dnsqueries.db database and ensure the pihole table exists
-        conn = connect_to_db(CONST_CONSOLIDATED_DB, "pihole")
-        cursor = conn.cursor()
-        cursor.execute(CONST_CREATE_PIHOLE_SQL)
-        conn.commit()
 
         # Fetch data from Pi-hole
         response = requests.get(endpoint, headers=headers, timeout=10)
@@ -152,18 +152,10 @@ def get_pihole_ftl_logs(page_size, config_dict):
         for client_ip, domains in client_data.items():
             for domain, times_seen in domains.items():
                 try:
-                    cursor.execute("""
-                        INSERT INTO pihole (client_ip, domain, type, times_seen, first_seen, last_seen)
-                        VALUES (?, ?, 'A', ?, datetime('now', 'localtime'), datetime('now', 'localtime'))
-                        ON CONFLICT(client_ip, domain, type)
-                        DO UPDATE SET
-                            last_seen = datetime('now', 'localtime'),
-                            times_seen = times_seen + excluded.times_seen
-                    """, (client_ip, domain, times_seen))
+                    insert_pihole_query(client_ip, domain, times_seen)
                 except sqlite3.Error as e:
                     log_error(logger, f"[ERROR] Failed to update database for client_ip: {client_ip}, domain: {domain}, Error: {e}")
 
-        conn.commit()
         log_info(logger, "[INFO] Successfully updated dns query history")
 
 
@@ -176,6 +168,3 @@ def get_pihole_ftl_logs(page_size, config_dict):
     except Exception as e:
         log_error(logger, f"[ERROR] An unexpected error occurred: {e}")
         return {}
-    finally:
-        if conn:
-            disconnect_from_db(conn)

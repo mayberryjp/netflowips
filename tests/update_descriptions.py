@@ -1,18 +1,15 @@
-import requests
-import logging
-
+import os
 import sys
+from database.core import connect_to_db, disconnect_from_db
 from pathlib import Path
-
+# Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
-
-# Configure logging
-
-
-from src.utils import dump_json, log_error, log_info
+sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
 
 def update_localhosts(data_object):
     """

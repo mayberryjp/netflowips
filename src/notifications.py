@@ -1,9 +1,9 @@
 import requests
 from src.const import IS_CONTAINER, VERSION, CONST_SITE
-from src.utils import log_info, log_error, log_warn  # Assuming log_info is defined in utils
-from src.database import get_config_settings
+from database.configuration import get_config_settings
 import os
 import logging
+from src.locallogging import log_info, log_error, log_warn
 
 if (IS_CONTAINER):
     SITE = os.getenv("SITE", CONST_SITE)

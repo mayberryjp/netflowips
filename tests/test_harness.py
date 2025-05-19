@@ -1,73 +1,28 @@
-import sqlite3
-import logging
-from datetime import datetime
 import os
-from pathlib import Path
+import sqlite3
 import sys
-import time
-import json
-import requests
-
+from datetime import datetime, timedelta
+from pathlib import Path
+# Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 sys.path.insert(0, "/database")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from init import *
 
-from src.utils import log_info, log_warn, log_error, calculate_broadcast
+from database.core import create_table, connect_to_db, delete_all_records, get_row_count
+
 from src.client import export_client_definition
-from integrations.maxmind import load_geolocation_data, create_geolocation_db
+from integrations.geolocation import load_geolocation_data, create_geolocation_db
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
 from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-from src.database import store_site_name,delete_all_records, get_localhosts, update_localhosts, import_custom_tags, get_custom_tags, init_configurations_from_sitepy, init_configurations_from_variable
-from src.const import CONST_LINK_LOCAL_RANGE, CONST_SITE, CONST_CREATE_TORNODES_SQL, CONST_CREATE_TRAFFICSTATS_SQL, CONST_CREATE_PIHOLE_SQL
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from src.const import (
-    CONST_CONSOLIDATED_DB, 
-    CONST_TEST_SOURCE_DB,
-    CONST_CONSOLIDATED_DB,
-    CONST_CONSOLIDATED_DB,
-    CONST_CONSOLIDATED_DB,
-    CONST_CONSOLIDATED_DB,
-    CONST_CONSOLIDATED_DB,
-    CONST_CREATE_ALLFLOWS_SQL,
-    CONST_CREATE_ALERTS_SQL,
-    CONST_CREATE_IGNORELIST_SQL,
-    CONST_CREATE_CONFIG_SQL,
-    CONST_CREATE_NEWFLOWS_SQL,
-    CONST_CREATE_ACTIONS_SQL,
-    CONST_CREATE_LOCALHOSTS_SQL,
-    CONST_CREATE_GEOLOCATION_SQL,
-    CONST_CREATE_REPUTATIONLIST_SQL,
-    CONST_CREATE_CUSTOMTAGS_SQL,
-    CONST_CREATE_SERVICES_SQL,
-    CONST_CREATE_TRAFFICSTATS_SQL,
-    VERSION,
-    CONST_CONSOLIDATED_DB
-)
-from src.utils import log_info
-
-from src.database import (
-    get_config_settings,
-    get_ignorelist,
-    connect_to_db,
-    update_allflows,
-    update_traffic_stats,
-    delete_database,
-    create_table,
-    init_configurations_from_sitepy,
-    get_row_count,
-    get_alerts_summary,
-    import_ignorelists,
-    store_machine_unique_identifier, 
-    store_version,
-)
 
 from integrations.services import create_services_db, get_all_services
 from src.tags import apply_tags
@@ -223,7 +178,7 @@ def copy_flows_to_newflows():
             source_conn = connect_to_db(source_db, "flows")
             source_cursor = source_conn.cursor()
 
-            log_info(logger, f"[INFO] Copying flows from {source_db} to {CONST_CONSOLIDATED_DB}")       
+            log_info(logger, f"[INFO] Copying flows from {source_db} to {source_db}")       
 
             # Get all flows from source
             source_cursor.execute("SELECT * FROM flows")
@@ -238,7 +193,7 @@ def copy_flows_to_newflows():
             # Insert flows into newflows
             for row in rows:
                 newflows_cursor.execute('''
-                    INSERT INTO flows (
+                    INSERT INTO newflows (
                         src_ip, dst_ip, src_port, dst_port, protocol, packets, bytes, flow_start, flow_end, last_seen, times_seen, tags
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(src_ip, dst_ip, src_port, dst_port, protocol)
@@ -297,19 +252,19 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
             "total_rows": total_rows,
             "filtered_rows": filtered_rows,
             "database_counts": {
-                "newflows": get_row_count(CONST_CONSOLIDATED_DB, 'flows'),
-                "allflows": get_row_count(CONST_CONSOLIDATED_DB, 'allflows'),
-                "alerts": get_row_count(CONST_CONSOLIDATED_DB, 'alerts'),
-                "ignorelist": get_row_count(CONST_CONSOLIDATED_DB, 'ignorelist'),
-                "localhosts": get_row_count(CONST_CONSOLIDATED_DB, 'localhosts'),
-                "configuration": get_row_count(CONST_CONSOLIDATED_DB, 'configuration'),
-                "geolocation": get_row_count(CONST_CONSOLIDATED_DB, 'geolocation'),
-                "dnsqueries": get_row_count(CONST_CONSOLIDATED_DB, "pihole"),
-                "reputationlist": get_row_count(CONST_CONSOLIDATED_DB, "reputationlist"),
-                "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes"),
                 "actions": get_row_count(CONST_CONSOLIDATED_DB, "actions"),
+                "alerts": get_row_count(CONST_CONSOLIDATED_DB, 'alerts'),
+                "allflows": get_row_count(CONST_CONSOLIDATED_DB, 'allflows'),
+                "configuration": get_row_count(CONST_CONSOLIDATED_DB, 'configuration'),
+                "customtags": get_row_count(CONST_CONSOLIDATED_DB, "customtags"),           
+                "geolocation": get_row_count(CONST_CONSOLIDATED_DB, 'geolocation'),  
+                "ignorelist": get_row_count(CONST_CONSOLIDATED_DB, 'ignorelist'),                                             
+                "localhosts": get_row_count(CONST_CONSOLIDATED_DB, 'localhosts'),
+                "newflows": get_row_count(CONST_CONSOLIDATED_DB, 'newflows'),
+                "pihole": get_row_count(CONST_CONSOLIDATED_DB, "pihole"),  
+                "reputationlist": get_row_count(CONST_CONSOLIDATED_DB, "reputationlist"),
                 "services": get_row_count(CONST_CONSOLIDATED_DB, "services"),
-                "customtags": get_row_count(CONST_CONSOLIDATED_DB, "customtags"),
+                "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes"),
                 "trafficstats": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats")
             },
             "tag_distribution": tag_distribution,
@@ -343,6 +298,11 @@ def main():
     SITE = os.getenv("SITE", CONST_SITE)
 
     site_config_path = os.path.join("/database/", f"{SITE}.py")
+
+    if os.path.exists(CONST_CONSOLIDATED_DB):
+        os.remove(CONST_CONSOLIDATED_DB)
+        log_info(logger, f"[INFO] Deleted existing consolidated database: {CONST_CONSOLIDATED_DB}")
+  
     
     if not os.path.exists(CONST_CONSOLIDATED_DB):
         log_info(logger, f"[INFO] Consolidated database not found, creating at {CONST_CONSOLIDATED_DB}. We assume this is a first time install. ")
@@ -374,8 +334,8 @@ def main():
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TRAFFICSTATS_SQL, "trafficstats")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALERTS_SQL, "alerts")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ALLFLOWS_SQL,"allflows")
-    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL, "flows")
-    delete_all_records(CONST_CONSOLIDATED_DB,"flows")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_NEWFLOWS_SQL, "newflows")
+    delete_all_records(CONST_CONSOLIDATED_DB,"newflows")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL, "localhosts")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_GEOLOCATION_SQL, "geolocation")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL, "reputationlist")
@@ -385,10 +345,10 @@ def main():
 
     copy_flows_to_newflows()
 
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "allflows")
+    conn = connect_to_db(CONST_CONSOLIDATED_DB, "newflows")
 
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM flows")
+    cursor.execute("SELECT * FROM newflows")
     rows = cursor.fetchall()
     rows = [list(row) for row in rows]
 
@@ -423,8 +383,9 @@ def main():
     # Convert back to arrays for use in update_allflows
     tagged_rows = [[row[col] if col in row else None for col in column_names] for row in tagged_rows_as_dicts]
 
-    update_allflows(tagged_rows, config_dict)
+    update_all_flows(tagged_rows, config_dict)
     update_traffic_stats(tagged_rows, config_dict)
+
 
     filtered_rows = [row for row in tagged_rows if 'IgnoreList' not in str(row[11])]
     log_info(logger, f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
@@ -436,8 +397,7 @@ def main():
     log_info(logger, f"[INFO] Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
 
     filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
-    log_info(logger,f"Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
-
+    log_info(logger,f"[INFO] Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
     # Dictionary to store durations for each detection function
     detection_durations = {}
@@ -445,101 +405,101 @@ def main():
     # Run detection functions and calculate durations
     start = datetime.now()
     update_local_hosts(filtered_rows, config_dict)
-    detection_durations['update_local_hosts'] = (datetime.now() - start).total_seconds()
+    detection_durations['update_local_hosts'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_new_outbound_connections(filtered_rows, config_dict)
-    detection_durations['detect_new_outbound_connections'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_new_outbound_connections'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     router_flows_detection(filtered_rows, config_dict)
-    detection_durations['router_flows_detection'] = (datetime.now() - start).total_seconds()
+    detection_durations['router_flows_detection'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     foreign_flows_detection(filtered_rows, config_dict)
-    detection_durations['foreign_flows_detection'] = (datetime.now() - start).total_seconds()
+    detection_durations['foreign_flows_detection'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     local_flows_detection(filtered_rows, config_dict)
-    detection_durations['local_flows_detection'] = (datetime.now() - start).total_seconds()
+    detection_durations['local_flows_detection'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_dead_connections(config_dict)
-    detection_durations['detect_dead_connections'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_dead_connections'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_unauthorized_dns(filtered_rows, config_dict)
-    detection_durations['detect_unauthorized_dns'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_unauthorized_dns'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_unauthorized_ntp(filtered_rows, config_dict)
-    detection_durations['detect_unauthorized_ntp'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_unauthorized_ntp'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_incorrect_ntp_stratum(filtered_rows, config_dict)
-    detection_durations['detect_incorrect_ntp_stratum'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_incorrect_ntp_stratum'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_incorrect_authoritative_dns(filtered_rows, config_dict)
-    detection_durations['detect_incorrect_authoritative_dns'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_incorrect_authoritative_dns'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_vpn_traffic(filtered_rows, config_dict)
-    detection_durations['detect_vpn_traffic'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_vpn_traffic'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_many_destinations(filtered_rows, config_dict)
-    detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_many_destinations'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_high_risk_ports(filtered_rows, config_dict)
-    detection_durations['detect_high_risk_ports'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_high_risk_ports'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_port_scanning(filtered_rows, config_dict)
-    detection_durations['detect_port_scanning'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_port_scanning'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_many_destinations(filtered_rows, config_dict)
-    detection_durations['detect_many_destinations'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_many_destinations'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
-    update_tor_nodes(config_dict)
+   # update_tor_nodes(config_dict)
     detect_tor_traffic(filtered_rows, config_dict)
-    detection_durations['detect_tor_traffic'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_tor_traffic'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_high_bandwidth_flows(filtered_rows, config_dict)
-    detection_durations['detect_high_bandwidth_flows'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_high_bandwidth_flows'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     detect_custom_tag(filtered_rows, config_dict)
-    detection_durations['detect_custom_tag'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_custom_tag'] = int((datetime.now() - start).total_seconds())
 
     log_info(logger, "[INFO] Preparing to detect geolocation flows...")
     start = datetime.now()
     create_geolocation_db()
     geolocation_data = load_geolocation_data()
     detect_geolocation_flows(filtered_rows, config_dict, geolocation_data)
-    detection_durations['detect_geolocation_flows'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_geolocation_flows'] = int((datetime.now() - start).total_seconds())
 
     log_info(logger, "[INFO] Preparing to download pihole dns query logs...")
     start = datetime.now()
     get_pihole_ftl_logs(10000,config_dict)
-    detection_durations['retrieve_pihole_dns_query_logs'] = (datetime.now() - start).total_seconds()
+    detection_durations['retrieve_pihole_dns_query_logs'] = int((datetime.now() - start).total_seconds())
 
     log_info(logger, "[INFO] Preparing to detect reputation list flows...")
     start = datetime.now()
     import_reputation_list(config_dict)
-    reputation_data = load_reputation_data(config_dict)
+    reputation_data = load_reputation_data()
     detect_reputation_flows(filtered_rows, config_dict, reputation_data)
-    detection_durations['detect_reputationlist_flows'] = (datetime.now() - start).total_seconds()
+    detection_durations['detect_reputationlist_flows'] = int((datetime.now() - start).total_seconds())
 
     log_info(logger, "[INFO] Preparing to fetch services list...")
     start = datetime.now()
     create_services_db()
     services_data = get_all_services()
-    detection_durations['fetch_services_flow'] = (datetime.now() - start).total_seconds()
+    detection_durations['fetch_services_flow'] = int((datetime.now() - start).total_seconds())
 
     combined_results = {}
     localhosts = get_localhosts()
@@ -552,7 +512,7 @@ def main():
         combined_results[ip] = {
             "dns_hostname": result.get("dns_hostname", None),
         }
-    detection_durations['discovery_dns'] = (datetime.now() - start).total_seconds()
+    detection_durations['discovery_dns'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     dl_results = get_pihole_dhcp_leases(localhosts, config_dict)
@@ -566,7 +526,7 @@ def main():
             "lease_hwaddr": result.get("lease_hwaddr", combined_results[ip].get("lease_hwaddress")),
             "lease_clientid": result.get("lease_clientid", combined_results[ip].get("lease_clientid")),
         })
-    detection_durations['discovery_pihole_dhcp_leases'] = (datetime.now() - start).total_seconds()
+    detection_durations['discovery_pihole_dhcp_leases'] = int((datetime.now() - start).total_seconds())
 
     start = datetime.now()
     nd_results = get_pihole_network_devices(localhosts, config_dict)
@@ -580,7 +540,7 @@ def main():
             "mac_address": result.get("mac_address", combined_results[ip].get("mac_address")),
             "mac_vendor": result.get("mac_vendor", combined_results[ip].get("mac_vendor")),
         })
-    detection_durations['discovery_pihole_network_devices'] = (datetime.now() - start).total_seconds()   
+    detection_durations['discovery_pihole_network_devices'] = int((datetime.now() - start).total_seconds())
 
 
     if config_dict.get("DiscoveryNmapOsFingerprint", 0) == 1:
@@ -598,7 +558,7 @@ def main():
             combined_results[ip].update({
                 "os_fingerprint": result.get("os_fingerprint", combined_results[ip].get("os_fingerprint")),
             })
-        detection_durations['discovery_nmap_os_fingerprint'] = (datetime.now() - start).total_seconds()
+        detection_durations['discovery_nmap_os_fingerprint'] = int((datetime.now() - start).total_seconds())
 
     # Query to count rows grouped by tags
     try:

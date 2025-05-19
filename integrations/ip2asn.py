@@ -10,13 +10,12 @@ src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 import logging
-from src.utils import log_error, log_info, ip_to_int, ip_network_to_range
 import requests
-from src.database import connect_to_db, disconnect_from_db
 import zipfile
 from src.const import CONST_CONSOLIDATED_DB
 import json
 import sqlite3
+from init import *
 
 
 def create_asn_database():

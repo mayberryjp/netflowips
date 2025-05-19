@@ -1,7 +1,20 @@
-from src.utils import log_error, log_warn, is_ip_in_range
+import sys
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent
+parent_dir = str(current_dir.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+src_dir = f"{parent_dir}/src"
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+sys.path.insert(0, "/database")
+import time
 import logging
+from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
+from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
+from integrations.nmap_fingerprint import os_fingerprint
 
-
+from init import *
 
 
 def tag_ignorelist(record, ignorelist_entries):
@@ -100,7 +113,7 @@ def tag_linklocal(record, link_local_range):
         str: "LinkLocal;" if either IP is in link-local range, None otherwise
     """
     logger = logging.getLogger(__name__)
-    from src.utils import is_ip_in_range
+
 
     try:
         # Link-local address range

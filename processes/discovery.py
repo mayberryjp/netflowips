@@ -1,5 +1,4 @@
 import sys
-import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
@@ -9,17 +8,13 @@ src_dir = f"{parent_dir}/src"
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 sys.path.insert(0, "/database")
-import sqlite3  # Import the sqlite3 module
-from src.database import update_localhosts, get_localhosts, get_config_settings # Import from database.py
-from src.utils import log_info, log_error  # Import log_info from utils
-from src.const import CONST_CONSOLIDATED_DB, CONST_CREATE_LOCALHOSTS_SQL, CONST_CONSOLIDATED_DB, CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CONSOLIDATED_DB, CONST_CREATE_IGNORELIST_SQL, CONST_CREATE_ALERTS_SQL, CONST_CREATE_ALLFLOWS_SQL, CONST_CREATE_NEWFLOWS_SQL, CONST_CREATE_CONFIG_SQL
-import schedule
 import time
 import logging
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
 from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
-from src.utils import get_usable_ips
+
+from init import *
 
 def do_discovery():
     logger = logging.getLogger(__name__)

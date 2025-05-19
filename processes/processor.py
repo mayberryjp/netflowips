@@ -10,18 +10,16 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 sys.path.insert(0, "/database")
 import sqlite3  # Import the sqlite3 module
-from src.database import disconnect_from_db, update_traffic_stats, connect_to_db, update_allflows, delete_all_records, get_config_settings   # Import from database.py
+from init import *
 from src.detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
 from src.notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
-from integrations.maxmind import load_geolocation_data
+from integrations.geolocation import load_geolocation_data
 from integrations.reputation import load_reputation_data
-from src.utils import log_info, log_error  # Import log_info from utils
 from src.const import CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import schedule
 import time
 import logging
-
-
+from database.newflows import get_new_flows
 
 if (IS_CONTAINER):
     REINITIALIZE_DB=os.getenv("REINITIALIZE_DB", CONST_REINITIALIZE_DB)
@@ -37,49 +35,46 @@ def process_data():
         log_error(logger, "[ERROR] Failed to load configuration settings")
         return
 
+    newflows = get_new_flows()
     """Read data from the database and process it."""
-    conn = connect_to_db(CONST_CONSOLIDATED_DB, "flows")
-    if conn and config_dict['ScheduleProcessor'] == 1:
+
+    if config_dict['ScheduleProcessor'] == 1:
         try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM flows")
-            rows = cursor.fetchall()
-            rows = [list(row) for row in rows]
 
-            if len(rows) > 0:
+            if len(newflows) > 0:
                 # delete newflows so collector can write clean to it again as quickly as possible
-                log_info(logger, f"[INFO] Fetched {len(rows)} rows from the database.")
+                log_info(logger, f"[INFO] Fetched {len(newflows)} rows from the database.")
                 if (config_dict['CleanNewFlows'] == 1):
-                    delete_all_records(CONST_CONSOLIDATED_DB, "flows")
+                    delete_all_records(CONST_CONSOLIDATED_DB, "newflows")
 
-                log_info(logger,f"[INFO] Processing {len(rows)} rows.")
+                log_info(logger,f"[INFO] Processing {len(newflows)} rows.")
 
                 # Pass the rows to update_all_flows
-                update_allflows(rows, config_dict)
-                update_traffic_stats(rows, config_dict)
+                update_all_flows(newflows, config_dict)
+                update_traffic_stats(newflows, config_dict)
 
                 if config_dict.get('GeolocationFlowsDetection',0) > 0:
                     geolocation_data = load_geolocation_data()
 
                 if config_dict.get('ReputationListDetection', 0) > 0:
-                    reputation_data = load_reputation_data(config_dict)
+                    reputation_data = load_reputation_data()
                 
                 log_info(logger,f"Started removing IgnoreList flows")
                 # process ignorelisted entries and remove from detection rows
-                filtered_rows = [row for row in rows if 'IgnoreList' not in str(row[11])]
-                log_info(logger,f"Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
+                filtered_rows = [row for row in newflows if 'IgnoreList' not in str(row[11])]
+                log_info(logger,f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
 
                 if config_dict.get('RemoveBroadcastFlows', 0) >0:
                     filtered_rows = [row for row in filtered_rows if 'Broadcast' not in str(row[11])]
-                    log_info(logger,f"Finished removing Broadcast flows - processing flow count is {len(filtered_rows)}")
+                    log_info(logger,f"[INFO] Finished removing Broadcast flows - processing flow count is {len(filtered_rows)}")
 
                 if config_dict.get('RemoveMulticastFlows', 0) >0:
                     filtered_rows = [row for row in filtered_rows if 'Multicast' not in str(row[11])]
-                    log_info(logger,f"Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
+                    log_info(logger,f"[INFO] Finished removing Multicast flows - processing flow count is {len(filtered_rows)}")
 
                 if config_dict.get('RemoveLinkLocalFlows', 0) >0:
                     filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
-                    log_info(logger,f"Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
+                    log_info(logger,f"[INFO] Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
                 # Proper way to check config values with default of 0
                 if config_dict.get("NewHostsDetection", 0) > 0:
@@ -134,19 +129,16 @@ def process_data():
                     detect_tor_traffic(filtered_rows, config_dict)     
 
                 if config_dict.get("HighBandwidthFlowDetection", 0) > 0:
-                    detect_high_bandwidth_flows(rows, config_dict)     
+                    detect_high_bandwidth_flows(filtered_rows, config_dict)     
         
                 if config_dict.get("AlertOnCustomTags", 0) > 0:
-                    detect_custom_tag(rows, config_dict)          
+                    detect_custom_tag(filtered_rows, config_dict)          
   
 
         except sqlite3.Error as e:
-            log_error(logger, f"[ERROR] Error reading from database: {e}")
-        finally:
-            disconnect_from_db(conn)
-        
+            log_error(logger, f"[ERROR] Error reading from database: {e}")        
     log_info(logger,f"[INFO] Processing finished.") 
-    disconnect_from_db(conn)
+
 
 if __name__ == "__main__":
 
