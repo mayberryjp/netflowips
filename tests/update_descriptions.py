@@ -1,6 +1,6 @@
 import os
 import sys
-from database.core import connect_to_db, disconnect_from_db
+
 from pathlib import Path
 # Set up path for imports
 current_dir = Path(__file__).resolve().parent
@@ -10,6 +10,7 @@ if parent_dir not in sys.path:
 sys.path.insert(0, "/database")
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from init import *
+from database.core import connect_to_db, disconnect_from_db
 
 def update_localhosts(data_object):
     """
@@ -77,7 +78,7 @@ def update_localhosts(data_object):
                         pass
                         #log_error(logger,f"Verification failed for local host: {ip_address}. Data mismatch. Expected {local_description} got {updated_host.get("local_description")} and {category} got {updated_host.get("icon")}")
                 else:
-                    log_error(logger,f"Host with IP {ip_address} not found in the host list.")
+                    log_warn(logger,f"Host with IP {ip_address} not found in the host list.")
             else:
                 log_error(logger,f"Failed to fetch the host list for verification, Status Code: {get_response.status_code}")
 

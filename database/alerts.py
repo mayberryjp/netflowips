@@ -14,6 +14,7 @@ from init import *
 def summarize_alerts_by_ip():
     """
     Summarize alerts by IP address over the last 12 hours in one-hour increments.
+    Returns results for every hour whether there were alerts or not.
 
     Returns:
         dict: A dictionary where the main key is the IP address, and the value is another dictionary
@@ -36,6 +37,14 @@ def summarize_alerts_by_ip():
         now = datetime.now()
         start_time = now - timedelta(hours=intervals)
 
+        # First, get all unique IP addresses with alerts in the time period
+        cursor.execute("""
+            SELECT DISTINCT ip_address 
+            FROM localhosts
+        """)
+        
+        all_ips = [row[0] for row in cursor.fetchall()]
+        
         # Query to fetch alerts within the last 12 hours
         cursor.execute("""
             SELECT ip_address, strftime('%Y-%m-%d %H:00:00', last_seen) as hour, COUNT(*)
@@ -45,27 +54,36 @@ def summarize_alerts_by_ip():
             ORDER BY ip_address, hour
         """, (start_time.strftime('%Y-%m-%d %H:%M:%S'),))
 
-        rows = cursor.fetchall()
+        alerts_by_hour = cursor.fetchall()
         disconnect_from_db(conn)
 
-        # Initialize the result dictionary
+        # Generate all hour intervals for the past 12 hours
+        hour_intervals = []
+        for i in range(intervals):
+            interval_time = now - timedelta(hours=intervals-i-1)
+            hour_intervals.append(interval_time.strftime('%Y-%m-%d %H:00:00'))
+
+        # Initialize the result dictionary with all IPs and all hours
         result = {}
-
-        # Process the rows to build the summary
-        for row in rows:
+        for ip in all_ips:
+            result[ip] = {"alert_intervals": [0] * intervals}
+            
+        # Fill in the actual alert counts where they exist
+        for row in alerts_by_hour:
             ip_address = row[0]
-            hour = datetime.strptime(row[1], '%Y-%m-%d %H:00:00')
+            hour = row[1]
             count = row[2]
+            
+            # Only process IPs that are in our all_ips list (from localhosts)
+            if ip_address in all_ips:
+                # Find which interval this hour belongs to
+                try:
+                    hour_index = hour_intervals.index(hour)
+                    result[ip_address]["alert_intervals"][hour_index] = count
+                except ValueError:
+                    # This shouldn't happen if our hour generation is correct
+                    log_warn(logger, f"Hour {hour} not found in generated intervals")
 
-            if ip_address not in result:
-                # Initialize the alert_intervals array with 12 zeros
-                result[ip_address] = {"alert_intervals": [0] * intervals}
-
-            # Calculate the index for the hour interval
-            hour_diff = int((now - hour).total_seconds() // 3600)
-            if 0 <= hour_diff < intervals:
-                # Reverse the index to place the most recent at the last position
-                result[ip_address]["alert_intervals"][intervals - 1 - hour_diff] = count
 
         return result
 
@@ -572,11 +590,6 @@ def get_alerts_by_category(category_name):
             disconnect_from_db(conn)
 
 def update_alert_acknowledgment(alert_id, acknowledged):
-
-
-
-
-
     """
     Update the acknowledged status of an alert in the database.
     
