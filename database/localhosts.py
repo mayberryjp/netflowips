@@ -284,7 +284,7 @@ def classify_localhost(ip_address, description, icon):
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
 
-def delete_localhost(ip_address):
+def delete_localhost_database(ip_address):
     """
     Delete a localhost record from the database.
     

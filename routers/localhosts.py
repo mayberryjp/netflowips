@@ -83,7 +83,7 @@ def setup_localhosts_routes(app):
         logger = logging.getLogger(__name__)
 
         try:
-            delete_localhost(ip_address)
+            delete_localhost_database(ip_address)
             # Delete the local host with the specified IP address
             response.content_type = 'application/json'
             log_info(logger, f"[INFO] Deleted local host with IP address: {ip_address}")
