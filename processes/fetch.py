@@ -99,7 +99,7 @@ def main():
         try: 
             if config_dict.get('ImportServicesList', 0) > 0:
                 log_info(logger, "[INFO] Fetching and updating services list...")
-                create_services_db
+                create_services_db()
                 log_info(logger, "[INFO] Services list download finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")

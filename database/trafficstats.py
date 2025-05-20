@@ -127,6 +127,7 @@ def get_traffic_stats_for_ip(ip_address):
             FROM trafficstats
             WHERE ip_address = ?
             ORDER BY timestamp DESC
+            limit 100
         """, (ip_address,))
 
         rows = cursor.fetchall()

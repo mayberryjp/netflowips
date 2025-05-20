@@ -386,6 +386,14 @@ def main():
     update_all_flows(tagged_rows, config_dict)
     update_traffic_stats(tagged_rows, config_dict)
 
+    # Dictionary to store durations for each detection function
+    detection_durations = {}
+
+    # Run detection functions and calculate durations
+    start = datetime.now()
+    update_local_hosts(tagged_rows, config_dict)
+    detection_durations['update_local_hosts'] = int((datetime.now() - start).total_seconds())
+
 
     filtered_rows = [row for row in tagged_rows if 'IgnoreList' not in str(row[11])]
     log_info(logger, f"[INFO] Finished removing IgnoreList flows - processing flow count is {len(filtered_rows)}")
@@ -399,13 +407,7 @@ def main():
     filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
     log_info(logger,f"[INFO] Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
-    # Dictionary to store durations for each detection function
-    detection_durations = {}
-
-    # Run detection functions and calculate durations
-    start = datetime.now()
-    update_local_hosts(filtered_rows, config_dict)
-    detection_durations['update_local_hosts'] = int((datetime.now() - start).total_seconds())
+    filtered_rows = tagged_rows
 
     start = datetime.now()
     detect_new_outbound_connections(filtered_rows, config_dict)

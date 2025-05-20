@@ -58,6 +58,10 @@ def process_data():
 
                 if config_dict.get('ReputationListDetection', 0) > 0:
                     reputation_data = load_reputation_data()
+
+                # Proper way to check config values with default of 0
+                if config_dict.get("NewHostsDetection", 0) > 0:
+                    update_local_hosts(newflows, config_dict)
                 
                 log_info(logger,f"[INFO] Started removing IgnoreList flows")
                 # process ignorelisted entries and remove from detection rows
@@ -76,9 +80,7 @@ def process_data():
                     filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
                     log_info(logger,f"[INFO] Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
-                # Proper way to check config values with default of 0
-                if config_dict.get("NewHostsDetection", 0) > 0:
-                    update_local_hosts(filtered_rows, config_dict)
+
 
                 if config_dict.get("NewOutboundDetection", 0) > 0:
                     detect_new_outbound_connections(filtered_rows, config_dict)
