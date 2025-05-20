@@ -38,7 +38,7 @@ setup_trafficstats_routes(app)
 
 # Define CORS headers
 CORS_HEADERS = {
-    'Access-Control-Allow-Origin': 'http://localhost:3030',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization'
 }
