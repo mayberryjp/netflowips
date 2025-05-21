@@ -67,6 +67,7 @@ from database.core import (
 #     delete_database,
       delete_all_records, 
      get_row_count, 
+     run_timed_query
 )
 
 from database.common import (

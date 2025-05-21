@@ -125,18 +125,23 @@ def get_hourly_alerts_summary(ip_address, start_time=None):
         if not start_time:
             start_time = '2000-01-01 00:00:00'
         
-        # Get hourly summary of alerts
-        cursor.execute("""
+        # Get hourly summary of alerts using run_timed_query
+        hourly_query = """
             SELECT strftime('%Y-%m-%d %H:00:00', last_seen) as hour, COUNT(*)
             FROM alerts
             WHERE ip_address = ? AND last_seen >= ?
             GROUP BY hour
             ORDER BY hour
-        """, (ip_address, start_time))
+        """
         
-        hourly_summary = cursor.fetchall()
+        hourly_summary, query_time = run_timed_query(
+            cursor, 
+            hourly_query, 
+            (ip_address, start_time),
+            description=f"get_hourly_alerts_for_{ip_address}"
+        )
         
-        log_info(logger, f"[INFO] Retrieved hourly alert summary for IP {ip_address} starting from {start_time}.")
+        log_info(logger, f"[INFO] Retrieved {len(hourly_summary)} hourly alert entries for IP {ip_address} in {query_time:.2f} ms")
         return hourly_summary
         
     except sqlite3.Error as e:
@@ -173,16 +178,21 @@ def get_all_alerts_by_ip(ip_address):
         cursor = conn.cursor()
         
         # Retrieve all alerts for the specified IP address, most recent first
-        cursor.execute("""
+        alerts_query = """
             SELECT id, ip_address, flow, category, 
                 alert_enrichment_1, alert_enrichment_2,
                 times_seen, first_seen, last_seen, acknowledged
             FROM alerts 
             WHERE ip_address = ?
             ORDER BY last_seen DESC
-        """, (ip_address,))
+        """
         
-        rows = cursor.fetchall()
+        rows, query_time = run_timed_query(
+            cursor, 
+            alerts_query, 
+            (ip_address,),
+            description=f"get_all_alerts_for_{ip_address}"
+        )
         
         # Get column names from cursor description
         columns = [column[0] for column in cursor.description]
@@ -199,7 +209,7 @@ def get_all_alerts_by_ip(ip_address):
                     pass  # Keep as string if JSON parsing fails
             alerts.append(alert_dict)
 
-        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts for IP address {ip_address}.")
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts for IP address {ip_address} in {query_time:.2f} ms")
         return alerts
         
     except sqlite3.Error as e:
@@ -273,17 +283,22 @@ def get_recent_alerts_database():
         cursor = conn.cursor()
         
         # Retrieve the most recent alerts, limited to 100
-        cursor.execute("""
+        recent_alerts_query = """
             SELECT id, ip_address, flow, category, 
                 alert_enrichment_1, alert_enrichment_2,
                 times_seen, first_seen, last_seen, acknowledged
             FROM alerts 
             ORDER BY last_seen DESC 
             LIMIT 100
-        """)
+        """
         
-        rows = cursor.fetchall()
+        rows, query_time = run_timed_query(
+            cursor, 
+            recent_alerts_query,
+            description="get_recent_alerts"
+        )
         
+        log_info(logger, f"[INFO] Retrieved {len(rows)} recent alerts in {query_time:.2f} ms")
         return rows
 
     except sqlite3.Error as e:
@@ -454,7 +469,7 @@ def get_recent_alerts_by_ip(ip_address):
         cursor = conn.cursor()
         
         # Retrieve alerts for the specified IP address, most recent first, limited to 100
-        cursor.execute("""
+        alerts_query = """
             SELECT id, ip_address, flow, category, 
                    alert_enrichment_1, alert_enrichment_2,
                    times_seen, first_seen, last_seen, acknowledged
@@ -462,9 +477,14 @@ def get_recent_alerts_by_ip(ip_address):
             WHERE ip_address = ?
             ORDER BY last_seen DESC 
             LIMIT 100
-        """, (ip_address,))
+        """
         
-        rows = cursor.fetchall()
+        rows, query_time = run_timed_query(
+            cursor, 
+            alerts_query, 
+            (ip_address,),
+            description=f"get_recent_alerts_for_{ip_address}"
+        )
         
         # Get column names from cursor description
         columns = [column[0] for column in cursor.description]
@@ -481,7 +501,7 @@ def get_recent_alerts_by_ip(ip_address):
                     pass  # Keep as string if JSON parsing fails
             alerts.append(alert_dict)
 
-        log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts for IP address {ip_address}.")
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} recent alerts for IP address {ip_address} in {query_time:.2f} ms")
         return alerts
 
     except sqlite3.Error as e:
@@ -629,6 +649,66 @@ def update_alert_acknowledgment(alert_id, acknowledged):
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while updating alert acknowledgment: {e}")
         return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def get_all_alerts_by_category(category):
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to alerts database")
+            return []
+            
+        cursor = conn.cursor()
+        
+        # Convert this query to use run_timed_query
+        rows, query_time = run_timed_query(
+            cursor,
+            """
+            SELECT id, ip_address, flow, category, 
+                alert_enrichment_1, alert_enrichment_2,
+                times_seen, first_seen, last_seen, acknowledged
+            FROM alerts 
+            WHERE category = ?
+            ORDER BY last_seen DESC
+            """,
+            (category,),
+            description=f"get_alerts_for_{category}"
+        )
+        
+        # Process the results as before
+        columns = [column[0] for column in cursor.description]
+        alerts = [dict(zip(columns, row)) for row in rows]
+        
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts for category {category} in {query_time:.2f} ms")
+        return alerts
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def get_localhost_by_ip(ip_address):
+    logger = logging.getLogger(__name__)
+    try:
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to localhosts database")
+            return None
+            
+        cursor = conn.cursor()
+        
+        # Convert this query to use run_timed_query
+        rows, query_time = run_timed_query(
+            cursor,
+            "SELECT * FROM localhosts WHERE ip_address = ?", 
+            (ip_address,),
+            description=f"get_localhost_{ip_address}"
+        )
+        
+        if rows:
+            return rows[0]
+        return None
     finally:
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)

@@ -80,8 +80,6 @@ def process_data():
                     filtered_rows = [row for row in filtered_rows if 'LinkLocal' not in str(row[11])]
                     log_info(logger,f"[INFO] Finished removing LinkLocal flows - processing flow count is {len(filtered_rows)}")
 
-
-
                 if config_dict.get("NewOutboundDetection", 0) > 0:
                     detect_new_outbound_connections(filtered_rows, config_dict)
 

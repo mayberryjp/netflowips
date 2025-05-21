@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from database.core import connect_to_db, disconnect_from_db
 from pathlib import Path
 # Set up path for imports
@@ -16,7 +17,7 @@ def insert_action(action_text):
     Insert a new record into the actions table.
 
     Args:
-        action_data (dict): A dictionary containing the action data to insert.
+        action_text (str): The text describing the action.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -29,12 +30,18 @@ def insert_action(action_text):
             return False
 
         cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO actions (action_text, acknowledged)
-            VALUES (?, 0)
-        """, (action_text,))
+        
+        # Use run_timed_query for the insert operation
+        _, query_time = run_timed_query(
+            cursor,
+            "INSERT INTO actions (action_text, acknowledged) VALUES (?, 0)",
+            (action_text,),
+            "insert_action",
+            fetch_all=False
+        )
+        
         conn.commit()
-        log_info(logger, f"[INFO] Inserted new action with text: {action_text}")
+        log_info(logger, f"[INFO] Inserted new action with text: {action_text} in {query_time:.2f} ms")
         return True
 
     except sqlite3.Error as e:
@@ -60,14 +67,18 @@ def get_all_actions():
             return []
 
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM actions")
-        rows = cursor.fetchall()
-        disconnect_from_db(conn)
-
+        
+        # Use run_timed_query for the select operation
+        rows, query_time = run_timed_query(
+            cursor,
+            "SELECT * FROM actions",
+            description="get_all_actions"
+        )
+        
         # Format the results as a list of dictionaries
         actions = [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
 
-        log_info(logger, f"[INFO] Retrieved {len(actions)} actions from the database.")
+        log_info(logger, f"[INFO] Retrieved {len(actions)} actions from the database in {query_time:.2f} ms")
         return actions
 
     except sqlite3.Error as e:
@@ -95,14 +106,19 @@ def update_action_acknowledged(action_id):
             return False
 
         cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE actions
-            SET acknowledged = 1
-            WHERE action_id = ?
-        """, (action_id,))
+        
+        # Use run_timed_query for the update operation
+        rowcount, query_time = run_timed_query(
+            cursor,
+            "UPDATE actions SET acknowledged = 1 WHERE action_id = ?",
+            (action_id,),
+            "update_action_acknowledged",
+            fetch_all=False
+        )
+        
         conn.commit()
-        log_info(logger, f"[INFO] Updated acknowledged field to 1 for action ID: {action_id}")
-        return True
+        log_info(logger, f"[INFO] Updated acknowledged field for action ID: {action_id} in {query_time:.2f} ms")
+        return rowcount > 0  # Return True if any rows were affected
 
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Database error while updating action: {e}")

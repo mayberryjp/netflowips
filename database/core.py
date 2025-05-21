@@ -3,6 +3,7 @@ import sqlite3
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+import time
 # Set up path for imports
 current_dir = Path(__file__).resolve().parent
 parent_dir = str(current_dir.parent)
@@ -119,3 +120,37 @@ def get_row_count(db_name, table_name):
     finally:
         if 'conn' in locals():
             disconnect_from_db(conn)
+
+def run_timed_query(cursor, query, params=None, description=None, fetch_all=True):
+    """
+    Execute a database query and time its execution.
+    
+    Args:
+        cursor: The database cursor
+        query: The SQL query string
+        params: Parameters for the query (optional)
+        description: Description of the query (optional)
+        fetch_all: Whether to fetch all results (default True)
+        
+    Returns:
+        tuple: (results, execution_time_ms) or (rowcount, execution_time_ms) for non-SELECT queries
+    """
+    logger = logging.getLogger(__name__)
+    desc = description or query.split()[0:3]  # Use first few words of query if no description
+    
+    start_time = time.time()
+    if params:
+        cursor.execute(query, params)
+    else:
+        cursor.execute(query)
+    
+    if fetch_all:
+        results = cursor.fetchall()
+        execution_time = (time.time() - start_time) * 1000
+        log_info(logger, f"[PERFORMANCE] Query '{desc}' returned {len(results)} rows in {execution_time:.2f} ms")
+        return results, execution_time
+    else:
+        rowcount = cursor.rowcount
+        execution_time = (time.time() - start_time) * 1000
+        log_info(logger, f"[PERFORMANCE] Query '{desc}' affected {rowcount} rows in {execution_time:.2f} ms")
+        return rowcount, execution_time

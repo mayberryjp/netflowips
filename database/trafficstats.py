@@ -122,15 +122,22 @@ def get_traffic_stats_for_ip(ip_address):
         cursor = conn.cursor()
 
         # Query to retrieve all data for the specified IP address
-        cursor.execute("""
+        query = """
             SELECT ip_address, timestamp, total_packets, total_bytes
             FROM trafficstats
             WHERE ip_address = ?
             ORDER BY timestamp DESC
-            limit 100
-        """, (ip_address,))
-
-        rows = cursor.fetchall()
+            LIMIT 100
+        """
+        
+        # Use run_timed_query for performance tracking
+        rows, query_time = run_timed_query(
+            cursor,
+            query,
+            (ip_address,),
+            description=f"get_traffic_stats_for_{ip_address}"
+        )
+        
         disconnect_from_db(conn)
 
         # Format the results as a list of dictionaries
@@ -141,7 +148,7 @@ def get_traffic_stats_for_ip(ip_address):
             "total_bytes": row[3]
         } for row in rows]
 
-        log_info(logger, f"[INFO] Retrieved {len(traffic_stats)} traffic stats entries for IP address {ip_address}.")
+        log_info(logger, f"[INFO] Retrieved {len(traffic_stats)} traffic stats entries for IP address {ip_address} in {query_time:.2f} ms")
         return traffic_stats
 
     except sqlite3.Error as e:
