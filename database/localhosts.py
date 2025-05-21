@@ -33,28 +33,31 @@ def get_localhost_by_ip(ip_address):
 
         cursor = conn.cursor()
         
-        # Query for the specific IP address
-        cursor.execute("""
+        # Query for the specific IP address using run_timed_query
+        query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
                    lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
             FROM localhosts
             WHERE ip_address = ?
-        """, (ip_address,))
+        """
         
-        row = cursor.fetchone()
+        rows, query_time = run_timed_query(
+            cursor,
+            query,
+            (ip_address,),
+            description=f"get_localhost_{ip_address}"
+        )
         
-        if not row:
-            log_info(logger, f"[INFO] No localhost found with IP address: {ip_address}")
+        # Check if any rows were returned
+        if not rows:
+            log_info(logger, f"[INFO] No localhost found with IP address: {ip_address} (query took {query_time:.2f} ms)")
             return None
             
-        # Get column names from cursor description
-     #   columns = [column[0] for column in cursor.description]
+        # Return the first row since we're querying by primary key
+        row = rows[0]
         
-        # Convert row to dictionary with column names as keys
-    #    localhost_dict = dict(zip(columns, row))
-        
-        #log_info(logger, f"[INFO] Retrieved details for localhost with IP: {ip_address}")
+        log_info(logger, f"[INFO] Retrieved details for localhost with IP: {ip_address} in {query_time:.2f} ms")
         return row
         
     except sqlite3.Error as e:
@@ -84,23 +87,31 @@ def get_localhosts_all():
 
     try:
         cursor = conn.cursor()
-        cursor.execute("""
+        
+        # Use run_timed_query for the SELECT operation
+        query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
                    lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
             FROM localhosts
-        """)
+        """
+        
+        rows, query_time = run_timed_query(
+            cursor,
+            query,
+            description="get_all_localhosts"
+        )
 
         # Get column names from cursor description
         columns = [column[0] for column in cursor.description]
         
         # Convert rows to list of dictionaries with column names as keys
         localhosts = []
-        for row in cursor.fetchall():
+        for row in rows:
             localhost_dict = dict(zip(columns, row))
             localhosts.append(localhost_dict)
             
-        log_info(logger, f"[INFO] Retrieved {len(localhosts)} localhost records with full details")
+        log_info(logger, f"[INFO] Retrieved {len(localhosts)} localhost records with full details in {query_time:.2f} ms")
         return localhosts
         
     except sqlite3.Error as e:
@@ -125,10 +136,21 @@ def get_localhosts():
 
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT ip_address FROM localhosts")
-        localhosts = set(row[0] for row in cursor.fetchall())
-        log_info(logger, f"[INFO] Retrieved {len(localhosts)} local hosts from the database")
+        
+        # Use run_timed_query to get IP addresses and track performance
+        query = "SELECT ip_address FROM localhosts"
+        rows, query_time = run_timed_query(
+            cursor,
+            query,
+            description="get_localhost_ips"
+        )
+        
+        # Convert results to a set of IP addresses
+        localhosts = set(row[0] for row in rows)
+        
+        log_info(logger, f"[INFO] Retrieved {len(localhosts)} local hosts from the database in {query_time:.2f} ms")
         return localhosts
+        
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Failed to retrieve local hosts: {e}")
         return set()

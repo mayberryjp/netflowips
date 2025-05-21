@@ -29,7 +29,6 @@ def summarize_alerts_by_ip():
         return {"error": "Unable to connect to the database"}
 
     cursor = conn.cursor()
-
     intervals = 12
 
     try:
@@ -38,23 +37,35 @@ def summarize_alerts_by_ip():
         start_time = now - timedelta(hours=intervals)
 
         # First, get all unique IP addresses with alerts in the time period
-        cursor.execute("""
+        ip_query = """
             SELECT DISTINCT ip_address 
             FROM localhosts
-        """)
+        """
         
-        all_ips = [row[0] for row in cursor.fetchall()]
+        all_ips_rows, ip_query_time = run_timed_query(
+            cursor, 
+            ip_query,
+            description="get_distinct_ips_for_summary"
+        )
+        
+        all_ips = [row[0] for row in all_ips_rows]
         
         # Query to fetch alerts within the last 12 hours
-        cursor.execute("""
+        alerts_query = """
             SELECT ip_address, strftime('%Y-%m-%d %H:00:00', last_seen) as hour, COUNT(*)
             FROM alerts
             WHERE last_seen >= ?
             GROUP BY ip_address, hour
             ORDER BY ip_address, hour
-        """, (start_time.strftime('%Y-%m-%d %H:%M:%S'),))
-
-        alerts_by_hour = cursor.fetchall()
+        """
+        
+        alerts_by_hour_rows, alerts_query_time = run_timed_query(
+            cursor, 
+            alerts_query,
+            (start_time.strftime('%Y-%m-%d %H:%M:%S'),),
+            description="get_alerts_by_hour"
+        )
+        
         disconnect_from_db(conn)
 
         # Generate all hour intervals for the past 12 hours
@@ -69,7 +80,7 @@ def summarize_alerts_by_ip():
             result[ip] = {"alert_intervals": [0] * intervals}
             
         # Fill in the actual alert counts where they exist
-        for row in alerts_by_hour:
+        for row in alerts_by_hour_rows:
             ip_address = row[0]
             hour = row[1]
             count = row[2]
@@ -84,7 +95,9 @@ def summarize_alerts_by_ip():
                     # This shouldn't happen if our hour generation is correct
                     log_warn(logger, f"Hour {hour} not found in generated intervals")
 
-
+        total_time = ip_query_time + alerts_query_time
+        log_info(logger, f"[INFO] Generated alert summary for {len(all_ips)} IPs in {total_time:.2f} ms " +
+                         f"(IP query: {ip_query_time:.2f} ms, Alerts query: {alerts_query_time:.2f} ms)")
         return result
 
     except sqlite3.Error as e:
@@ -243,13 +256,20 @@ def get_alert_count_by_id(alert_id):
 
         cursor = conn.cursor()
         
-        # Count alerts with the specified ID
-        cursor.execute("SELECT COUNT(*) FROM alerts WHERE id = ?", (alert_id,))
+        # Count alerts with the specified ID using run_timed_query
+        count_query = "SELECT COUNT(*) FROM alerts WHERE id = ?"
         
-        # Get the count from the result
-        count = cursor.fetchone()[0]
+        results, query_time = run_timed_query(
+            cursor, 
+            count_query, 
+            (alert_id,),
+            description=f"count_alerts_with_id_{alert_id}"
+        )
         
-        #log_info(logger, f"[INFO] Found {count} alerts with ID {alert_id}.")
+        # Get the count from the first row, first column of the result
+        count = results[0][0]
+        
+        log_info(logger, f"[INFO] Found {count} alerts with ID {alert_id} in {query_time:.2f} ms")
         return count
         
     except sqlite3.Error as e:
@@ -420,22 +440,32 @@ def get_alerts_summary():
 
         cursor = conn.cursor()
         
-        # Get total count
-        cursor.execute("SELECT COUNT(*) FROM alerts")
-        total_count = cursor.fetchone()[0]
+        # Get total count using run_timed_query
+        total_count_query = "SELECT COUNT(*) FROM alerts"
+        total_count_result, count_query_time = run_timed_query(
+            cursor, 
+            total_count_query,
+            description="count_alerts"
+        )
+        total_count = total_count_result[0][0]
         
-        # Get counts by category
-        cursor.execute("""
+        # Get counts by category using run_timed_query
+        category_count_query = """
             SELECT category, COUNT(*) as count 
             FROM alerts 
             GROUP BY category 
             ORDER BY count DESC
-        """)
-        categories = cursor.fetchall()
+        """
         
-        # Log the summary
-        log_info(logger, f"[INFO] Total alerts: {total_count}")
-        log_info(logger, "[INFO] Breakdown by category:")
+        categories, category_query_time = run_timed_query(
+            cursor, 
+            category_count_query,
+            description="alerts_by_category"
+        )
+        
+        # Log the summary with performance metrics
+        log_info(logger, f"[INFO] Total alerts: {total_count} (query took {count_query_time:.2f} ms)")
+        log_info(logger, f"[INFO] Breakdown by category (query took {category_query_time:.2f} ms):")
         for category, count in categories:
             percentage = (count / total_count * 100) if total_count > 0 else 0
             log_info(logger, f"[INFO]   {category}: {count} ({percentage:.1f}%)")
@@ -530,8 +560,13 @@ def get_all_alerts():
             return []
 
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM alerts")
-        rows = cursor.fetchall()
+        
+        # Use run_timed_query for the SELECT operation
+        rows, query_time = run_timed_query(
+            cursor,
+            "SELECT * FROM alerts",
+            description="get_all_alerts"
+        )
 
         # Get column names from cursor description
         columns = [column[0] for column in cursor.description]
@@ -548,7 +583,7 @@ def get_all_alerts():
                     pass  # Keep as string if JSON parsing fails
             alerts.append(alert_dict)
 
-        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts from the database.")
+        log_info(logger, f"[INFO] Retrieved {len(alerts)} alerts from the database in {query_time:.2f} ms")
         return alerts
 
     except sqlite3.Error as e:
@@ -562,7 +597,6 @@ def get_all_alerts():
             disconnect_from_db(conn)
 
 def get_alerts_by_category(category_name):
-
     """
     Retrieve alerts from the database for a specific category.
 
@@ -584,19 +618,23 @@ def get_alerts_by_category(category_name):
 
         cursor = conn.cursor()
         
-        # Retrieve all alerts for the specified category
-        cursor.execute("""
+        # Retrieve all alerts for the specified category using run_timed_query
+        category_query = """
             SELECT id, ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, 
                    times_seen, first_seen, last_seen, acknowledged
             FROM alerts
             WHERE category = ?
             ORDER BY last_seen DESC
-        """, (category_name,))
+        """
         
-        # Just return the raw rows
-        rows = cursor.fetchall()
+        rows, query_time = run_timed_query(
+            cursor, 
+            category_query, 
+            (category_name,),
+            description=f"get_alerts_for_category_{category_name}"
+        )
         
-        log_info(logger, f"[INFO] Retrieved {len(rows)} alerts for category '{category_name}' from the database.")
+        log_info(logger, f"[INFO] Retrieved {len(rows)} alerts for category '{category_name}' in {query_time:.2f} ms")
         return rows
 
     except sqlite3.Error as e:
