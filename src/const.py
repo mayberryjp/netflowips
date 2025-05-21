@@ -127,7 +127,8 @@ CONST_CREATE_LOCALHOSTS_SQL = """
         lease_clientid TEXT,
         icon TEXT,                -- New column for icon
         tags TEXT,                -- New column for tags
-        acknowledged INTEGER DEFAULT 0 -- New column for acknowledged
+        acknowledged INTEGER DEFAULT 0,
+        threat_score INTEGER DEFAULT 0 -- New column for threat score
     )
 """
 

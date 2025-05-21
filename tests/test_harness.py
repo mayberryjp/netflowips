@@ -25,6 +25,7 @@ from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
 
 from integrations.services import create_services_db, get_all_services
+from integrations.threatscore import calculate_update_threat_scores
 from src.tags import apply_tags
 
 from src.detections import (
@@ -598,6 +599,8 @@ def main():
             lease_hwaddr=data.get('lease_hwaddr'),
             lease_clientid=data.get('lease_clientid')
         )
+
+    calculate_update_threat_scores()
 
     log_info(logger, "\n===== STARTING CLASSIFICATION TEST =====")
 

@@ -329,12 +329,6 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
         if src_country or dst_country:
             log_info(logger, f"[INFO] Flow involves an IP in a banned country: {src_ip} ({src_country}) and {dst_ip} ({dst_country})")
 
-            matches += 1
-            message = (f"Flow involves an IP in a banned country:\n"
-                      f"Source IP: {src_ip} ({src_country or 'N/A'})\n"
-                      f"Destination IP: {dst_ip} ({dst_country or 'N/A'})")
-
-            alert_id = f"{src_ip}_{dst_ip}_{protocol}_BannedCountryDetection"
 
             local_ip = None
             remote_ip = None
@@ -348,17 +342,25 @@ def detect_geolocation_flows(rows, config_dict, geolocation_data):
                 remote_country = src_country
                 remote_ip = src_ip
 
-                handle_alert(
-                    config_dict,
-                    "GeolocationFlowsDetection",
-                    message,
-                    local_ip,
-                    row,
-                    "Flow involves an IP in a banned country",
-                    remote_ip,
-                    remote_country,
-                    alert_id
-                )
+            matches += 1
+            message = (f"Flow involves an IP in a banned country:\n"
+                      f"Local IP: {local_ip}\n"
+                      f"Remote IP: {remote_ip} ({remote_country or 'N/A'})")
+
+            alert_id = f"{local_ip}_{remote_ip}_{protocol}_BannedCountryDetection"
+
+
+            handle_alert(
+                config_dict,
+                "GeolocationFlowsDetection",
+                message,
+                local_ip,
+                row,
+                "Flow involves an IP in a banned country",
+                remote_ip,
+                remote_country,
+                alert_id
+            )
 
     print()  # Final newline
     log_info(logger, f"[INFO] Completed geolocation processing. Found {matches} matches in {total} flows")

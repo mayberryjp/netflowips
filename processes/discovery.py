@@ -13,6 +13,7 @@ import logging
 from integrations.dns import dns_lookup  # Import the dns_lookup function from dns.py
 from integrations.piholedhcp import get_pihole_dhcp_leases, get_pihole_network_devices
 from integrations.nmap_fingerprint import os_fingerprint
+from integrations.threatscore import calculate_update_threat_scores
 
 from init import *
 
@@ -92,6 +93,8 @@ def do_discovery():
             lease_hwaddr=data.get('lease_hwaddr'),
             lease_clientid=data.get('lease_clientid')
         )
+
+    calculate_update_threat_scores()
 
 if __name__ == "__main__":
     # wait a bit for startup so collector can init configurations
