@@ -20,7 +20,8 @@ from init import *
 
 def create_services_db():
     """
-    Downloads the IANA service names and port numbers CSV and stores it in the database.
+    Downloads the IANA service names and port numbers CSV and stores it in the database
+    using efficient bulk inserts.
     
     The function creates a 'services' table with columns:
     - port_number (integer)
@@ -42,18 +43,21 @@ def create_services_db():
             log_error(logger, f"[ERROR] Failed to download IANA services CSV: {response.status_code}")
             return False
         
-        # Step 4: Parse and insert the CSV data
-        log_info(logger, "[INFO] Parsing and inserting IANA services data...")
+        # Step 2: Parse and insert the CSV data
+        log_info(logger, "[INFO] Parsing and preparing IANA services data...")
         
         delete_all_records(CONST_CONSOLIDATED_DB, "services")
-        # Clear existing data
         
         # Parse CSV
         csv_data = io.StringIO(response.text)
         reader = csv.DictReader(csv_data)
         
-        # Insert data
-        count = 0
+        # Collect records for bulk insert
+        batch_size = 1000
+        service_records = []
+        total_count = 0
+        batch_count = 0
+        
         for row in reader:
             service_name = row.get("Service Name", "")
             port_number = row.get("Port Number", "")
@@ -67,19 +71,37 @@ def create_services_db():
             try:
                 # Convert port to integer
                 port_int = int(port_number)
-                insert_service(port_int, protocol, service_name, description)
                 
-                count += 1
+                # Add to batch
+                service_records.append((port_int, protocol, service_name, description))
+                batch_count += 1
                 
-                # Commit in batches to avoid large transactions
-                if count % 1000 == 0:
-                    log_info(logger, f"[INFO] Processed {count} service entries...")
+                # Insert in batches to avoid large transactions
+                if batch_count >= batch_size:
+                    success, count = insert_services_bulk(service_records)
+                    if success:
+                        total_count += count
+                        log_info(logger, f"[INFO] Processed batch of {count} service entries (total: {total_count})...")
+                    else:
+                        log_error(logger, f"[ERROR] Failed to insert batch of {len(service_records)} records")
+                    
+                    # Reset batch
+                    service_records = []
+                    batch_count = 0
                     
             except ValueError:
                 # Skip rows where port cannot be converted to integer
                 continue
         
-        log_info(logger, f"[INFO] Successfully loaded {count} IANA service entries into the database.")
+        # Insert any remaining records
+        if service_records:
+            success, count = insert_services_bulk(service_records)
+            if success:
+                total_count += count
+            else:
+                log_error(logger, f"[ERROR] Failed to insert final batch of {len(service_records)} records")
+        
+        log_info(logger, f"[INFO] Successfully loaded {total_count} IANA service entries into the database.")
         return True
         
     except requests.RequestException as e:

@@ -161,7 +161,8 @@ from database.actions import (
 from database.services import (
     get_services_by_port, 
     get_all_services_database,
-    insert_service
+    insert_service,
+    insert_services_bulk
 )
 
 from database.tornodes import (
