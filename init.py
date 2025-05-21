@@ -87,7 +87,7 @@ from database.alerts import (
     get_alerts_by_category, 
     get_all_alerts,
     update_alert_acknowledgment,
-    delete_alert,
+    delete_alert_database,
     get_recent_alerts_database,
     get_alert_count_by_id,
     get_hourly_alerts_summary,

@@ -63,6 +63,7 @@ def setup_ignorelist_routes(app):
         elif request.method == 'POST':
             # Add a new ignorelist entry
             data = request.json
+            
             ignorelist_id = data.get("ignorelist_id")
             src_ip = data.get('src_ip')
             dst_ip = data.get('dst_ip')

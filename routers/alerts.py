@@ -157,8 +157,7 @@ def setup_alerts_routes(app):
         """
         logger = logging.getLogger(__name__)
 
-        delete_alert(id)
-
+        delete_alert_database(id)
 
         response.content_type = 'application/json'
         log_info(logger, f"[INFO] Deleted alert with ID: {id}")

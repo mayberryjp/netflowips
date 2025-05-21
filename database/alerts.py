@@ -296,7 +296,7 @@ def get_recent_alerts_database():
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
 
-def delete_alert(alert_id):
+def delete_alert_database(alert_id):
     """
     Delete an alert from the database.
     
