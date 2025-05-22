@@ -43,13 +43,8 @@ def tag_ignorelist(record, ignorelist_entries):
         # Check if the flow matches any ignorelist entry
         src_match = (ignorelist_src_ip == record['src_ip'] or ignorelist_src_ip == record['dst_ip'] or ignorelist_src_ip == "*")
         dst_match = (ignorelist_dst_ip == record['dst_ip'] or ignorelist_dst_ip == record['src_ip'] or ignorelist_dst_ip == "*")
-        
-        # Add handling for empty strings
-        port_match = (ignorelist_dst_port == "*" or ignorelist_dst_port == "" or 
-                      (ignorelist_dst_port.isdigit() and int(ignorelist_dst_port) in (record['src_port'], record['dst_port'])))
-        
-        protocol_match = (ignorelist_protocol == "*" or ignorelist_protocol == "" or 
-                          (ignorelist_protocol.isdigit() and int(ignorelist_protocol) == record['protocol']))
+        port_match = (ignorelist_dst_port in (record['src_port'], record['dst_port']) or ignorelist_dst_port == "*")
+        protocol_match = ((int(ignorelist_protocol) == record['protocol']) or (ignorelist_protocol == "*"))
 
         if src_match and dst_match and port_match and protocol_match:
             #log_info(logger, f"[INFO] Row is ignorelisted with ID: {ignorelist_id}")
@@ -161,13 +156,13 @@ def tag_custom(record, tag_entries):
             src_match = (tag_src_ip == record['src_ip'] or tag_src_ip == record['dst_ip'] or tag_src_ip == "*")
             dst_match = (tag_dst_ip == record['dst_ip'] or tag_dst_ip == record['src_ip'] or tag_dst_ip == "*")
             
-            # Port check - handle empty strings and non-numeric values
-            port_match = (tag_dst_port == "*" or tag_dst_port == "" or 
-                         (tag_dst_port.isdigit() and int(tag_dst_port) in (record['src_port'], record['dst_port'])))
+            # Port check - handle string conversion for wildcard
+            port_match = (tag_dst_port == "*" or 
+                         int(tag_dst_port) in (record['src_port'], record['dst_port']))
             
-            # Protocol check - handle empty strings and non-numeric values
-            protocol_match = (tag_protocol == "*" or tag_protocol == "" or 
-                             (tag_protocol.isdigit() and int(tag_protocol) == record['protocol']))
+            # Protocol check - handle string conversion for wildcard
+            protocol_match = (tag_protocol == "*" or 
+                             int(tag_protocol) == record['protocol'])
             
             # If all criteria match, add the tag
             if src_match and dst_match and port_match and protocol_match:
