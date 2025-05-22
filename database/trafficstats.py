@@ -102,14 +102,15 @@ def update_traffic_stats(rows, config_dict):
 
 def get_traffic_stats_for_ip(ip_address):
     """
-    Retrieve all traffic statistics for a specific IP address from the trafficstats table.
+    Retrieve all traffic statistics for a specific IP address from the trafficstats table,
+    including alert counts for the same timeframes.
 
     Args:
         ip_address (str): The IP address to filter data by.
 
     Returns:
-        list: A list of dictionaries containing all traffic statistics for the specified IP address.
-              Returns an empty list if no data is found or an error occurs.
+        list: A list of dictionaries containing all traffic statistics and alert counts
+              for the specified IP address. Returns an empty list if no data is found or an error occurs.
     """
     logger = logging.getLogger(__name__)
     try:
@@ -121,8 +122,8 @@ def get_traffic_stats_for_ip(ip_address):
 
         cursor = conn.cursor()
 
-        # Query to retrieve all data for the specified IP address
-        query = """
+        # Query to retrieve all traffic data for the specified IP address
+        traffic_query = """
             SELECT ip_address, timestamp, total_packets, total_bytes
             FROM trafficstats
             WHERE ip_address = ?
@@ -131,24 +132,59 @@ def get_traffic_stats_for_ip(ip_address):
         """
         
         # Use run_timed_query for performance tracking
-        rows, query_time = run_timed_query(
+        traffic_rows, traffic_query_time = run_timed_query(
             cursor,
-            query,
+            traffic_query,
             (ip_address,),
             description=f"get_traffic_stats_for_{ip_address}"
         )
         
+        # Query to retrieve alert counts for the same IP address
+        alerts_query = """
+            SELECT 
+                strftime('%Y-%m-%d:%H', last_seen) AS hour,
+                COUNT(*) AS alert_count
+            FROM 
+                alerts
+            WHERE 
+                datetime(last_seen) >= datetime('now', '-100 hours') AND ip_address = ?
+            GROUP BY 
+                hour
+            ORDER BY 
+                hour ASC
+        """
+        
+        # Use run_timed_query for performance tracking
+        alert_rows, alerts_query_time = run_timed_query(
+            cursor,
+            alerts_query,
+            (ip_address,),
+            description=f"get_alert_counts_for_{ip_address}"
+        )
+        
         disconnect_from_db(conn)
 
-        # Format the results as a list of dictionaries
-        traffic_stats = [{
-            "ip_address": row[0],
-            "timestamp": row[1],
-            "total_packets": row[2],
-            "total_bytes": row[3]
-        } for row in rows]
+        # Create a mapping of timestamps to alert counts
+        alert_counts = {row[0]: row[1] for row in alert_rows}
+        
+        # Format the results as a list of dictionaries, including alert counts
+        traffic_stats = []
+        for row in traffic_rows:
+            timestamp = row[1]
+            # Get the alert count for this timestamp, or 0 if none exists
+            alert_count = alert_counts.get(timestamp, 0)
+            
+            traffic_stats.append({
+                "ip_address": row[0],
+                "timestamp": timestamp,
+                "total_packets": row[2],
+                "total_bytes": row[3],
+                "alerts": alert_count
+            })
 
-        log_info(logger, f"[INFO] Retrieved {len(traffic_stats)} traffic stats entries for IP address {ip_address} in {query_time:.2f} ms")
+        total_query_time = traffic_query_time + alerts_query_time
+        log_info(logger, f"[INFO] Retrieved {len(traffic_stats)} traffic stats entries with alert counts for IP {ip_address} " + 
+                         f"in {total_query_time:.2f} ms (traffic: {traffic_query_time:.2f} ms, alerts: {alerts_query_time:.2f} ms)")
         return traffic_stats
 
     except sqlite3.Error as e:

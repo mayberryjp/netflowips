@@ -70,9 +70,9 @@ def setup_ignorelist_routes(app):
             dst_port = data.get('dst_port')
             protocol = data.get('protocol')
             
-            if not ignorelist_id or not src_ip or not dst_ip:
+            if not ignorelist_id or not src_ip or not dst_ip or not dst_port or not protocol:
                 response.status = 400
-                return {"error": "Required fields missing (ignorelist_id, src_ip, dst_ip)"}
+                return {"error": "Required fields missing (ignorelist_id, src_ip, dst_ip, dst_port, dst_protocol)"}
             
             try:
 
