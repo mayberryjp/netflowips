@@ -31,6 +31,11 @@ def do_discovery():
         return
 
     existing_localhosts = get_localhosts()
+
+    log_info(logger,"[INFO] Threat score calculation started")
+    calculate_update_threat_scores()
+    log_info(logger,"[INFO] Threat score calculation finished")
+    
     combined_results = {}
     
     DNS_SERVERS = config_dict['ApprovedLocalDnsServersList'].split(',')
@@ -44,6 +49,7 @@ def do_discovery():
             }
     else:
         log_error(logger, "[ERROR] No DNS servers in configuration to perform DNS lookup or DnsDiscoveryNotEnabled")
+
 
     if config_dict.get('DiscoveryPiholeDhcp', 0) > 0:
         nd_results = get_pihole_network_devices(existing_localhosts, config_dict)
@@ -94,7 +100,7 @@ def do_discovery():
             lease_clientid=data.get('lease_clientid')
         )
 
-    calculate_update_threat_scores()
+    log_info(logger,"[INFO] Discovery process completed.")
 
 if __name__ == "__main__":
     # wait a bit for startup so collector can init configurations

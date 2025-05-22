@@ -12,6 +12,86 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from init import *
 
 
+def insert_custom_tag(tag_id, src_ip, dst_ip, dst_port, protocol, tag_name="", enabled=1):
+    """
+    Insert a new custom tag entry into the customtags table.
+    
+    Args:
+        tag_id (str): The unique identifier for the tag
+        src_ip (str): Source IP address pattern
+        dst_ip (str): Destination IP address pattern
+        dst_port (str): Destination port pattern
+        protocol (str): Protocol pattern
+        tag_name (str, optional): Human-readable name for the tag. Defaults to empty string.
+        enabled (int, optional): Whether the tag is enabled (1) or disabled (0). Defaults to 1.
+        
+    Returns:
+        tuple: (success, tag_id) where:
+               - success (bool): True if the operation was successful
+               - tag_id: The ID of the inserted tag if successful, None otherwise
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the customtags database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "customtags")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to customtags database.")
+            return False, None
+            
+        cursor = conn.cursor()
+        
+        # Check if the custom tag entry already exists
+        check_query = """
+            SELECT COUNT(*) FROM customtags
+            WHERE tag_id = ? AND src_ip = ? AND dst_ip = ? AND dst_port = ? AND protocol = ?
+        """
+        
+        results, check_time = run_timed_query(
+            cursor,
+            check_query,
+            (tag_id, src_ip, dst_ip, dst_port, protocol),
+            description=f"check_tag_exists_{tag_id}"
+        )
+        
+        exists = results[0][0]
+        if exists:
+            log_info(logger, f"[INFO] Custom tag entry already exists with ID {tag_id}")
+            return True, tag_id
+        
+        # Insert the new custom tag entry
+        insert_query = """
+            INSERT INTO customtags (
+                tag_id, src_ip, dst_ip, dst_port, protocol, tag_name, 
+                enabled, added, insert_date
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, 
+                ?, datetime('now', 'localtime'), datetime('now', 'localtime')
+            )
+        """
+        
+        _, insert_time = run_timed_query(
+            cursor,
+            insert_query,
+            (tag_id, src_ip, dst_ip, dst_port, protocol, tag_name, enabled),
+            description=f"insert_tag_{tag_id}",
+            fetch_all=False
+        )
+        
+        conn.commit()
+        log_info(logger, f"[INFO] Successfully inserted new custom tag with ID {tag_id} in {insert_time:.2f} ms")
+        return True, tag_id
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while inserting custom tag: {e}")
+        return False, None
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while inserting custom tag: {e}")
+        return False, None
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
 def get_custom_tags():
     """
     Retrieve active entries from the customtags table in the ignorelist database.

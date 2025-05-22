@@ -21,6 +21,7 @@ from routers.localhosts import *
 from routers.services import *
 from routers.trafficstats import *
 from routers.integrations import *
+from routers.customtags import *
 
 # Initialize the Bottle app
 app = Bottle()
@@ -34,6 +35,7 @@ setup_integrations_routes(app)
 setup_localhosts_routes(app)
 setup_services_routes(app)
 setup_trafficstats_routes(app)
+setup_configurations_routes(app)
 
 
 # Define CORS headers

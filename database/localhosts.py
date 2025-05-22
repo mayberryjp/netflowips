@@ -37,7 +37,7 @@ def get_localhost_by_ip(ip_address):
         query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
-                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score
             FROM localhosts
             WHERE ip_address = ?
         """
@@ -92,7 +92,7 @@ def get_localhosts_all():
         query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
-                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score
             FROM localhosts
         """
         
@@ -205,7 +205,6 @@ def update_localhosts(ip_address, mac_address=None, mac_vendor=None, dhcp_hostna
         return False
     finally:
         disconnect_from_db(conn)
-
 
 def insert_localhost_basic(ip_address, original_flow=None):
     """

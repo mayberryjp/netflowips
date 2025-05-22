@@ -1,6 +1,6 @@
 {
     "ip_address": "192.168.50.101",
-    "export_date": "2025-05-21T18:24:39.048516",
+    "export_date": "2025-05-22T11:04:40.544302",
     "instance_identifier": "cbdfd98b391f71eb732cd388a2537fd153ffa5069c98cd9af8a5a5c7c843144c",
     "host_info": {
         "ip_address": "192.168.50.101",
@@ -13,14 +13,7 @@
         "icon": null,
         "local_description": null
     },
-    "dns_queries": [
-        {
-            "domain": "hms.cloudlabs.sharp.co.jp",
-            "times_queried": 2,
-            "first_query": "2025-05-21 18:23:28",
-            "last_query": "2025-05-21 18:23:28"
-        }
-    ],
+    "dns_queries": [],
     "flows": [
         {
             "destination": "121.119.209.36",
@@ -29,7 +22,7 @@
             "flow_count": 118,
             "total_packets": 3669,
             "total_bytes": 2968488,
-            "first_seen": "2025-05-21 18:16:26",
+            "first_seen": "2025-05-22 10:56:26",
             "last_seen": "2025-04-20T07:41:15.600000+00:00"
         },
         {
@@ -39,7 +32,7 @@
             "flow_count": 79,
             "total_packets": 2802,
             "total_bytes": 2258510,
-            "first_seen": "2025-05-21 18:16:25",
+            "first_seen": "2025-05-22 10:56:26",
             "last_seen": "2025-04-20T06:26:15.849000+00:00"
         },
         {
@@ -49,7 +42,7 @@
             "flow_count": 171,
             "total_packets": 3746,
             "total_bytes": 1429977,
-            "first_seen": "2025-05-21 18:16:25",
+            "first_seen": "2025-05-22 10:56:26",
             "last_seen": "2025-04-20T06:23:42.446000+00:00"
         },
         {
@@ -59,7 +52,7 @@
             "flow_count": 1,
             "total_packets": 1933,
             "total_bytes": 91639,
-            "first_seen": "2025-05-21 18:16:24",
+            "first_seen": "2025-05-22 10:56:25",
             "last_seen": "2025-04-19T23:52:32.294000+00:00"
         },
         {
@@ -69,7 +62,7 @@
             "flow_count": 1,
             "total_packets": 1200,
             "total_bytes": 56691,
-            "first_seen": "2025-05-21 18:16:25",
+            "first_seen": "2025-05-22 10:56:25",
             "last_seen": "2025-04-20T14:03:54.761000+00:00"
         },
         {
@@ -79,7 +72,7 @@
             "flow_count": 1,
             "total_packets": 91,
             "total_bytes": 6326,
-            "first_seen": "2025-05-21 18:16:24",
+            "first_seen": "2025-05-22 10:56:24",
             "last_seen": "2025-04-20T06:25:55.575000+00:00"
         }
     ],

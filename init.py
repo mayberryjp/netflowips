@@ -148,7 +148,8 @@ from database.ignorelist import (
 
 from database.customtags import (
     get_custom_tags, 
-    import_custom_tags
+    import_custom_tags,
+    insert_custom_tag
 )
 
 # Action functions
