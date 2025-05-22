@@ -158,7 +158,7 @@ def tag_custom(record, tag_entries):
             
             # Port check - handle string conversion for wildcard
             port_match = (tag_dst_port == "*" or 
-                         int(tag_dst_port) in (record['src_port'], record['dst_port']))
+                         tag_dst_port in (record['src_port'], record['dst_port']))
             
             # Protocol check - handle string conversion for wildcard
             protocol_match = (tag_protocol == "*" or 
