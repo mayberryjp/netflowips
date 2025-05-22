@@ -1,4 +1,4 @@
-VERSION="v0.3.136"
+VERSION="v0.3.151"
 # v3 is after consolidating database, v4 is moving to ORM, v5 is moving to constructor, v6 is integrating agent
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
@@ -128,7 +128,8 @@ CONST_CREATE_LOCALHOSTS_SQL = """
         icon TEXT,                -- New column for icon
         tags TEXT,                -- New column for tags
         acknowledged INTEGER DEFAULT 0,
-        threat_score INTEGER DEFAULT 1 -- New column for threat score
+        threat_score INTEGER DEFAULT 1, -- New column for threat score
+        alerts_enabled INTEGER DEFAULT 1
     )
 """
 

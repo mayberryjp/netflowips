@@ -1,4 +1,4 @@
-CONST_DEVICE_CATEGORIES = {
+CONST_DEVICE_CATEGORIES = [
         {"category": "ROUTER", "ICON": "router_icon"},
         {"category": "FIREWALL", "ICON": "firewall_icon"},
         {"category": "WIFI_ACCESS_POINT", "ICON": "access_point_icon"},
@@ -75,9 +75,6 @@ CONST_DEVICE_CATEGORIES = {
         {"category": "MIRROR", "ICON": "mirror_icon"},
         {"category": "BED", "ICON": "bed_icon"},
         {"category": "TREADMILL", "ICON": "treadmill_icon"},
-        {"category": "WEIGHT_BENCH", "ICON": "weight_bench_icon"},
-        {"category": "GARDEN", "ICON": "garden_icon"},
-        {"category": "COMPOSTER", "ICON": "composter_icon"},
         {"category": "BBQ_GRILL", "ICON": "bbq_grill_icon"},
         {"category": "SMOKE_DETECTOR", "ICON": "smoke_detector_icon"},
         {"category": "WATER_MONITOR", "ICON": "water_monitor_icon"},
@@ -99,4 +96,4 @@ CONST_DEVICE_CATEGORIES = {
         {"category": "BATTERY_CHARGER", "ICON": "battery_charger_icon"},
         {"category": "BROADCAST_ADDRESS", "ICON": "broadcast_address_icon"},
         {"category": "PRESENCE_SENSOR", "ICON": "presence_sensor_icon"},
-}
+]

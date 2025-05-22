@@ -116,7 +116,8 @@ from database.localhosts import (
     insert_localhost_basic,
     classify_localhost,
     delete_localhost_database,
-    update_localhost_threat_score
+    update_localhost_threat_score,
+    update_localhost_alerts_enabled
 )
 
 from database.allflows import (

@@ -37,7 +37,7 @@ def get_localhost_by_ip(ip_address):
         query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
-                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score, alerts_enabled 
             FROM localhosts
             WHERE ip_address = ?
         """
@@ -92,7 +92,7 @@ def get_localhosts_all():
         query = """
             SELECT ip_address, first_seen, original_flow, 
                    mac_address, mac_vendor, dhcp_hostname, dns_hostname, os_fingerprint,
-                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score
+                   lease_hostname, lease_hwaddr, lease_clientid, acknowledged, local_description, icon, tags, threat_score, alerts_enabled 
             FROM localhosts
         """
         
@@ -392,6 +392,58 @@ def update_localhost_threat_score(ip_address, threat_score):
         return False
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error while updating threat score for {ip_address}: {e}")
+        return False
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
+
+def update_localhost_alerts_enabled(ip_address, alerts_enabled):
+    """
+    Update the alerts_enabled flag for a localhost in the database.
+    
+    Args:
+        ip_address (str): The IP address of the localhost to update
+        alerts_enabled (bool): Whether alerts should be enabled for this localhost
+        
+    Returns:
+        bool: True if the update was successful, False otherwise
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the localhosts database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "localhosts")
+        if not conn:
+            log_error(logger, "[ERROR] Unable to connect to localhosts database.")
+            return False
+
+        cursor = conn.cursor()
+        
+        # First check if the localhost exists
+        cursor.execute("SELECT 1 FROM localhosts WHERE ip_address = ?", (ip_address,))
+        if not cursor.fetchone():
+            log_warn(logger, f"[WARN] No localhost found with IP {ip_address} to update alerts_enabled flag")
+            return False
+        
+        # Convert boolean to integer (SQLite doesn't have a boolean type)
+        alerts_enabled_int = 1 if alerts_enabled else 0
+        
+        # Update the alerts_enabled flag for the specified localhost
+        cursor.execute("""
+            UPDATE localhosts
+            SET alerts_enabled = ?
+            WHERE ip_address = ?
+        """, (alerts_enabled_int, ip_address))
+        
+        conn.commit()
+        log_info(logger, f"[INFO] Successfully updated alerts_enabled for {ip_address} to {alerts_enabled}")
+        return True
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while updating alerts_enabled for {ip_address}: {e}")
+        return False
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while updating alerts_enabled for {ip_address}: {e}")
         return False
     finally:
         if 'conn' in locals() and conn:
