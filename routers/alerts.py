@@ -16,6 +16,48 @@ app = Bottle()
 
 def setup_alerts_routes(app):
 
+    @app.route('/api/alerts/ip/<ip_address>', method=['DELETE'])
+    def delete_alerts_for_ip(ip_address):
+        """
+        API endpoint to delete all alerts for a specific IP address.
+        
+        Args:
+            ip_address: The IP address for which all alerts should be deleted.
+            
+        Returns:
+            JSON object indicating success or failure and the count of deleted alerts.
+        """
+        logger = logging.getLogger(__name__)
+        
+        try:
+            # Import the delete function
+            from database.alerts import delete_alerts_by_ip
+            
+            # Delete all alerts for the specified IP address
+            success, count = delete_alerts_by_ip(ip_address)
+            
+            response.content_type = 'application/json'
+            
+            if success:
+                log_info(logger, f"[INFO] Successfully deleted {count} alerts for IP address: {ip_address}")
+                return {
+                    "success": True,
+                    "message": f"Successfully deleted {count} alerts for IP address: {ip_address}",
+                    "count": count
+                }
+            else:
+                log_error(logger, f"[ERROR] Failed to delete alerts for IP address: {ip_address}")
+                response.status = 500
+                return {
+                    "success": False,
+                    "error": f"Failed to delete alerts for IP address: {ip_address}"
+                }
+            
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error deleting alerts for IP address {ip_address}: {e}")
+            response.status = 500
+            return {"success": False, "error": str(e)}
+
     @app.route('/api/alerts/category/<category_name>', method=['GET'])
     def get_alerts_by_category_api(category_name):
         """

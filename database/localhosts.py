@@ -448,3 +448,51 @@ def update_localhost_alerts_enabled(ip_address, alerts_enabled):
     finally:
         if 'conn' in locals() and conn:
             disconnect_from_db(conn)
+
+def delete_alerts_by_ip(ip_address):
+    """
+    Delete all alerts for the specified IP address from the alerts database.
+    
+    Args:
+        ip_address (str): The IP address for which all alerts should be deleted
+        
+    Returns:
+        tuple: (success, count) where:
+               - success (bool): True if the operation was successful
+               - count (int): Number of alerts deleted
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Connect to the alerts database
+        conn = connect_to_db(CONST_CONSOLIDATED_DB, "alerts")
+        if not conn:
+            log_error(logger, f"[ERROR] Unable to connect to alerts database.")
+            return False, 0
+
+        cursor = conn.cursor()
+        
+        # First get the count for logging purposes
+        cursor.execute("SELECT COUNT(*) FROM alerts WHERE ip_address = ?", (ip_address,))
+        count = cursor.fetchone()[0]
+        
+        if count == 0:
+            log_info(logger, f"[INFO] No alerts found for IP {ip_address} to delete")
+            return True, 0
+        
+        # Delete all alerts for the specified IP address
+        cursor.execute("DELETE FROM alerts WHERE ip_address = ?", (ip_address,))
+        
+        conn.commit()
+        log_info(logger, f"[INFO] Successfully deleted {count} alerts for IP address: {ip_address}")
+        return True, count
+        
+    except sqlite3.Error as e:
+        log_error(logger, f"[ERROR] Database error while deleting alerts for IP {ip_address}: {e}")
+        return False, 0
+    except Exception as e:
+        log_error(logger, f"[ERROR] Unexpected error while deleting alerts for IP {ip_address}: {e}")
+        return False, 0
+    finally:
+        if 'conn' in locals() and conn:
+            disconnect_from_db(conn)
