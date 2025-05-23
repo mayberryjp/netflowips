@@ -213,7 +213,7 @@ def get_dead_connections_from_database():
                     sum(forward_packets) as f_packets,
                     sum(reverse_packets) as r_packets
                 FROM ConnectionPairs
-                WHERE connection_protocol NOT IN (1, 2)  -- Exclude ICMP and IGMP
+                WHERE connection_protocol IN (6)  -- Exclude ICMP and IGMP
                 AND row_tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
