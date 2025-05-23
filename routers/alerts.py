@@ -369,3 +369,32 @@ def setup_alerts_routes(app):
             log_error(logger, f"[ERROR] Failed to get alerts for IP {ip_address}: {e}")
             response.status = 500
             return {"error": str(e)}
+        
+    @app.route('/api/alerts/all', method=['DELETE'])
+    def delete_all_alerts():
+        """
+        API endpoint to delete all alerts from the database.
+
+        Returns:
+            JSON object indicating success or failure.
+        """
+        logger = logging.getLogger(__name__)
+        
+        try:
+            # Import or use the database function
+            from database.core import delete_all_records            
+            # Delete all alerts
+            count = delete_all_records(CONST_CONSOLIDATED_DB, "alerts")
+            
+            response.content_type = 'application/json'
+
+            return {"message": f"All alerts deleted successfully records)"}
+            
+        except sqlite3.Error as e:
+            log_error(logger, f"[ERROR] Database error when deleting all alerts: {e}")
+            response.status = 500
+            return {"error": str(e)}
+        except Exception as e:
+            log_error(logger, f"[ERROR] Failed to delete all alerts: {e}")
+            response.status = 500
+            return {"error": str(e)}
