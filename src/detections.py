@@ -1,7 +1,3 @@
-from datetime import datetime, timedelta
-from database.alerts import log_alert_to_db
-from database.allflows import update_tag_to_allflows
-from src.notifications import send_telegram_message  # Import notification functions
 import logging
 from src.const import CONST_CONSOLIDATED_DB
 import os
@@ -21,13 +17,28 @@ from init import *
 from database.newflows import get_new_flows
 
 
-from detections.detect_custom_tag import detect_custom_tag
-from detections.detect_dead_connections import detect_dead_connections
-from detections.detect_new_outbound_connections import detect_new_outbound_connections
-from detections.detect_new_inbound_connections import detect_new_inbound_connections
-from detections.detect_geolocation_flows import detect_geolocation_flows
-from detections.detect_router_flows import router_flows_detection
-from detections.detect_foreign_flows import foreign_flows_detection
+from integrations.geolocation import load_geolocation_data
+from integrations.reputation import load_reputation_data
+
+from detect.detect_custom_tag import detect_custom_tag
+from detect.detect_dead_connections import detect_dead_connections
+from detect.detect_new_outbound_connections import detect_new_outbound_connections
+from detect.detect_geolocation_flows import detect_geolocation_flows
+from detect.detect_unauthorized_dns import detect_unauthorized_dns
+from detect.detect_unauthorized_ntp import detect_unauthorized_ntp
+from detect.detect_incorrect_authoritative_dns import detect_incorrect_authoritative_dns
+from detect.detect_port_scanning import detect_port_scanning
+from detect.detect_tor_traffic import detect_tor_traffic
+from detect.detect_vpn_traffic import detect_vpn_traffic
+from detect.detect_high_bandwidth_flows import detect_high_bandwidth_flows
+from detect.detect_many_destinations import detect_many_destinations
+from detect.detect_reputation_flows import detect_reputation_flows
+from detect.local_flows_detection import local_flows_detection
+from detect.foreign_flows_detection import foreign_flows_detection
+from detect.router_flow_detections import router_flows_detection
+from detect.update_localhosts import update_local_hosts
+from detect.detect_high_risk_ports import detect_high_risk_ports
+from detect.detect_incorrect_ntp_stratum import detect_incorrect_ntp_stratum
 
 
 # Function to process data
@@ -144,46 +155,3 @@ def process_data():
         except sqlite3.Error as e:
             log_error(logger, f"[ERROR] Error reading from database: {e}")        
     log_info(logger,f"[INFO] Processing finished.") 
-
-
-
-def handle_alert(config_dict, detection_key, telegram_message, local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash):
-    """
-    Handle alerting logic based on the configuration level.
-
-    Args:
-        config_dict (dict): Configuration dictionary.
-        detection_key (str): The key in the configuration dict for the detection type (e.g., "NewOutboundDetection").
-        src_ip (str): Source IP address.
-        row (list): The flow data row.
-        alert_message (str): The alert message to send.
-        dst_ip (str): Destination IP address.
-        dst_port (int): Destination port.
-        alert_id (str): Unique identifier for the alert.
-
-    Returns:
-        str: "insert", "update", or None based on the operation performed.
-    """
-    logger = logging.getLogger(__name__)
-
-    # Get the detection level from the configuration
-    detection_level = config_dict.get(detection_key, 0)
-
-    if detection_level >= 2:
-        # Send Telegram alert and log to database
-        insert_or_update = log_alert_to_db(local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash, False)
-                #insert_or_update = log_alert_to_db(local_ip, original_flow, category, enrichment_1, enrichment_2, alert_id, False)
-#                           def log_alert_to_db(ip_address, flow, category, alert_enrichment_1, alert_enrichment_2, alert_id_hash, realert=False):
- 
-        if insert_or_update == "insert":
-            send_telegram_message(telegram_message, original_flow)
-        elif insert_or_update == "update" and detection_level == 3:
-            send_telegram_message(telegram_message, original_flow)
-
-        return insert_or_update
-
-    elif detection_level == 1:
-        # Only log to database
-        return log_alert_to_db(local_ip, original_flow, alert_category, enrichment_1, enrichment_2, alert_id_hash, False)
-
-    return None

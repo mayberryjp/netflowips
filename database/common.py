@@ -227,7 +227,6 @@ def collect_database_counts():
     except Exception as e:
         log_error(logger, f"[ERROR] Unexpected error: {e}")
 
-    conn_ignorelist.close()
     return counts
 
 def store_version():

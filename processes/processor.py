@@ -11,10 +11,9 @@ if str(src_dir) not in sys.path:
 sys.path.insert(0, "/database")
 import sqlite3  # Import the sqlite3 module
 from init import *
-from src.detections import detect_custom_tag, detect_reputation_flows, update_local_hosts, detect_geolocation_flows, detect_new_outbound_connections, router_flows_detection, local_flows_detection, foreign_flows_detection, detect_unauthorized_dns, detect_unauthorized_ntp, detect_incorrect_authoritative_dns, detect_incorrect_ntp_stratum , detect_dead_connections, detect_vpn_traffic, detect_high_risk_ports, detect_many_destinations, detect_port_scanning, detect_tor_traffic, detect_high_bandwidth_flows
-from src.notifications import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
-from integrations.geolocation import load_geolocation_data
-from integrations.reputation import load_reputation_data
+
+from notifications.telegram import send_test_telegram_message  # Import send_test_telegram_message from notifications.py
+
 from src.const import CONST_REINITIALIZE_DB, IS_CONTAINER, CONST_CONSOLIDATED_DB
 import schedule
 import time

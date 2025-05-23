@@ -15,6 +15,7 @@ sys.path.insert(0, "/database")
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import logging
 from locallogging import log_info, log_error, log_warn
+from notifications.core import handle_alert
 from init import *
 
 def detect_many_destinations(rows, config_dict):

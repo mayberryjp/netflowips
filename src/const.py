@@ -1,4 +1,4 @@
-VERSION="v0.3.174"
+VERSION="v0.3.218"
 # v3 is after consolidating database, v4 is moving to ORM, v5 is moving to constructor, v6 is integrating agent
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
@@ -66,7 +66,9 @@ CONST_CREATE_ALERTS_SQL='''
         first_seen TEXT,
         last_seen TEXT,
         acknowledged INTEGER DEFAULT 0
-    )
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_alerts_ip_address ON alerts(ip_address);
 '''
 
 CONST_CREATE_IGNORELIST_SQL='''
@@ -151,7 +153,9 @@ CONST_CREATE_TRAFFICSTATS_SQL = """
         total_packets INTEGER DEFAULT 0,
         total_bytes INTEGER DEFAULT 0,
         PRIMARY KEY (ip_address, timestamp)
-    )"""
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_trafficstats_ip_address ON trafficstats(ip_address);"""
 
 CONST_CREATE_REPUTATIONLIST_SQL="""
     CREATE TABLE IF NOT EXISTS reputationlist (

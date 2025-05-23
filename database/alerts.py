@@ -269,7 +269,7 @@ def get_alert_count_by_id(alert_id):
         # Get the count from the first row, first column of the result
         count = results[0][0]
         
-        log_info(logger, f"[INFO] Found {count} alerts with ID {alert_id} in {query_time:.2f} ms")
+        #log_info(logger, f"[INFO] Found {count} alerts with ID {alert_id} in {query_time:.2f} ms")
         return count
         
     except sqlite3.Error as e:

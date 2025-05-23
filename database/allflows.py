@@ -179,7 +179,7 @@ def get_dead_connections_from_database():
         
         # Execute the complex query to identify potential dead connections
         cursor.execute("""
-                WITH ConnectionPairs AS (
+               WITH ConnectionPairs AS (
                     SELECT 
                         a1.src_ip as initiator_ip,
                         a1.dst_ip as responder_ip,
@@ -204,16 +204,17 @@ def get_dead_connections_from_database():
                 SELECT 
                     initiator_ip,
                     responder_ip,
+					initiator_port,
                     responder_port,
-                    forward_packets,
-                    reverse_packets,
                     connection_protocol,
                     row_tags,
                     COUNT(*) as connection_count,
                     sum(forward_packets) as f_packets,
-                    sum(reverse_packets) as r_packets
+                    sum(reverse_packets) as r_packets,
+					sum(forward_bytes) as f_bytes,
+					sum(reverse_bytes) as r_bytes
                 FROM ConnectionPairs
-                WHERE connection_protocol IN (6)  -- Exclude ICMP and IGMP
+                WHERE connection_protocol=6 -- Exclude ICMP and IGMP
                 AND row_tags not like '%DeadConnectionDetection%'
                 AND responder_ip NOT LIKE '224%'  -- Exclude multicast
                 AND responder_ip NOT LIKE '239%'  -- Exclude multicast
@@ -224,10 +225,49 @@ def get_dead_connections_from_database():
                     AND r_packets < 1
         """)
         
-        rows = cursor.fetchall()
+        raw_rows = cursor.fetchall()
+        
+        # Restructure rows to match required field order
+        restructured_rows = []
+        for row in raw_rows:
+            initiator_ip = row[0]        # src_ip
+            responder_ip = row[1]        # dst_ip
+            initiator_port = row[2]      # src_port
+            responder_port = row[3]      # dst_port
+            protocol = row[4]            # protocol
+            tags = row[5]                # tags
+            # connection_count = row[6]  # Not used in the restructured output
+            packets = row[7]             # forward_packets
+            bytes_ = row[9]             # forward_bytes (f_bytes)
             
-        log_info(logger, f"[INFO] Identified {len(rows)} potential dead connections.")
-        return rows
+            # Create default values for missing fields
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            flow_start = current_time    # Placeholder
+            flow_end = current_time      # Placeholder
+            last_seen = current_time     # Placeholder
+            times_seen = row[6]              # Default value
+            
+            # Create a restructured row with the requested field order
+            restructured_row = (
+                initiator_ip,             # src_ip
+                responder_ip,             # dst_ip
+                initiator_port,    
+               responder_port,           # dst_port
+                protocol,                 # protocol
+                packets,                  # packets
+                bytes_,                   # bytes
+                flow_start,               # flow_start
+                flow_end,                 # flow_end
+                last_seen,                # last_seen
+                times_seen,               # times_seen
+                tags                      # tags
+            )
+            restructured_rows.append(restructured_row)
+            
+
+            
+        log_info(logger, f"[INFO] Identified {len(restructured_rows)} potential dead connections.")
+        return restructured_rows
         
     except sqlite3.Error as e:
         log_error(logger, f"[ERROR] Database error while querying dead connections: {e}")

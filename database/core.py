@@ -67,7 +67,7 @@ def create_table(db_name, create_table_sql, table):
             return
 
         cursor = conn.cursor()
-        cursor.execute(create_table_sql)
+        cursor.executescript(create_table_sql)
         conn.commit()
         log_info(logger, f"[INFO] {db_name} table {table} initialized successfully.")
         disconnect_from_db(conn)
