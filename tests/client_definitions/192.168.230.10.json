@@ -1,0 +1,30 @@
+{
+    "ip_address": "192.168.230.10",
+    "export_date": "2025-05-23T05:45:47.096326",
+    "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
+    "host_info": {
+        "ip_address": "192.168.230.10",
+        "mac_address": null,
+        "mac_vendor": null,
+        "dhcp_hostname": null,
+        "dns_hostname": "netgearswitch.",
+        "os_fingerprint": "No OS fingerprint detected",
+        "lease_hostname": null,
+        "icon": "SWITCH",
+        "local_description": "Netgear GS308EPP POE Switch"
+    },
+    "dns_queries": [],
+    "flows": [
+        {
+            "destination": "192.168.8.1",
+            "port": 0,
+            "protocol": 1,
+            "flow_count": 49,
+            "total_packets": 49,
+            "total_bytes": 4116,
+            "first_seen": "2025-05-23 05:13:17",
+            "last_seen": "7330017"
+        }
+    ],
+    "actions": []
+}

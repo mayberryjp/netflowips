@@ -1,0 +1,69 @@
+{
+    "ip_address": "192.168.230.11",
+    "export_date": "2025-05-23T05:45:45.095584",
+    "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
+    "host_info": {
+        "ip_address": "192.168.230.11",
+        "mac_address": "fc:e8:c0:f8:78:db",
+        "mac_vendor": "Espressif Inc.",
+        "dhcp_hostname": "zigbeeradio",
+        "dns_hostname": "zigbeeradio.",
+        "os_fingerprint": "lwIP_lwIP_None_90",
+        "lease_hostname": null,
+        "icon": "ZIGBEE_RADIO",
+        "local_description": "Zigbee SLZB-06P7 POE Adapter"
+    },
+    "dns_queries": [
+        {
+            "domain": "google.com",
+            "times_queried": 1903,
+            "first_query": "2025-05-22 17:00:39",
+            "last_query": "2025-05-07 07:58:36"
+        },
+        {
+            "domain": "updates.smlight.tech",
+            "times_queried": 21,
+            "first_query": "2025-05-22 17:00:39",
+            "last_query": "2025-05-07 15:10:58"
+        },
+        {
+            "domain": "stats.smlight.tech",
+            "times_queried": 1,
+            "first_query": "2025-05-18 06:54:41",
+            "last_query": "2025-05-18 06:54:41"
+        }
+    ],
+    "flows": [
+        {
+            "destination": "224.0.0.251",
+            "port": 5353,
+            "protocol": 17,
+            "flow_count": 110,
+            "total_packets": 112,
+            "total_bytes": 34803,
+            "first_seen": "2025-05-18 06:53:49",
+            "last_seen": "1885254861"
+        },
+        {
+            "destination": "45.83.192.98",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 14,
+            "total_packets": 181,
+            "total_bytes": 17412,
+            "first_seen": "2025-05-22 15:01:07",
+            "last_seen": "108825434"
+        },
+        {
+            "destination": "192.68.230.236",
+            "port": 123,
+            "protocol": 17,
+            "flow_count": 10,
+            "total_packets": 23,
+            "total_bytes": 1748,
+            "first_seen": "2025-05-19 07:02:40",
+            "last_seen": "2012599028"
+        }
+    ],
+    "actions": []
+}

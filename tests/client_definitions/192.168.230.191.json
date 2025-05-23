@@ -1,0 +1,143 @@
+{
+    "ip_address": "192.168.230.191",
+    "export_date": "2025-05-23T05:45:43.294654",
+    "instance_identifier": "4f658d7aaf0c3df27c309d03c448dc4128d8eed15511fff4b1b09de388e987bd",
+    "host_info": {
+        "ip_address": "192.168.230.191",
+        "mac_address": "4c:a9:19:37:0f:87",
+        "mac_vendor": "Tuya Smart Inc.",
+        "dhcp_hostname": "battery_charger.832-5.com",
+        "dns_hostname": "battery_charger.832-5.com.",
+        "os_fingerprint": "lwIP_lwIP_None_99",
+        "lease_hostname": "battery_charger",
+        "icon": "BATTERY_CHARGER",
+        "local_description": "Tuya Battery Charger Relay"
+    },
+    "dns_queries": [
+        {
+            "domain": "m2.tuyaus.com",
+            "times_queried": 219,
+            "first_query": "2025-05-20 17:01:04",
+            "last_query": "2025-05-16 07:30:36"
+        },
+        {
+            "domain": "a3.tuyaus.com",
+            "times_queried": 10,
+            "first_query": "2025-05-21 03:00:57",
+            "last_query": "2025-05-18 06:54:41"
+        }
+    ],
+    "flows": [
+        {
+            "destination": "255.255.255.255",
+            "port": 6667,
+            "protocol": 17,
+            "flow_count": 1003,
+            "total_packets": 185988,
+            "total_bytes": 43149216,
+            "first_seen": "2025-05-23 05:40:48",
+            "last_seen": "1803787799"
+        },
+        {
+            "destination": "35.161.158.54",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 4,
+            "total_packets": 10021,
+            "total_bytes": 789165,
+            "first_seen": "2025-05-18 14:20:27",
+            "last_seen": "2015726690"
+        },
+        {
+            "destination": "54.188.99.4",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 7531,
+            "total_bytes": 592218,
+            "first_seen": "2025-05-09 18:17:28",
+            "last_seen": "1792868906"
+        },
+        {
+            "destination": "54.69.37.156",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 415,
+            "total_packets": 4668,
+            "total_bytes": 540435,
+            "first_seen": "2025-05-19 18:46:26",
+            "last_seen": "100980092"
+        },
+        {
+            "destination": "54.187.112.38",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 282,
+            "total_packets": 3093,
+            "total_bytes": 364423,
+            "first_seen": "2025-05-20 05:12:13",
+            "last_seen": "100365900"
+        },
+        {
+            "destination": "35.84.67.65",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 3452,
+            "total_bytes": 272027,
+            "first_seen": "2025-05-19 18:47:30",
+            "last_seen": "37418927"
+        },
+        {
+            "destination": "34.218.147.23",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 92,
+            "total_packets": 937,
+            "total_bytes": 114758,
+            "first_seen": "2025-05-23 05:44:00",
+            "last_seen": "178995769"
+        },
+        {
+            "destination": "100.21.156.247",
+            "port": 8886,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 1304,
+            "total_bytes": 102658,
+            "first_seen": "2025-05-20 05:29:08",
+            "last_seen": "140019622"
+        },
+        {
+            "destination": "34.218.107.222",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 4,
+            "total_packets": 48,
+            "total_bytes": 4407,
+            "first_seen": "2025-05-16 08:09:34",
+            "last_seen": "1043"
+        },
+        {
+            "destination": "35.164.57.66",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 2,
+            "total_packets": 26,
+            "total_bytes": 2265,
+            "first_seen": "2025-05-16 07:50:30",
+            "last_seen": "2275000927"
+        },
+        {
+            "destination": "52.35.54.49",
+            "port": 443,
+            "protocol": 6,
+            "flow_count": 1,
+            "total_packets": 15,
+            "total_bytes": 1188,
+            "first_seen": "2025-05-16 07:48:23",
+            "last_seen": "312161"
+        }
+    ],
+    "actions": []
+}

@@ -256,20 +256,13 @@ def get_alert_count_by_id(alert_id):
 
         cursor = conn.cursor()
         
-        # Count alerts with the specified ID using run_timed_query
+        # Count alerts with the specified ID using direct cursor execution
         count_query = "SELECT COUNT(*) FROM alerts WHERE id = ?"
-        
-        results, query_time = run_timed_query(
-            cursor, 
-            count_query, 
-            (alert_id,),
-            description=f"count_alerts_with_id_{alert_id}"
-        )
+        cursor.execute(count_query, (alert_id,))
         
         # Get the count from the first row, first column of the result
-        count = results[0][0]
+        count = cursor.fetchone()[0]
         
-        #log_info(logger, f"[INFO] Found {count} alerts with ID {alert_id} in {query_time:.2f} ms")
         return count
         
     except sqlite3.Error as e:
