@@ -14,7 +14,7 @@ from init import *
 
 def delete_old_traffic_stats():
     """
-    Delete all records from the trafficstats table with a timestamp of 2 days ago or older.
+    Delete all records from the trafficstats table with a timestamp of 31 days ago or older.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -29,7 +29,7 @@ def delete_old_traffic_stats():
 
         cursor = conn.cursor()
 
-        # Calculate the cutoff timestamp (2 days ago)
+        # Calculate the cutoff timestamp (31 days ago)
         cutoff_date = (datetime.now() - timedelta(days=31)).strftime('%Y-%m-%d')
 
         # Delete records older than the cutoff timestamp
