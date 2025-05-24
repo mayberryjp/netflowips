@@ -62,5 +62,7 @@ CONST_DEFAULT_CONFIGS = [
     ('SendConfigurationToCloudApi','0'),
     ('ApprovedHighRiskDestinations', ''),
     ('MaxMindAPIKey', ''),
-    ('ImportServicesList','1')
+    ('ImportServicesList','1'),
+    ('TelegramEnabled', '0'),
+    ('ImportAsnDatabase', '1'),
 ]

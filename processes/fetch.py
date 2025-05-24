@@ -56,9 +56,10 @@ def main():
         # Call the update_tor_nodes function
 
         try:
-            log_info(logger,"[INFO] Retrieving IP2ASN Database...")
-            create_asn_database()
-            log_info(logger, "[INFO] IP2ASN update finished.")
+            if config_dict.get("ImportAsnDatabase",0) > 0:
+                log_info(logger,"[INFO] Retrieving IP2ASN Database...")
+                create_asn_database()
+                log_info(logger, "[INFO] IP2ASN update finished.")
         except Exception as e:
             log_error(logger, f"[ERROR] Error during data fetch: {e}")
 

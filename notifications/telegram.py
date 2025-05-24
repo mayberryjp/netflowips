@@ -22,24 +22,26 @@ def send_telegram_message(message, flow):
     """
     config_dict = get_config_settings()
     logger = logging.getLogger(__name__)
-    try:
-        # Create header with warning emoji and site name
-        header = f"⚠️ Security Alert - {SITE}\n\n"
-        formatted_message = header + message
+    if config_dict['TelegramBotToken'] and config_dict['TelegramChatId'] and config_dict['TelegramEnabled']:
+        try:
+            
+            # Create header with warning emoji and site name
+            header = f"⚠️ Security Alert - {SITE}\n\n"
+            formatted_message = header + message
 
-        url = f"https://api.telegram.org/bot{config_dict['TelegramBotToken']}/sendMessage"
-        payload = {
-            "chat_id": config_dict['TelegramChatId'],
-            "text": formatted_message,
-            "parse_mode": "HTML"
-        }
-        response = requests.post(url, json=payload)
-        if response.status_code == 200:
-            log_info(logger, f"[INFO] Telegram message sent successfully.")
-        else:
-            log_error(logger, f"[ERROR] Failed to send Telegram message. Status code: {response.status_code}, Response: {response.text}")
-    except Exception as e:
-        log_error(logger, f"[ERROR] Exception occurred while sending Telegram message: {e}")
+            url = f"https://api.telegram.org/bot{config_dict['TelegramBotToken']}/sendMessage"
+            payload = {
+                "chat_id": config_dict['TelegramChatId'],
+                "text": formatted_message,
+                "parse_mode": "HTML"
+            }
+            response = requests.post(url, json=payload)
+            if response.status_code == 200:
+                log_info(logger, f"[INFO] Telegram message sent successfully.")
+            else:
+                log_error(logger, f"[ERROR] Failed to send Telegram message. Status code: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Exception occurred while sending Telegram message: {e}")
 
 
 def send_test_telegram_message():
@@ -48,7 +50,9 @@ def send_test_telegram_message():
     """
     logger = logging.getLogger(__name__)
     config_dict= get_config_settings()
-    if config_dict['TelegramBotToken'] and config_dict['TelegramChatId']:
+
+    
+    if config_dict['TelegramBotToken'] and config_dict['TelegramChatId'] and config_dict['TelegramEnabled']:
         try:
             message = f"HomelabIDS is online - running version {VERSION} at {SITE}."
             url = f"https://api.telegram.org/bot{config_dict['TelegramBotToken']}/sendMessage"

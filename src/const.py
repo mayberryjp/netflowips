@@ -262,5 +262,7 @@ CONST_INSTALL_CONFIGS = [
     ('IgnoreListEntries', '[]'),
     ('MaxMindAPIKey', ''),  # x
     ('RemoveLinkLocalFlows', '0'),
-    ('ImportServicesList','1')  #x 
+    ('ImportServicesList','1'),
+    ('TelegramEnabled', '0'),
+    ('ImportAsnDatabase', '1'),
 ]
