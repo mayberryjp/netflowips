@@ -62,6 +62,7 @@ if __name__ == "__main__":
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_REPUTATIONLIST_SQL, "reputationlist")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL, "tornodes")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL, "pihole")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IPASN_SQL, "ipasn")
 
     config_dict = get_config_settings()
 

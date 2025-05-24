@@ -18,6 +18,7 @@ from src.client import upload_all_client_definitions, upload_configuration
 from integrations.reputation import import_reputation_list
 from integrations.piholedns import get_pihole_ftl_logs
 from integrations.services import create_services_db
+from integrations.ipasn import create_asn_database
 from src.const import CONST_REINITIALIZE_DB, CONST_CONSOLIDATED_DB, IS_CONTAINER
 from init import *
 
@@ -35,18 +36,31 @@ def main():
         log_error(logger, "[ERROR] Failed to load configuration settings")
         exit(1)
 
-    fetch_interval = config_dict.get('IntegrationFetchInterval',3600)
+    fetch_interval = config_dict.get('IntegrationFetchInterval',86400)
     # Fixed interval in seconds (e.g., 24 hours = 86400 seconds)
 
     while True:
 
-        delete_old_traffic_stats()
+        try:
+            log_info(logger,"[INFO] Deleting old traffic stats...")
+            delete_old_traffic_stats()
+            log_info(logger, "[INFO] Finished deleting old traffic stats.")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error during deleting old traffic stats: {e}")
+
 
         config_dict = get_config_settings()
         if not config_dict:
             log_error(logger, "[ERROR] Failed to load configuration settings")
             exit(1)
         # Call the update_tor_nodes function
+
+        try:
+            log_info(logger,"[INFO] Retrieving IP2ASN Database...")
+            create_asn_database()
+            log_info(logger, "[INFO] IP2ASN update finished.")
+        except Exception as e:
+            log_error(logger, f"[ERROR] Error during data fetch: {e}")
 
         try: 
             if config_dict.get('TorFlowDetection',0) > 0:

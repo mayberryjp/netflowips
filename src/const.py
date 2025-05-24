@@ -1,4 +1,4 @@
-VERSION="v0.3.226"
+VERSION="v0.3.260"
 # v3 is after consolidating database, v4 is moving to ORM, v5 is moving to constructor, v6 is integrating agent
 CONST_COLLECTOR_LISTEN_PORT=2055
 CONST_COLLECTOR_LISTEN_ADDRESS="0.0.0.0"
@@ -136,14 +136,16 @@ CONST_CREATE_LOCALHOSTS_SQL = """
 """
 
 CONST_CREATE_IPASN_SQL="""
-        CREATE TABLE IF NOT EXISTS asn (
+        CREATE TABLE IF NOT EXISTS ipasn (
             network TEXT PRIMARY KEY,
             start_ip INTEGER,
             end_ip INTEGER,
             netmask INTEGER,
             asn TEXT,
             isp_name TEXT
-        )
+        );
+        
+        CREATE INDEX idx_ipasn_ip_range ON ipasn (start_ip, end_ip);
     """
 
 CONST_CREATE_TRAFFICSTATS_SQL = """
@@ -227,7 +229,7 @@ CONST_INSTALL_CONFIGS = [
     ('DiscoveryReverseDns', '0'),
     ('DiscoveryPiholeDhcp', '0'),
     ('EnableLocalDiscoveryProcess', '0'),
-    ('DiscoveryProcessRunInterval', '60'),
+    ('DiscoveryProcessRunInterval', '28800'),
     ('DiscoveryNmapOsFingerprint',0),
     ('ReputationUrl','https://iplists.firehol.org/files/firehol_level1.netset'),
     ('ReputationListRemove','192.168.0.0/16,0.0.0.0/8,224.0.0.0/3,169.254.0.0/16'),
@@ -252,13 +254,13 @@ CONST_INSTALL_CONFIGS = [
     ('CollectorProcessingInterval','60'),
     ('SendErrorsToCloudApi','0'),
     ('RemoveMulticastFlows','1'),
-    ('TagEntries', ''),
-    ('AlertOnCustomTagList',''),
-    ('AlertOnCustomTags','0'),
+    ('TagEntries', ''), #x
+    ('AlertOnCustomTagList',''),  #x
+    ('AlertOnCustomTags','0'), #x
     ('SendConfigurationToCloudApi','0'),
-    ('ApprovedHighRiskDestinations', ''),
+    ('ApprovedHighRiskDestinations', ''), # x
     ('IgnoreListEntries', '[]'),
-    ('MaxMindAPIKey', ''),
+    ('MaxMindAPIKey', ''),  # x
     ('RemoveLinkLocalFlows', '0'),
-    ('ImportServicesList','1')
+    ('ImportServicesList','1')  #x 
 ]

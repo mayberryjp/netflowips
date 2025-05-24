@@ -23,7 +23,7 @@ from integrations.nmap_fingerprint import os_fingerprint
 from integrations.reputation import import_reputation_list, load_reputation_data
 from integrations.tor import update_tor_nodes
 from integrations.piholedns import get_pihole_ftl_logs
-
+from integrations.ipasn import create_asn_database
 from integrations.services import create_services_db, get_all_services
 from integrations.threatscore import calculate_update_threat_scores
 from src.tags import apply_tags
@@ -266,7 +266,8 @@ def log_test_results(start_time, end_time, duration, total_rows, filtered_rows, 
                 "reputationlist": get_row_count(CONST_CONSOLIDATED_DB, "reputationlist"),
                 "services": get_row_count(CONST_CONSOLIDATED_DB, "services"),
                 "tornodes": get_row_count(CONST_CONSOLIDATED_DB, "tornodes"),
-                "trafficstats": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats")
+                "trafficstats": get_row_count(CONST_CONSOLIDATED_DB, "trafficstats"),
+                "ipasn": get_row_count(CONST_CONSOLIDATED_DB, "ipasn")
             },
             "tag_distribution": tag_distribution,
             "alert_categories": categories,
@@ -343,6 +344,7 @@ def main():
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_TORNODES_SQL, "tornodes")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_PIHOLE_SQL, "pihole")
     create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_ACTIONS_SQL, "actions")
+    create_table(CONST_CONSOLIDATED_DB, CONST_CREATE_IPASN_SQL, "ipasn")
 
     copy_flows_to_newflows()
 
@@ -503,6 +505,15 @@ def main():
     create_services_db()
     services_data = get_all_services()
     detection_durations['fetch_services_flow'] = int((datetime.now() - start).total_seconds())
+
+
+    start = datetime.now()
+    log_info(logger,"[INFO] Retrieving IP2ASN Database..")
+    create_asn_database()
+    log_info(logger, "[INFO] IP2ASN update finished.")
+    detection_durations['fetch_ip2asn'] = int((datetime.now() - start).total_seconds())
+
+
 
     combined_results = {}
     localhosts = get_localhosts()

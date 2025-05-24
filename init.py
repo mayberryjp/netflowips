@@ -16,6 +16,7 @@ import ipaddress
 
 # Local imports - Constants
 from src.const import (
+    CONST_CREATE_IPASN_SQL,
     CONST_CONSOLIDATED_DB,
     CONST_TEST_SOURCE_DB,
     CONST_CREATE_ALLFLOWS_SQL,
@@ -94,6 +95,10 @@ from database.alerts import (
     get_hourly_alerts_summary,
     summarize_alerts_by_ip,
     get_all_alerts_by_ip
+)
+
+from database.ipasn import  (
+    insert_asn_records_batch
 )
 
 # Configuration functions
